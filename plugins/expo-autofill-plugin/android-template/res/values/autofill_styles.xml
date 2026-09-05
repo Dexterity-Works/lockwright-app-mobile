@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Lockwright.Autofill.Fullscreen" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Name is historical. Must float: a full activity hides Vivaldi. -->
+    <style name="Theme.Lockwright.Autofill.Fullscreen" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowActivityTransitions">false</item>
         <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimation.PearPassBottomSheet</item>

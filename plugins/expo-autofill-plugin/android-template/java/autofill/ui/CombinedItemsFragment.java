@@ -38,6 +38,7 @@ import com.pears.pass.autofill.jobs.JobEncryption;
 import com.pears.pass.autofill.jobs.JobFileManager;
 import com.pears.pass.autofill.jobs.UpdatePasskeyPayload;
 import com.pears.pass.autofill.utils.AutofillConstants;
+import com.pears.pass.autofill.utils.AutofillHostTeardown;
 import com.pears.pass.autofill.utils.AutofillSheetLoad;
 import com.pears.pass.autofill.utils.ChipFillDecision;
 import com.pears.pass.autofill.utils.SecureBufferUtils;
@@ -240,7 +241,12 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
         sheetClose.setOnClickListener(v -> {
             if (navigationListener != null) navigationListener.onCancel();
         });
-        searchInput.setHint("Search in All Items");
+        searchInput.setHint("Site or app");
+        if (MODE_ASSERTION.equals(mode)
+                && CredentialItem.TYPE_LOGIN.equals(recordTypeFilter)) {
+            searchInput.setText(
+                    AutofillSheetLoad.visibleFillLocation(webDomain, packageName));
+        }
     }
 
     private String sheetTitleForFilter() {
@@ -390,6 +396,7 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                 }
                 if (getActivity() == null) return;
                 getActivity().runOnUiThread(() -> {
+                    if (!shouldApplySheetUpdate()) return;
                     vaults.clear();
                     vaults.addAll(items);
                     if (vaults.isEmpty()) {
@@ -471,6 +478,7 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                 if (getActivity() == null) return;
                 final List<CredentialItem> finalParsed = parsed;
                 getActivity().runOnUiThread(() -> {
+                    if (!shouldApplySheetUpdate()) return;
                     allCredentials.clear();
                     allCredentials.addAll(finalParsed);
                     hasUserSearched = false;
@@ -506,12 +514,13 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
         if (!query.isEmpty()) {
             out = new ArrayList<>();
             for (CredentialItem c : allCredentials) {
-                if (UriMatchHelper.credentialMatchesSearch(
+                if (AutofillSheetLoad.matchesFillQuery(
                         c.getTitle(),
                         c.getUsername(),
                         c.getWebsites(),
                         c.getUris(),
-                        query)) {
+                        query,
+                        packageName)) {
                     out.add(c);
                 }
             }
@@ -542,6 +551,12 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
             showList();
             maybeAutoSelectPreselect(out);
         }
+    }
+
+    private boolean shouldApplySheetUpdate() {
+        android.app.Activity activity = getActivity();
+        boolean finishing = activity == null || activity.isFinishing();
+        return AutofillHostTeardown.shouldApplySheetUpdate(isAdded(), finishing);
     }
 
     private void maybeAutoSelectPreselect(List<CredentialItem> visible) {

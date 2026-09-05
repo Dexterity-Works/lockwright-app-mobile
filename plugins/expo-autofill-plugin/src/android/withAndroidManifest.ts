@@ -3,6 +3,17 @@ import { AutofillPluginOptions } from '../index';
 
 const AUTOFILL_THEME = '@style/Theme.Lockwright.Autofill.Fullscreen';
 
+/** Empty affinity: fill must not join the main Lockwright task. */
+function applyFillHostActivityAttrs(activity: any) {
+  activity.$ = activity.$ || {};
+  activity.$['android:theme'] = AUTOFILL_THEME;
+  activity.$['android:taskAffinity'] = '';
+  activity.$['android:excludeFromRecents'] = 'true';
+  activity.$['android:exported'] = 'false';
+  activity.$['android:windowSoftInputMode'] = 'adjustResize';
+  activity.$['android:launchMode'] = 'singleTop';
+}
+
 export const withAndroidManifest: ConfigPlugin<AutofillPluginOptions> = (config, _options) => {
   return withAndroidManifestMod(config, (cfg) => {
     const mainApplication = cfg.modResults.manifest.application?.[0];
@@ -43,19 +54,11 @@ export const withAndroidManifest: ConfigPlugin<AutofillPluginOptions> = (config,
     );
 
     if (authActivity) {
-      authActivity.$['android:theme'] = AUTOFILL_THEME;
+      applyFillHostActivityAttrs(authActivity);
     } else {
-      mainApplication.activity.push({
-        $: {
-          'android:name': '.autofill.ui.AuthenticationActivity',
-          'android:theme': AUTOFILL_THEME,
-          'android:taskAffinity': '',
-          'android:excludeFromRecents': 'true',
-          'android:exported': 'false',
-          'android:windowSoftInputMode': 'adjustResize',
-          'android:launchMode': 'singleTop',
-        },
-      } as any);
+      const activity = { $: { 'android:name': '.autofill.ui.AuthenticationActivity' } };
+      applyFillHostActivityAttrs(activity);
+      mainApplication.activity.push(activity as any);
     }
 
     // Add (or update) Passkey Registration Activity
@@ -64,19 +67,11 @@ export const withAndroidManifest: ConfigPlugin<AutofillPluginOptions> = (config,
     );
 
     if (passkeyActivity) {
-      passkeyActivity.$['android:theme'] = AUTOFILL_THEME;
+      applyFillHostActivityAttrs(passkeyActivity);
     } else {
-      mainApplication.activity.push({
-        $: {
-          'android:name': '.autofill.ui.PasskeyRegistrationActivity',
-          'android:theme': AUTOFILL_THEME,
-          'android:taskAffinity': '',
-          'android:excludeFromRecents': 'true',
-          'android:exported': 'false',
-          'android:windowSoftInputMode': 'adjustResize',
-          'android:launchMode': 'singleTop',
-        },
-      } as any);
+      const activity = { $: { 'android:name': '.autofill.ui.PasskeyRegistrationActivity' } };
+      applyFillHostActivityAttrs(activity);
+      mainApplication.activity.push(activity as any);
     }
 
     // Add Credential Provider Service (Android 14+ passkey support)

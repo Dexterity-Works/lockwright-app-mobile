@@ -2,6 +2,8 @@ package com.pears.pass.autofill.utils;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -13,6 +15,37 @@ import java.util.Set;
  * Ports the mobile/extension JS matcher (domain / host / startsWith / exact).
  */
 public final class UriMatchHelper {
+    /**
+     * ponytail: static browser packages. Reverse-DNS of
+     * com.vivaldi.browser is vivaldi.com, which hides github.com
+     * when the browser omits webDomain. Add a package when a fill
+     * from that browser filters to the vendor site.
+     */
+    private static final Set<String> BROWSER_PACKAGES = new HashSet<>(Arrays.asList(
+            "com.android.chrome",
+            "com.chrome.beta",
+            "com.chrome.dev",
+            "com.chrome.canary",
+            "com.google.android.apps.chrome",
+            "org.mozilla.firefox",
+            "org.mozilla.firefox_beta",
+            "org.mozilla.focus",
+            "org.mozilla.fenix",
+            "com.vivaldi.browser",
+            "com.vivaldi.browser.snapshot",
+            "com.microsoft.emmx",
+            "com.opera.browser",
+            "com.opera.mini.native",
+            "com.brave.browser",
+            "com.sec.android.app.sbrowser",
+            "com.duckduckgo.mobile.android",
+            "org.bromite.bromite",
+            "com.kiwibrowser.browser",
+            "com.huawei.browser",
+            "org.torproject.torbrowser",
+            "com.android.browser"
+    ));
+
     public static final String MATCH_DOMAIN = "domain";
     public static final String MATCH_HOST = "host";
     public static final String MATCH_STARTS_WITH = "startsWith";
@@ -175,6 +208,12 @@ public final class UriMatchHelper {
 
     public static boolean doesWebsiteMatchPage(String pageUrl, String website, String matchType) {
         if (website == null || website.trim().isEmpty() || pageUrl == null) return false;
+        if (matchesPage(pageUrl, website, matchType)) return true;
+        String fromApp = httpsUrlFromAndroidApp(website);
+        return fromApp != null && matchesPage(pageUrl, fromApp, matchType);
+    }
+
+    private static boolean matchesPage(String pageUrl, String website, String matchType) {
         String type = fromVaultUriMatch(matchType);
         switch (type) {
             case MATCH_HOST:
@@ -255,7 +294,9 @@ public final class UriMatchHelper {
         Set<String> seen = new LinkedHashSet<>();
         addPageUrl(out, seen, pageUrlFromWebDomain(webDomain));
         addPageUrl(out, seen, pageUrlFromAndroidApp(packageName));
-        if (packageName != null && !packageName.trim().isEmpty()) {
+        if (packageName != null
+                && !packageName.trim().isEmpty()
+                && !isBrowserPackage(packageName)) {
             addPageUrl(out, seen, pageUrlFromWebDomain(packageNameToDomain(packageName)));
         }
         return out;
@@ -287,6 +328,27 @@ public final class UriMatchHelper {
             return trimmed.substring(schemeEnd + 3);
         }
         return trimmed;
+    }
+
+    static String httpsUrlFromAndroidApp(String website) {
+        if (website == null) return null;
+        String trimmed = unwrapPrefixedAppUri(website.trim());
+        String lower = trimmed.toLowerCase(Locale.ROOT);
+        if (!lower.startsWith("androidapp://")) return null;
+        String pkg = trimmed.substring("androidapp://".length()).trim();
+        if (pkg.isEmpty() || isBrowserPackage(pkg)) return null;
+        String domain = packageNameToDomain(pkg);
+        if (domain == null || domain.isEmpty()) return null;
+        return "https://" + domain;
+    }
+
+    static boolean isBrowserPackage(String packageName) {
+        if (packageName == null) return false;
+        String pkg = packageName.trim().toLowerCase(Locale.ROOT);
+        if (pkg.startsWith("androidapp://")) {
+            pkg = pkg.substring("androidapp://".length());
+        }
+        return BROWSER_PACKAGES.contains(pkg);
     }
 
     /** com.twitter.android → twitter.com. Null/short names return as-is. */

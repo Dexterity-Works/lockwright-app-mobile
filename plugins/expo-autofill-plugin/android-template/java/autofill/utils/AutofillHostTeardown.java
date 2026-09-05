@@ -11,4 +11,12 @@ public final class AutofillHostTeardown {
     public static boolean shouldReleaseWorklet(boolean isFinishing) {
         return isFinishing;
     }
+
+    /**
+     * Vault load finishes after Vivaldi cancels the fill host.
+     * Applying the list then NPEs and the sheet drops.
+     */
+    public static boolean shouldApplySheetUpdate(boolean isAdded, boolean isFinishing) {
+        return isAdded && !isFinishing;
+    }
 }

@@ -9,6 +9,13 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+### Fixed
+
+- Unlock-to-fill floats over the browser. Vivaldi no longer minimizes under a full Lockwright window.
+- Unlock-to-fill search field shows the page or app being matched. Edit it to find the login (type `github.com` when Vivaldi sent no page).
+- Unlock-to-fill from Vivaldi (and other browsers) no longer guesses the browser vendor site when the page domain is missing.
+- `androidapp://com.github.android` matches `github.com` in a browser.
+
 ## [0.0.21] - 2026-09-05
 
 `0a5877bb714a8cae30fd19966cf6808e92c8b067`

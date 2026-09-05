@@ -10,6 +10,8 @@ public final class AutofillHostTeardownTest {
     public static void main(String[] args) {
         pauseFromBiometricKeepsWorklet();
         finishingReleasesWorklet();
+        goneHostSkipsSheetUpdate();
+        liveHostAppliesSheetUpdate();
 
         if (failures > 0) {
             System.err.println(failures + " AutofillHostTeardown checks failed");
@@ -24,6 +26,15 @@ public final class AutofillHostTeardownTest {
 
     private static void finishingReleasesWorklet() {
         expect("finishing releases", AutofillHostTeardown.shouldReleaseWorklet(true), true);
+    }
+
+    private static void goneHostSkipsSheetUpdate() {
+        expect("detached skips", AutofillHostTeardown.shouldApplySheetUpdate(false, false), false);
+        expect("finishing skips", AutofillHostTeardown.shouldApplySheetUpdate(true, true), false);
+    }
+
+    private static void liveHostAppliesSheetUpdate() {
+        expect("live applies", AutofillHostTeardown.shouldApplySheetUpdate(true, false), true);
     }
 
     private static void expect(String label, boolean got, boolean want) {

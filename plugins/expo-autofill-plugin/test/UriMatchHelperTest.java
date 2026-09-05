@@ -18,6 +18,9 @@ public final class UriMatchHelperTest {
         hostWithPortStillGetsHttps();
         prefixedAndroidAppRecordMatchesPackageFill();
         searchMatchesWebsiteWhenTitleDoesNot();
+        vivaldiGithubPageFindsGithubWebsite();
+        browserPackageDoesNotGuessItsOwnSite();
+        githubAppUriMatchesGithubWebsite();
 
         if (failures > 0) {
             System.err.println(failures + " UriMatchHelper checks failed");
@@ -110,6 +113,49 @@ public final class UriMatchHelperTest {
                         listOf("androidapp://com.twitter.android"),
                         new ArrayList<>(),
                         "twitter.android"),
+                true);
+    }
+
+    private static void vivaldiGithubPageFindsGithubWebsite() {
+        List<String> websites = listOf("https://github.com");
+        expect(
+                "Vivaldi github.com fill matches github.com login",
+                UriMatchHelper.bestRecordSiteMatchRank(
+                        websites,
+                        new ArrayList<>(),
+                        UriMatchHelper.pageUrlsForAutofill(
+                                "github.com", "com.vivaldi.browser"))
+                        > 0,
+                true);
+    }
+
+    private static void browserPackageDoesNotGuessItsOwnSite() {
+        List<String> pageUrls =
+                UriMatchHelper.pageUrlsForAutofill(null, "com.vivaldi.browser");
+        expect(
+                "Vivaldi without webDomain does not guess vivaldi.com",
+                pageUrls.contains("https://vivaldi.com"),
+                false);
+        List<String> github = listOf("https://github.com");
+        List<String> vivaldi = listOf("https://vivaldi.com");
+        expect(
+                "missing webDomain must not hide github behind a vivaldi.com hit",
+                UriMatchHelper.bestRecordSiteMatchRank(github, new ArrayList<>(), pageUrls)
+                        > 0,
+                false);
+        expect(
+                "missing webDomain must not exclusive-match vivaldi.com",
+                UriMatchHelper.bestRecordSiteMatchRank(vivaldi, new ArrayList<>(), pageUrls)
+                        > 0,
+                false);
+    }
+
+    private static void githubAppUriMatchesGithubWebsite() {
+        List<String> websites = listOf("androidapp://com.github.android");
+        expect(
+                "GitHub app URI matches github.com in a browser",
+                UriMatchHelper.recordMatchesPage(
+                        websites, new ArrayList<>(), "https://github.com"),
                 true);
     }
 

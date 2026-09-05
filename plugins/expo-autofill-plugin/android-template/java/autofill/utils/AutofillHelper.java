@@ -302,7 +302,8 @@ public class AutofillHelper {
         String webDomain = node.getWebDomain();
         FieldSignals signals = fromNode(node, autofillHints, inputType);
 
-        if (webDomain != null && fields.webDomain == null) {
+        if (webDomain != null && !webDomain.isEmpty()
+                && (fields.webDomain == null || fields.webDomain.isEmpty())) {
             fields.webDomain = webDomain;
         }
 

@@ -28,6 +28,7 @@ import com.pears.pass.autofill.jobs.JobEncryption;
 import com.pears.pass.autofill.jobs.JobFileManager;
 import com.pears.pass.autofill.jobs.PasskeyJobCreator;
 import com.pears.pass.autofill.jobs.UpdatePasskeyPayload;
+import com.pears.pass.autofill.utils.AutofillFillWindow;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.utils.VaultInitializer;
 
@@ -257,19 +258,18 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
         });
     }
 
-    // 85% height sheet anchored to bottom, with a dim backdrop. v2 only.
-    private static final float WINDOW_HEIGHT_RATIO = 0.85f;
+    // Bottom sheet over the caller. Must float (see AutofillFillWindow).
     private void applyPartialHeightWindow() {
         try {
             android.view.Window window = getWindow();
             if (window == null) return;
             int screenHeight = getResources().getDisplayMetrics().heightPixels;
-            int targetHeight = (int) (screenHeight * WINDOW_HEIGHT_RATIO);
+            int targetHeight = AutofillFillWindow.overlayHeightPx(screenHeight);
             android.view.WindowManager.LayoutParams params = window.getAttributes();
             params.width = android.view.WindowManager.LayoutParams.MATCH_PARENT;
             params.height = targetHeight;
             params.gravity = android.view.Gravity.BOTTOM;
-            params.dimAmount = 0.5f;
+            params.dimAmount = AutofillFillWindow.DIM_AMOUNT;
             window.setAttributes(params);
             window.addFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

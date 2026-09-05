@@ -34,6 +34,11 @@ javac -d "$TMP" \
 java -cp "$TMP" com.pears.pass.autofill.utils.AutofillHostTeardownTest
 
 javac -d "$TMP" \
+  "$ROOT/android-template/java/autofill/utils/AutofillFillWindow.java" \
+  "$ROOT/test/AutofillFillWindowTest.java"
+java -cp "$TMP" com.pears.pass.autofill.utils.AutofillFillWindowTest
+
+javac -d "$TMP" \
   "$ROOT/android-template/java/autofill/utils/VaultStoreReady.java" \
   "$ROOT/test/VaultStoreReadyTest.java"
 java -cp "$TMP" com.pears.pass.autofill.utils.VaultStoreReadyTest
@@ -49,6 +54,7 @@ javac -d "$TMP" \
 java -cp "$TMP" com.pears.pass.autofill.utils.ChipFillDecisionTest
 
 javac -d "$TMP" \
+    "$ROOT/android-template/java/autofill/utils/UriMatchHelper.java" \
     "$ROOT/android-template/java/autofill/utils/AutofillSheetLoad.java" \
     "$ROOT/test/AutofillSheetLoadTest.java"
 java -cp "$TMP" com.pears.pass.autofill.utils.AutofillSheetLoadTest
@@ -157,8 +163,12 @@ grep -q 'pageUrlsForAutofill' "$COMBINED" || {
   echo "CombinedItems must match androidapp package URIs via pageUrlsForAutofill" >&2
   exit 1
 }
-grep -q 'credentialMatchesSearch' "$COMBINED" || {
-  echo "CombinedItems search must match website URIs, not only title and username" >&2
+grep -q 'AutofillSheetLoad.visibleFillLocation' "$COMBINED" || {
+  echo "CombinedItems must show the page being matched in the search field" >&2
+  exit 1
+}
+grep -q 'AutofillSheetLoad.matchesFillQuery' "$COMBINED" || {
+  echo "CombinedItems must re-match when the user edits the fill location" >&2
   exit 1
 }
 
@@ -187,3 +197,29 @@ grep -q 'FieldClassifier.isUsername' "$HELPER"
 grep -q 'FieldClassifier.isOtp' "$HELPER"
 grep -q 'FieldClassifier.isIdentity' "$HELPER"
 grep -q 'applyPrecedingUsername' "$HELPER"
+
+STYLES="$ROOT/android-template/res/values/autofill_styles.xml"
+grep -q 'android:windowIsFloating">true' "$STYLES" || {
+  echo "fill theme must float so Vivaldi stays visible under the sheet" >&2
+  exit 1
+}
+
+grep -q 'AutofillFillWindow.overlayHeightPx' "$AUTH" || {
+  echo "AuthenticationActivity must size the sheet through AutofillFillWindow" >&2
+  exit 1
+}
+PASSKEY="$ROOT/android-template/java/autofill/ui/PasskeyRegistrationActivity.java"
+grep -q 'AutofillFillWindow.overlayHeightPx' "$PASSKEY" || {
+  echo "PasskeyRegistrationActivity must size the sheet through AutofillFillWindow" >&2
+  exit 1
+}
+
+MANIFEST="$ROOT/src/android/withAndroidManifest.ts"
+grep -q 'function applyFillHostActivityAttrs' "$MANIFEST" || {
+  echo "manifest plugin must share fill-host activity attrs" >&2
+  exit 1
+}
+grep -c 'applyFillHostActivityAttrs' "$MANIFEST" | grep -qx '5' || {
+  echo "fill-host attrs must apply to new and existing Authentication and Passkey activities" >&2
+  exit 1
+}
