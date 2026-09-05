@@ -9,6 +9,14 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.22] - 2026-09-06
+
+`BUMP_SHA`
+
+### Changed
+
+- Play versionCode 12.
+
 ### Fixed
 
 - Unlock-to-fill floats over the browser. Vivaldi no longer minimizes under a full Lockwright window.
@@ -71,7 +79,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - A locked initialized vault counts as set up. Unlock-to-fill setup no longer loops.
 
-[unreleased]: https://github.com/Thaoh/lockwright-app-mobile/compare/0a5877bb714a8cae30fd19966cf6808e92c8b067...HEAD
+[unreleased]: https://github.com/Thaoh/lockwright-app-mobile/compare/BUMP_SHA...HEAD
+[0.0.22]: https://github.com/Thaoh/lockwright-app-mobile/compare/0a5877bb714a8cae30fd19966cf6808e92c8b067...BUMP_SHA
 [0.0.21]: https://github.com/Thaoh/lockwright-app-mobile/compare/00ca6a1ef5fd79cab19fc35ea33d514a21e51c7d...0a5877bb714a8cae30fd19966cf6808e92c8b067
 [0.0.20]: https://github.com/Thaoh/lockwright-app-mobile/compare/5adbf7d9490cadf272f66864bba042717b44313e...00ca6a1ef5fd79cab19fc35ea33d514a21e51c7d
 [0.0.19]: https://github.com/Thaoh/lockwright-app-mobile/compare/ea23b521f63467ebebb11c3a1db471f11763ba37...5adbf7d9490cadf272f66864bba042717b44313e
