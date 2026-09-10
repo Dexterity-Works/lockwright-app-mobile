@@ -10,7 +10,9 @@ function applyFillHostActivityAttrs(activity: any) {
   activity.$['android:taskAffinity'] = '';
   activity.$['android:excludeFromRecents'] = 'true';
   activity.$['android:exported'] = 'false';
-  activity.$['android:windowSoftInputMode'] = 'adjustResize';
+  activity.$['android:windowSoftInputMode'] = 'adjustPan';
+  activity.$['android:configChanges'] =
+    'keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode';
   activity.$['android:launchMode'] = 'singleTop';
 }
 

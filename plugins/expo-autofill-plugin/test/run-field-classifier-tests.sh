@@ -171,6 +171,14 @@ grep -q 'AutofillSheetLoad.matchesFillQuery' "$COMBINED" || {
   echo "CombinedItems must re-match when the user edits the fill location" >&2
   exit 1
 }
+grep -q 'AutofillSheetLoad.filterAsTypedQuery' "$COMBINED" || {
+  echo "CombinedItems must not exclusive-search on the page prefill" >&2
+  exit 1
+}
+grep -q 'applyingPrefill' "$COMBINED" || {
+  echo "CombinedItems must not treat programmatic search prefill as typing" >&2
+  exit 1
+}
 
 SESSION="$ROOT/android-template/java/autofill/data/AutofillUnlockSession.java"
 grep -q 'pageUrlsForAutofill' "$SESSION" || {
@@ -221,5 +229,13 @@ grep -q 'function applyFillHostActivityAttrs' "$MANIFEST" || {
 }
 grep -c 'applyFillHostActivityAttrs' "$MANIFEST" | grep -qx '5' || {
   echo "fill-host attrs must apply to new and existing Authentication and Passkey activities" >&2
+  exit 1
+}
+grep -q "adjustPan" "$MANIFEST" || {
+  echo "fill host must pan for IME, not resize" >&2
+  exit 1
+}
+grep -qF 'keyboard|keyboardHidden' "$MANIFEST" || {
+  echo "fill host must keep the activity across keyboard configChanges" >&2
   exit 1
 }

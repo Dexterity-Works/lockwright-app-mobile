@@ -31,4 +31,14 @@ public final class AutofillFillWindow {
         if (screenHeightPx <= 0) return 0;
         return (int) (screenHeightPx * HEIGHT_RATIO);
     }
+
+    /**
+     * IME on a floating fill host recreates the activity unless
+     * configChanges lists keyboard. Recreate cancels Autofill and
+     * the sheet drops into recents.
+     */
+    public static boolean typingRecreatesHost(String configChanges) {
+        if (configChanges == null || configChanges.isEmpty()) return true;
+        return !configChanges.contains("keyboard");
+    }
 }

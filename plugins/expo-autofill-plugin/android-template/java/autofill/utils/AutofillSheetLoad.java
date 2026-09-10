@@ -49,4 +49,14 @@ public final class AutofillSheetLoad {
         }
         return UriMatchHelper.credentialMatchesSearch(title, username, websites, uris, q);
     }
+
+    /**
+     * Prefill of the page in the search field is not a typed query.
+     * Treating it as one hides logins titled GitHub when the URI
+     * list missed github.com.
+     */
+    public static boolean filterAsTypedQuery(boolean hasUserSearched, String query) {
+        if (!hasUserSearched) return false;
+        return query != null && !query.trim().isEmpty();
+    }
 }

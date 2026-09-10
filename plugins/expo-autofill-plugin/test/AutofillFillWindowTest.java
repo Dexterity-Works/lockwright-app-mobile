@@ -14,6 +14,7 @@ public final class AutofillFillWindowTest {
         floatingKeepsCallerSurface();
         nonFloatingHidesCallerSurface();
         sheetHeightIsPartial();
+        keyboardConfigKeepsHost();
 
         if (failures > 0) {
             System.err.println(failures + " AutofillFillWindow checks failed");
@@ -47,6 +48,15 @@ public final class AutofillFillWindowTest {
     private static void sheetHeightIsPartial() {
         expect("850 of 1000", AutofillFillWindow.overlayHeightPx(1000), 850);
         expect("zero screen", AutofillFillWindow.overlayHeightPx(0), 0);
+    }
+
+    private static void keyboardConfigKeepsHost() {
+        expect("missing keyboard config recreates the fill host",
+                AutofillFillWindow.typingRecreatesHost(null), true);
+        expect("keyboard in configChanges keeps the fill host",
+                AutofillFillWindow.typingRecreatesHost(
+                        "keyboard|keyboardHidden|orientation|screenSize"),
+                false);
     }
 
     private static void expect(String label, Object got, Object want) {

@@ -111,6 +111,7 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
     private final List<CredentialItem> allCredentials = new ArrayList<>();
     private final Map<String, Map<String, Object>> rawRecordsById = new HashMap<>();
     private boolean hasUserSearched = false;
+    private boolean applyingPrefill = false;
     private boolean dropdownExpanded = false;
 
     public static CombinedItemsFragment newInstance(String mode,
@@ -244,8 +245,10 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
         searchInput.setHint("Site or app");
         if (MODE_ASSERTION.equals(mode)
                 && CredentialItem.TYPE_LOGIN.equals(recordTypeFilter)) {
+            applyingPrefill = true;
             searchInput.setText(
                     AutofillSheetLoad.visibleFillLocation(webDomain, packageName));
+            applyingPrefill = false;
         }
     }
 
@@ -265,7 +268,9 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
             @Override public void afterTextChanged(Editable s) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String q = s.toString();
-                if (!q.isEmpty() && !hasUserSearched) hasUserSearched = true;
+                if (!applyingPrefill && !q.isEmpty() && !hasUserSearched) {
+                    hasUserSearched = true;
+                }
                 applyFilter(q);
             }
         });
@@ -511,7 +516,7 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
 
     private void applyFilter(String query) {
         List<CredentialItem> out;
-        if (!query.isEmpty()) {
+        if (AutofillSheetLoad.filterAsTypedQuery(hasUserSearched, query)) {
             out = new ArrayList<>();
             for (CredentialItem c : allCredentials) {
                 if (AutofillSheetLoad.matchesFillQuery(

@@ -19,6 +19,9 @@ public final class AutofillSheetLoadTest {
         vivaldiWithoutPageLeavesLocationEmpty();
         nativeAppShowsAndroidAppLocation();
         typedGithubLocationFindsGithubLogin();
+        githubDotComFindsTitleGitHub();
+        androidAppGithubUriMatchesTypedGithubDotCom();
+        prefillIsNotExclusiveSearch();
 
         if (failures > 0) {
             System.err.println(failures + " AutofillSheetLoad checks failed");
@@ -81,6 +84,43 @@ public final class AutofillSheetLoadTest {
                 AutofillSheetLoad.matchesFillQuery(
                         "X", "user", websites, new ArrayList<UriMatchHelper.UriEntry>(),
                         "vivaldi.com", "com.vivaldi.browser"),
+                false);
+    }
+
+    private static void githubDotComFindsTitleGitHub() {
+        expect(
+                "github.com finds a login titled GitHub with no URI",
+                AutofillSheetLoad.matchesFillQuery(
+                        "GitHub", "user", new ArrayList<String>(),
+                        new ArrayList<UriMatchHelper.UriEntry>(),
+                        "github.com", "com.vivaldi.browser"),
+                true);
+    }
+
+    private static void androidAppGithubUriMatchesTypedGithubDotCom() {
+        List<String> websites = new ArrayList<>();
+        websites.add("androidapp://com.github.android");
+        expect(
+                "typed github.com finds androidapp GitHub login",
+                AutofillSheetLoad.matchesFillQuery(
+                        "GitHub", "user", websites,
+                        new ArrayList<UriMatchHelper.UriEntry>(),
+                        "github.com", "com.vivaldi.browser"),
+                true);
+    }
+
+    private static void prefillIsNotExclusiveSearch() {
+        expect(
+                "prefill github.com is not an exclusive typed search",
+                AutofillSheetLoad.filterAsTypedQuery(false, "github.com"),
+                false);
+        expect(
+                "typing github.com is an exclusive typed search",
+                AutofillSheetLoad.filterAsTypedQuery(true, "github.com"),
+                true);
+        expect(
+                "cleared search after typing shows the vault",
+                AutofillSheetLoad.filterAsTypedQuery(true, ""),
                 false);
     }
 

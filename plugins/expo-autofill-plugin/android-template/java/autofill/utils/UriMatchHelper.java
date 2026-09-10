@@ -119,6 +119,15 @@ public final class UriMatchHelper {
         String q = query.toLowerCase(Locale.ROOT);
         if (title != null && title.toLowerCase(Locale.ROOT).contains(q)) return true;
         if (username != null && username.toLowerCase(Locale.ROOT).contains(q)) return true;
+        String hostLabel = hostLabel(q);
+        if (hostLabel != null) {
+            if (title != null && title.toLowerCase(Locale.ROOT).contains(hostLabel)) {
+                return true;
+            }
+            if (username != null && username.toLowerCase(Locale.ROOT).contains(hostLabel)) {
+                return true;
+            }
+        }
         for (String website : getRecordWebsiteValues(websites, uris)) {
             if (website == null) continue;
             if (website.toLowerCase(Locale.ROOT).contains(q)) return true;
@@ -386,6 +395,30 @@ public final class UriMatchHelper {
         String websiteNormalized = normalizeUrl(website);
         if (pageNormalized == null || websiteNormalized == null) return false;
         return pageNormalized.equals(websiteNormalized);
+    }
+
+    /**
+     * github.com → github. Lets a login titled GitHub match a typed
+     * page host when the URI list missed the site.
+     */
+    static String hostLabel(String query) {
+        if (query == null) return null;
+        String q = query.trim().toLowerCase(Locale.ROOT);
+        if (q.startsWith("http://") || q.startsWith("https://")) {
+            String host = hostname(q);
+            if (host == null) return null;
+            q = host;
+        }
+        int slash = q.indexOf('/');
+        if (slash != -1) q = q.substring(0, slash);
+        if (q.contains(" ") || !q.contains(".")) return null;
+        String[] parts = q.split("\\.");
+        int i = 0;
+        if (parts.length > 2 && "www".equals(parts[0])) i = 1;
+        if (i >= parts.length) return null;
+        String label = parts[i];
+        if (label.length() < 2) return null;
+        return label;
     }
 
     private static String hostname(String value) {
