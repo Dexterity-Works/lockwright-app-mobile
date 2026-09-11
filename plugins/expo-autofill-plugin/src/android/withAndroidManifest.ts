@@ -3,11 +3,11 @@ import { AutofillPluginOptions } from '../index';
 
 const AUTOFILL_THEME = '@style/Theme.Lockwright.Autofill.Fullscreen';
 
-/** Empty affinity: fill must not join the main Lockwright task. */
+/** Dedicated affinity: empty is dropped from the merged manifest. */
 function applyFillHostActivityAttrs(activity: any) {
   activity.$ = activity.$ || {};
   activity.$['android:theme'] = AUTOFILL_THEME;
-  activity.$['android:taskAffinity'] = '';
+  activity.$['android:taskAffinity'] = '.autofill';
   activity.$['android:excludeFromRecents'] = 'true';
   activity.$['android:exported'] = 'false';
   activity.$['android:windowSoftInputMode'] = 'adjustPan';

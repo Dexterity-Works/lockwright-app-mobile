@@ -15,6 +15,9 @@ const { useAutoLockContext } = require('../../../context/AutoLockContext')
 const { useBottomSheet } = require('../../../context/BottomSheetContext')
 const { useModal } = require('../../../context/ModalContext')
 const {
+  shouldReleaseVaultForFill
+} = require('../../../utils/androidFillWorklet')
+const {
   getLastActivityAt,
   setLastActivityAt
 } = require('../../../utils/autoLockStorage')
@@ -43,6 +46,9 @@ jest.mock('./useRouteHelper', () => ({
 jest.mock('../../../utils/autoLockStorage', () => ({
   getLastActivityAt: jest.fn(),
   setLastActivityAt: jest.fn()
+}))
+jest.mock('../../../utils/androidFillWorklet', () => ({
+  shouldReleaseVaultForFill: jest.fn(() => false)
 }))
 jest.mock('../../../utils/filesCache', () => ({
   clearAllFileCache: jest.fn()
@@ -103,6 +109,7 @@ describe('useAutoLockWatcher', () => {
     getLastActivityAt.mockResolvedValue(0)
     setLastActivityAt.mockResolvedValue()
     refetchMock.mockResolvedValue({ hasPasswordSet: true })
+    shouldReleaseVaultForFill.mockReturnValue(false)
 
     jest.spyOn(global, 'setTimeout').mockImplementation(() => 0)
     jest.spyOn(global, 'clearTimeout').mockImplementation(() => {})
@@ -169,5 +176,22 @@ describe('useAutoLockWatcher', () => {
       routes: [{ name: 'AuthMasterPassword' }]
     })
     expect(resetStateMock).toHaveBeenCalled()
+  })
+
+  it('releases the vault when Android fill takes the files', async () => {
+    shouldReleaseVaultForFill.mockReturnValue(true)
+    let onChange
+    AppState.addEventListener.mockImplementation((type, handler) => {
+      if (type === 'change') onChange = handler
+      return { remove: addListenerRemoveMock }
+    })
+
+    renderHook(() => useAutoLockWatcher())
+
+    await act(async () => {
+      await onChange('background')
+    })
+
+    expect(closeAllInstances).toHaveBeenCalled()
   })
 })

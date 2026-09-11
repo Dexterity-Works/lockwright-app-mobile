@@ -44,6 +44,7 @@ import com.pears.pass.autofill.utils.ChipFillDecision;
 import com.pears.pass.autofill.utils.SecureBufferUtils;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.utils.UriMatchHelper;
+import com.pears.pass.autofill.utils.VaultErrorUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -416,6 +417,11 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                     SecureLog.d(TAG, "loadVaults failed with cached session list: " + e.getMessage());
                     return;
                 }
+                if (!AutofillSheetLoad.showEmptyAfterLoadFailure(
+                        VaultErrorUtils.isDatabaseLockError(e))) {
+                    SecureLog.d(TAG, "loadVaults lock, keep waiting: " + e.getMessage());
+                    return;
+                }
                 handleAsyncError(TAG, "loadVaults failed: " + e.getMessage(), this::showEmpty);
             }
         });
@@ -499,6 +505,11 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                 });
             } catch (Exception e) {
                 handleAsyncError(TAG, "unlockAndLoad failed: " + e.getMessage(), () -> {
+                    if (!AutofillSheetLoad.showEmptyAfterLoadFailure(
+                            VaultErrorUtils.isDatabaseLockError(e))) {
+                        showLoading();
+                        return;
+                    }
                     if (vault.isLocked()) {
                         showPasswordPrompt();
                         Toast.makeText(requireContext(), "Invalid vault password", Toast.LENGTH_SHORT).show();
@@ -516,7 +527,8 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
 
     private void applyFilter(String query) {
         List<CredentialItem> out;
-        if (AutofillSheetLoad.filterAsTypedQuery(hasUserSearched, query)) {
+        String pageLocation = AutofillSheetLoad.visibleFillLocation(webDomain, packageName);
+        if (AutofillSheetLoad.filterAsTypedQuery(hasUserSearched, query, pageLocation)) {
             out = new ArrayList<>();
             for (CredentialItem c : allCredentials) {
                 if (AutofillSheetLoad.matchesFillQuery(
@@ -532,6 +544,11 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
         } else if (!hasUserSearched) {
             out = filterInitial(allCredentials);
         } else {
+            out = new ArrayList<>(allCredentials);
+        }
+
+        if (AutofillSheetLoad.keepVaultWhenPagePrefillMisses(
+                query, pageLocation, out.size(), allCredentials.size())) {
             out = new ArrayList<>(allCredentials);
         }
 
@@ -738,8 +755,7 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
             String id = (String) record.get("id");
             if (id == null) continue;
 
-            Object recordType = record.get("type");
-            if (!(recordType instanceof String) || !recordTypeFilter.equals(recordType)) {
+            if (!AutofillSheetLoad.recordMatchesFilter(record, recordTypeFilter)) {
                 continue;
             }
 

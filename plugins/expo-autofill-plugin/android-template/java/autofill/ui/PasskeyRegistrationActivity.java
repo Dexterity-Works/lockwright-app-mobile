@@ -266,11 +266,12 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
             int screenHeight = getResources().getDisplayMetrics().heightPixels;
             int targetHeight = AutofillFillWindow.overlayHeightPx(screenHeight);
             android.view.WindowManager.LayoutParams params = window.getAttributes();
-            params.width = android.view.WindowManager.LayoutParams.MATCH_PARENT;
+            params.width = AutofillFillWindow.overlayWidth();
             params.height = targetHeight;
-            params.gravity = android.view.Gravity.BOTTOM;
+            params.gravity = AutofillFillWindow.overlayGravity();
             params.dimAmount = AutofillFillWindow.DIM_AMOUNT;
             window.setAttributes(params);
+            window.setLayout(AutofillFillWindow.overlayWidth(), targetHeight);
             window.addFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 window.setDecorFitsSystemWindows(false);

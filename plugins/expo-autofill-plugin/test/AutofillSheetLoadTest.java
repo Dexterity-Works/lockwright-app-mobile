@@ -22,6 +22,10 @@ public final class AutofillSheetLoadTest {
         githubDotComFindsTitleGitHub();
         androidAppGithubUriMatchesTypedGithubDotCom();
         prefillIsNotExclusiveSearch();
+        pagePrefillIsNotTypedSearchEvenAfterTextEvent();
+        pagePrefillMissShowsVaultLogins();
+        loginTypeInDataIsStillALogin();
+        lockErrorIsNotEmptyVault();
 
         if (failures > 0) {
             System.err.println(failures + " AutofillSheetLoad checks failed");
@@ -122,6 +126,66 @@ public final class AutofillSheetLoadTest {
                 "cleared search after typing shows the vault",
                 AutofillSheetLoad.filterAsTypedQuery(true, ""),
                 false);
+    }
+
+    private static void pagePrefillIsNotTypedSearchEvenAfterTextEvent() {
+        expect(
+                "github.com still in the field is the page, not a typed exclusive search",
+                AutofillSheetLoad.filterAsTypedQuery(true, "github.com", "github.com"),
+                false);
+        expect(
+                "typing gh on github.com is an exclusive search",
+                AutofillSheetLoad.filterAsTypedQuery(true, "gh", "github.com"),
+                true);
+    }
+
+    private static void pagePrefillMissShowsVaultLogins() {
+        expect(
+                "github.com prefill with 0 URI matches still shows 3 vault logins",
+                AutofillSheetLoad.keepVaultWhenPagePrefillMisses(
+                        "github.com", "github.com", 0, 3),
+                true);
+        expect(
+                "a typed miss does not dump the vault",
+                AutofillSheetLoad.keepVaultWhenPagePrefillMisses("zzzz", "github.com", 0, 3),
+                false);
+    }
+
+    private static void loginTypeInDataIsStillALogin() {
+        java.util.Map<String, Object> data = new java.util.HashMap<>();
+        data.put("type", "login");
+        data.put("title", "GitHub");
+        java.util.List<String> sites = new java.util.ArrayList<>();
+        sites.add("https://github.com");
+        data.put("websites", sites);
+        java.util.Map<String, Object> record = new java.util.HashMap<>();
+        record.put("id", "gh-1");
+        record.put("data", data);
+        expect(
+                "login type nested in data is still a fill login",
+                AutofillSheetLoad.recordMatchesFilter(record, "login"),
+                true);
+        java.util.Map<String, Object> noType = new java.util.HashMap<>();
+        noType.put("id", "gh-2");
+        java.util.Map<String, Object> noTypeData = new java.util.HashMap<>();
+        noTypeData.put("title", "GitHub work");
+        noTypeData.put("websites", sites);
+        noType.put("data", noTypeData);
+        expect(
+                "websites without a type field is still a fill login",
+                AutofillSheetLoad.recordMatchesFilter(noType, "login"),
+                true);
+    }
+
+    private static void lockErrorIsNotEmptyVault() {
+        expect(
+                "a locked database is not an empty vault",
+                AutofillSheetLoad.showEmptyAfterLoadFailure(true),
+                false);
+        expect(
+                "a failed load without a lock is an empty vault",
+                AutofillSheetLoad.showEmptyAfterLoadFailure(false),
+                true);
     }
 
     private static void expect(String label, Object got, Object want) {

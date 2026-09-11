@@ -6,12 +6,13 @@ import {
   useUserData,
   useVaults
 } from '@tetherto/pearpass-lib-vault'
-import { AppState, Keyboard } from 'react-native'
+import { AppState, Keyboard, Platform } from 'react-native'
 
 import { useRouteHelper } from './useRouteHelper'
 import { useAutoLockContext } from '../../../context/AutoLockContext'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { useModal } from '../../../context/ModalContext'
+import { shouldReleaseVaultForFill } from '../../../utils/androidFillWorklet'
 import {
   getLastActivityAt,
   setLastActivityAt
@@ -210,14 +211,27 @@ export const useAutoLockWatcher = () => {
   }, [isAutoLockActive, clearAutoLockTimer, resetAutoLockTimer])
 
   /**
-   * Background → foreground handling
+   * Background → foreground, and Android fill taking the vault files.
    */
   useEffect(() => {
-    if (!isAutoLockActive) return
-
     const handleAppStateChange = async (nextState) => {
       const prev = appStateRef.current
       appStateRef.current = nextState
+
+      if (shouldReleaseVaultForFill(Platform.OS, prev, nextState)) {
+        if (isAutoLockActive) {
+          await performLock()
+        } else {
+          try {
+            await closeAllInstances()
+          } catch {
+            // Already closed, or the fill worklet now owns the files.
+          }
+        }
+        return
+      }
+
+      if (!isAutoLockActive) return
 
       if (nextState === 'active' && prev !== 'active') {
         keyboardVisibleRef.current = false
@@ -232,7 +246,7 @@ export const useAutoLockWatcher = () => {
 
     const sub = AppState.addEventListener('change', handleAppStateChange)
     return () => sub.remove()
-  }, [resetAutoLockTimer, isAutoLockActive])
+  }, [resetAutoLockTimer, isAutoLockActive, performLock])
 
   useEffect(() => {
     if (!isAutoLockActive) return

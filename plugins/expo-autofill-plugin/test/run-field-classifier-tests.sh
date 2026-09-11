@@ -175,6 +175,18 @@ grep -q 'AutofillSheetLoad.filterAsTypedQuery' "$COMBINED" || {
   echo "CombinedItems must not exclusive-search on the page prefill" >&2
   exit 1
 }
+grep -q 'AutofillSheetLoad.keepVaultWhenPagePrefillMisses' "$COMBINED" || {
+  echo "CombinedItems must show Personal logins when github.com prefill matches none" >&2
+  exit 1
+}
+grep -q 'AutofillSheetLoad.recordMatchesFilter' "$COMBINED" || {
+  echo "CombinedItems must parse logins the same way the app does" >&2
+  exit 1
+}
+grep -q 'AutofillSheetLoad.showEmptyAfterLoadFailure' "$COMBINED" || {
+  echo "CombinedItems must not treat a locked database as an empty vault" >&2
+  exit 1
+}
 grep -q 'applyingPrefill' "$COMBINED" || {
   echo "CombinedItems must not treat programmatic search prefill as typing" >&2
   exit 1
@@ -193,8 +205,7 @@ grep -q 'includeOtpCodes' "$IOS_CLIENT" || {
 }
 
 MASTER="$ROOT/android-template/java/autofill/ui/MasterPasswordFragment.java"
-master_resume="$(awk '/void onResume\(/,/void onCreateView/' "$MASTER")"
-printf '%s\n' "$master_resume" | grep -q 'isAuthenticatingBiometric' || {
+grep -A20 'public void onResume()' "$MASTER" | grep -q 'isAuthenticatingBiometric' || {
   echo "onResume must not vaultsClose while fingerprint is in flight" >&2
   exit 1
 }
@@ -216,9 +227,25 @@ grep -q 'AutofillFillWindow.overlayHeightPx' "$AUTH" || {
   echo "AuthenticationActivity must size the sheet through AutofillFillWindow" >&2
   exit 1
 }
+grep -q 'window.setLayout' "$AUTH" || {
+  echo "AuthenticationActivity must setLayout so the fill sheet is MATCH_PARENT wide" >&2
+  exit 1
+}
+grep -q 'AutofillFillWindow.overlayGravity' "$AUTH" || {
+  echo "AuthenticationActivity must pin the fill sheet to the bottom" >&2
+  exit 1
+}
 PASSKEY="$ROOT/android-template/java/autofill/ui/PasskeyRegistrationActivity.java"
 grep -q 'AutofillFillWindow.overlayHeightPx' "$PASSKEY" || {
   echo "PasskeyRegistrationActivity must size the sheet through AutofillFillWindow" >&2
+  exit 1
+}
+grep -q 'window.setLayout' "$PASSKEY" || {
+  echo "PasskeyRegistrationActivity must setLayout so the fill sheet is MATCH_PARENT wide" >&2
+  exit 1
+}
+grep -q 'AutofillFillWindow.overlayGravity' "$PASSKEY" || {
+  echo "PasskeyRegistrationActivity must pin the fill sheet to the bottom" >&2
   exit 1
 }
 
@@ -239,3 +266,11 @@ grep -qF 'keyboard|keyboardHidden' "$MANIFEST" || {
   echo "fill host must keep the activity across keyboard configChanges" >&2
   exit 1
 }
+grep -q "taskAffinity'] = '.autofill'" "$MANIFEST" || {
+  echo "fill host must use a dedicated .autofill affinity so Unlock to fill does not bring the main app over Vivaldi" >&2
+  exit 1
+}
+if grep -q "taskAffinity'] = ''" "$MANIFEST"; then
+  echo "empty taskAffinity is dropped from the merged manifest and joins the app task" >&2
+  exit 1
+fi
