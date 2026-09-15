@@ -61,6 +61,7 @@
     "@tetherto/pear-apps-utils-avatar-initials": "git+https://github.com/tetherto/pear-apps-utils-avatar-initials.git",
     "@tetherto/pear-apps-utils-date": "git+https://github.com/tetherto/pear-apps-utils-date.git",
     "@tetherto/pear-apps-utils-generate-unique-id": "git+https://github.com/tetherto/pear-apps-utils-generate-unique-id.git",
+    "@tetherto/pear-apps-utils-pattern-search": "git+https://github.com/tetherto/pear-apps-utils-pattern-search.git",
     "@tetherto/pear-apps-utils-qr": "git+https://github.com/tetherto/pear-apps-utils-qr.git",
     "@tetherto/pear-apps-utils-validator": "git+https://github.com/tetherto/pear-apps-utils-validator.git",
     "@tetherto/pearpass-lib-constants": "git+https://github.com/Thaoh/lockwright-lib-constants.git#0221dba94373926c7316c675d9bff774daf8464f",
