@@ -2,8 +2,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "pear-apps-lib-feedback": ["./packages/pear-apps-lib-feedback"],
-      "pear-apps-lib-feedback/*": ["./packages/pear-apps-lib-feedback/*"],
       "pear-apps-lib-ui-react-hooks": ["./packages/pear-apps-lib-ui-react-hooks"],
       "pear-apps-lib-ui-react-hooks/*": ["./packages/pear-apps-lib-ui-react-hooks/*"],
       "pear-apps-utils-avatar-initials": ["./packages/pear-apps-utils-avatar-initials"],
@@ -12,8 +10,6 @@
       "pear-apps-utils-date/*": ["./packages/pear-apps-utils-date/*"],
       "pear-apps-utils-generate-unique-id": ["./packages/pear-apps-utils-generate-unique-id"],
       "pear-apps-utils-generate-unique-id/*": ["./packages/pear-apps-utils-generate-unique-id/*"],
-      "pear-apps-utils-pattern-search": ["./packages/pear-apps-utils-pattern-search"],
-      "pear-apps-utils-pattern-search/*": ["./packages/pear-apps-utils-pattern-search/*"],
       "pear-apps-utils-qr": ["./packages/pear-apps-utils-qr"],
       "pear-apps-utils-qr/*": ["./packages/pear-apps-utils-qr/*"],
       "pear-apps-utils-validator": ["./packages/pear-apps-utils-validator"],
