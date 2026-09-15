@@ -13,6 +13,10 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 `4e7c54e87feea739d4d360e35f6a9dbfc80e32da`
 
+### Changed
+
+- Play versionCode 15.
+
 ### Fixed
 
 - Unlock-to-fill keeps the sheet when the vault worklet dies after unlock, instead of showing an empty Personal list.

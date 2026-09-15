@@ -6,7 +6,7 @@
     "version": "0.0.25",
     "android": {
       "package": "works.dexterity.lockwright",
-      "versionCode": 14,
+      "versionCode": 15,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
