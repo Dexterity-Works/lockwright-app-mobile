@@ -9,6 +9,14 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.25] - 2026-09-15
+
+`BUMP_SHA`
+
+### Fixed
+
+- Unlock-to-fill keeps the sheet when the vault worklet dies after unlock, instead of showing an empty Personal list.
+
 ## [0.0.24] - 2026-09-11
 
 `4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4`
@@ -106,7 +114,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - A locked initialized vault counts as set up. Unlock-to-fill setup no longer loops.
 
-[unreleased]: https://github.com/Thaoh/lockwright-app-mobile/compare/4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4...HEAD
+[unreleased]: https://github.com/Thaoh/lockwright-app-mobile/compare/BUMP_SHA...HEAD
+[0.0.25]: https://github.com/Thaoh/lockwright-app-mobile/compare/4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4...BUMP_SHA
 [0.0.24]: https://github.com/Thaoh/lockwright-app-mobile/compare/f674ba47ac1c2ca5fdc674ebadbebc7563d40d7b...4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4
 [0.0.23]: https://github.com/Thaoh/lockwright-app-mobile/compare/f7ea6444b70cd14fb5d024072ae34de142c08eed...f674ba47ac1c2ca5fdc674ebadbebc7563d40d7b
 [0.0.22]: https://github.com/Thaoh/lockwright-app-mobile/compare/0a5877bb714a8cae30fd19966cf6808e92c8b067...f7ea6444b70cd14fb5d024072ae34de142c08eed
