@@ -187,6 +187,10 @@ grep -q 'AutofillSheetLoad.showEmptyAfterLoadFailure' "$COMBINED" || {
   echo "CombinedItems must not treat a locked database as an empty vault" >&2
   exit 1
 }
+grep -q 'AutofillSheetLoad.isTransientLoadFailure' "$COMBINED" || {
+  echo "CombinedItems must not treat a dead worklet as an empty vault" >&2
+  exit 1
+}
 grep -q 'applyingPrefill' "$COMBINED" || {
   echo "CombinedItems must not treat programmatic search prefill as typing" >&2
   exit 1

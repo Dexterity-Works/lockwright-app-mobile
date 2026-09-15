@@ -26,6 +26,9 @@ public final class AutofillSheetLoadTest {
         pagePrefillMissShowsVaultLogins();
         loginTypeInDataIsStillALogin();
         lockErrorIsNotEmptyVault();
+        workletDownIsNotEmptyVault();
+        failedActivateIsNotEmptyVault();
+        forgejoHostFindsForgejoLogin();
 
         if (failures > 0) {
             System.err.println(failures + " AutofillSheetLoad checks failed");
@@ -185,6 +188,65 @@ public final class AutofillSheetLoadTest {
         expect(
                 "a failed load without a lock is an empty vault",
                 AutofillSheetLoad.showEmptyAfterLoadFailure(false),
+                true);
+    }
+
+    private static void workletDownIsNotEmptyVault() {
+        expect(
+                "a dead autofill worklet is a transient load failure",
+                AutofillSheetLoad.isTransientLoadFailure(
+                        new RuntimeException("Worklet not running")),
+                true);
+        expect(
+                "vault not initialised after a crash is a transient load failure",
+                AutofillSheetLoad.isTransientLoadFailure(
+                        new RuntimeException("Vault not initialised")),
+                true);
+        expect(
+                "a dead worklet is not an empty vault",
+                AutofillSheetLoad.showEmptyAfterLoadFailure(
+                        AutofillSheetLoad.isTransientLoadFailure(
+                                new RuntimeException("Worklet not running"))),
+                false);
+    }
+
+    private static void failedActivateIsNotEmptyVault() {
+        expect(
+                "failed activate after unlock is a transient load failure",
+                AutofillSheetLoad.isTransientLoadFailure(
+                        new RuntimeException("Failed to activate vault")),
+                true);
+        expect(
+                "failed activate is not an empty Personal vault",
+                AutofillSheetLoad.showEmptyAfterLoadFailure(
+                        AutofillSheetLoad.isTransientLoadFailure(
+                                new RuntimeException("Failed to activate vault"))),
+                false);
+        expect(
+                "an unrelated parse error can still be an empty vault",
+                AutofillSheetLoad.showEmptyAfterLoadFailure(
+                        AutofillSheetLoad.isTransientLoadFailure(
+                                new RuntimeException("bad record id"))),
+                true);
+    }
+
+    private static void forgejoHostFindsForgejoLogin() {
+        List<String> websites = new ArrayList<>();
+        websites.add("https://git.sandstrak.win");
+        expect(
+                "git.sandstrak.win fill finds the Forgejo login",
+                AutofillSheetLoad.matchesFillQuery(
+                        "Forgejo",
+                        "tor-arne",
+                        websites,
+                        new ArrayList<UriMatchHelper.UriEntry>(),
+                        "git.sandstrak.win",
+                        "com.vivaldi.browser"),
+                true);
+        expect(
+                "git.sandstrak.win prefill with 0 URI matches still shows Personal logins",
+                AutofillSheetLoad.keepVaultWhenPagePrefillMisses(
+                        "git.sandstrak.win", "git.sandstrak.win", 0, 4),
                 true);
     }
 

@@ -418,7 +418,8 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                     return;
                 }
                 if (!AutofillSheetLoad.showEmptyAfterLoadFailure(
-                        VaultErrorUtils.isDatabaseLockError(e))) {
+                        VaultErrorUtils.isDatabaseLockError(e)
+                                || AutofillSheetLoad.isTransientLoadFailure(e))) {
                     SecureLog.d(TAG, "loadVaults lock, keep waiting: " + e.getMessage());
                     return;
                 }
@@ -506,7 +507,8 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
             } catch (Exception e) {
                 handleAsyncError(TAG, "unlockAndLoad failed: " + e.getMessage(), () -> {
                     if (!AutofillSheetLoad.showEmptyAfterLoadFailure(
-                            VaultErrorUtils.isDatabaseLockError(e))) {
+                            VaultErrorUtils.isDatabaseLockError(e)
+                                    || AutofillSheetLoad.isTransientLoadFailure(e))) {
                         showLoading();
                         return;
                     }

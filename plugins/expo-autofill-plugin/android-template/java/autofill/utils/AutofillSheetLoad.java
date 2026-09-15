@@ -121,4 +121,27 @@ public final class AutofillSheetLoad {
     public static boolean showEmptyAfterLoadFailure(boolean databaseLocked) {
         return !databaseLocked;
     }
+
+    /**
+     * Autofill Bare IPC died, or getVaultById failed after the main app
+     * crashed while both held pearpass/. That is not an empty vault.
+     */
+    public static boolean isTransientLoadFailure(Throwable error) {
+        for (Throwable current = error; current != null; current = current.getCause()) {
+            if (messageSaysTransientLoad(current.getMessage())) return true;
+        }
+        return false;
+    }
+
+    private static boolean messageSaysTransientLoad(String message) {
+        if (message == null || message.isEmpty()) return false;
+        String lower = message.toLowerCase();
+        return lower.contains("worklet not running")
+                || lower.contains("worklet is null")
+                || lower.contains("failed to start worklet")
+                || lower.contains("vault not initialised")
+                || lower.contains("vault not initialized")
+                || lower.contains("ipc read error")
+                || lower.contains("failed to activate vault");
+    }
 }
