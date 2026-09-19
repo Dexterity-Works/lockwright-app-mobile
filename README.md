@@ -184,12 +184,12 @@ See [`e2e/SETUP_AND_RUN_GUIDE.md`](e2e/SETUP_AND_RUN_GUIDE.md) for the full setu
 
 | Project | Description |
 | --- | --- |
-| [`lockwright-app-desktop`](https://github.com/Thaoh/lockwright-app-desktop) | Desktop app for Lockwright |
-| [`lockwright-app-browser-extension`](https://github.com/Thaoh/lockwright-app-browser-extension) | Browser extension for Lockwright |
-| [`lockwright-lib-vault`](https://github.com/Thaoh/lockwright-lib-vault) | Vault management library |
-| [`lockwright-lib-vault-core`](https://github.com/Thaoh/lockwright-lib-vault-core) | Bare worker and client for Lockwright vaults |
-| [`lockwright-lib-constants`](https://github.com/Thaoh/lockwright-lib-constants) | Shared constants |
-| [`lockwright-lib-ui-react-native-components`](https://github.com/Thaoh/lockwright-lib-ui-react-native-components) | UI kit |
+| [`lockwright-app-desktop`](https://github.com/Dexterity-Works/lockwright-app-desktop) | Desktop app for Lockwright |
+| [`lockwright-app-browser-extension`](https://github.com/Dexterity-Works/lockwright-app-browser-extension) | Browser extension for Lockwright |
+| [`lockwright-lib-vault`](https://github.com/Dexterity-Works/lockwright-lib-vault) | Vault management library |
+| [`lockwright-lib-vault-core`](https://github.com/Dexterity-Works/lockwright-lib-vault-core) | Bare worker and client for Lockwright vaults |
+| [`lockwright-lib-constants`](https://github.com/Dexterity-Works/lockwright-lib-constants) | Shared constants |
+| [`lockwright-lib-ui-react-native-components`](https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components) | UI kit |
 
 ---
 
