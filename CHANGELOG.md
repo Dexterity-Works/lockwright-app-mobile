@@ -9,6 +9,10 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.26] - 2026-09-21
+
+`BUMP_SHA`
+
 ### Fixed
 
 - Unlock-to-fill after fingerprint does not replace the live fill response. That replacement crashed the browser. Empty Personal after activate waits for logins instead of caching an empty unlock.
@@ -122,7 +126,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - A locked initialized vault counts as set up. Unlock-to-fill setup no longer loops.
 
-[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/4e7c54e87feea739d4d360e35f6a9dbfc80e32da...HEAD
+[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/BUMP_SHA...HEAD
+[0.0.26]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/4e7c54e87feea739d4d360e35f6a9dbfc80e32da...BUMP_SHA
 [0.0.25]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4...4e7c54e87feea739d4d360e35f6a9dbfc80e32da
 [0.0.24]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/f674ba47ac1c2ca5fdc674ebadbebc7563d40d7b...4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4
 [0.0.23]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/f7ea6444b70cd14fb5d024072ae34de142c08eed...f674ba47ac1c2ca5fdc674ebadbebc7563d40d7b

@@ -3,7 +3,7 @@
     "name": "Lockwright",
     "slug": "pearpass",
     "icon": "./assets/images/appIcons/app-icon.png",
-    "version": "0.0.25",
+    "version": "0.0.26",
     "android": {
       "package": "works.dexterity.lockwright",
       "versionCode": 15,
@@ -134,7 +134,7 @@
       "./plugins/withCustomSplashScreen"
     ],
     "extra": {
-      "appVersion": "0.0.25",
+      "appVersion": "0.0.26",
       "eas": {
         "projectId": "28facb62-e2a2-4b6c-bc3f-0f5469e79415",
         "build": {
