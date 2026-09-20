@@ -13,6 +13,10 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 `ec25ef988a7947ac468e58726b18eb0e70073196`
 
+### Changed
+
+- Play versionCode 16.
+
 ### Fixed
 
 - Unlock-to-fill after fingerprint does not replace the live fill response. That replacement crashed the browser. Empty Personal after activate waits for logins instead of caching an empty unlock.
