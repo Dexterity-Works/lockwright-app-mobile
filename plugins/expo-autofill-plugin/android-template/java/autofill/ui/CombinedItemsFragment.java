@@ -466,14 +466,30 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                 // V1 parity: registration mode pulls the rpId/userName matches +
                 // pending passkey jobs (mirroring searchForExistingCredentials).
                 // Assertion mode keeps loading the full vault for domain filtering.
+                long recordsStartedAt = System.currentTimeMillis();
                 List<Map<String, Object>> records;
-                if (MODE_REGISTRATION.equals(mode) && getActivity() instanceof PasskeyRegistrationActivity) {
-                    records = ((PasskeyRegistrationActivity) getActivity())
-                            .loadV2RegistrationMatches().get();
-                } else {
-                    records = vaultClient.listCanonicalRecords().get();
+                List<CredentialItem> parsed;
+                while (true) {
+                    if (MODE_REGISTRATION.equals(mode)
+                            && getActivity() instanceof PasskeyRegistrationActivity) {
+                        records = ((PasskeyRegistrationActivity) getActivity())
+                                .loadV2RegistrationMatches().get();
+                    } else {
+                        records = vaultClient.listCanonicalRecords().get();
+                    }
+                    parsed = parseCredentials(records);
+                    if (!AutofillSheetLoad.keepWaitingForRecords(
+                            parsed.size(),
+                            System.currentTimeMillis() - recordsStartedAt)) {
+                        break;
+                    }
+                    try {
+                        Thread.sleep(150);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
                 }
-                List<CredentialItem> parsed = parseCredentials(records);
 
                 // Merge pending passkey jobs in assertion mode (registration handles its own).
                 if (MODE_ASSERTION.equals(mode)) {
@@ -495,7 +511,8 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                     allCredentials.addAll(finalParsed);
                     hasUserSearched = false;
                     hidePasswordPrompt();
-                    if (MODE_ASSERTION.equals(mode)) {
+                    if (MODE_ASSERTION.equals(mode)
+                            && AutofillSheetLoad.cacheUnlockSession(finalParsed.size())) {
                         AutofillUnlockSession.get().unlock(
                                 finalParsed,
                                 AutofillConstants.UNLOCK_SESSION_TTL_MS

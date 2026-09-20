@@ -18,6 +18,7 @@ public final class AutofillFillWindowTest {
         sheetHeightLeavesCallerVisible();
         overlayFillsWidthAtBottom();
         keyboardConfigKeepsHost();
+        authPendingIntentKeepsLiveHost();
 
         if (failures > 0) {
             System.err.println(failures + " AutofillFillWindow checks failed");
@@ -87,6 +88,27 @@ public final class AutofillFillWindowTest {
                 AutofillFillWindow.typingRecreatesHost(
                         "keyboard|keyboardHidden|orientation|screenSize"),
                 false);
+    }
+
+    private static void authPendingIntentKeepsLiveHost() {
+        expect(
+                "CANCEL_CURRENT kills the live Unlock to fill host",
+                AutofillFillWindow.cancelsLiveAuthHost(
+                        AutofillFillWindow.FLAG_CANCEL_CURRENT),
+                true);
+        int flags = AutofillFillWindow.authPendingIntentFlags(true);
+        expect(
+                "fill auth PI must not cancel the live host after fingerprint",
+                AutofillFillWindow.cancelsLiveAuthHost(flags),
+                false);
+        expect(
+                "fill auth PI updates the existing sender",
+                (flags & AutofillFillWindow.FLAG_UPDATE_CURRENT) != 0,
+                true);
+        expect(
+                "S+ fill auth PI is mutable so extras survive",
+                (flags & AutofillFillWindow.FLAG_MUTABLE) != 0,
+                true);
     }
 
     private static void expect(String label, Object got, Object want) {

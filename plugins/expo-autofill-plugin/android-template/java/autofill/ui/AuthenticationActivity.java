@@ -99,6 +99,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Navigat
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_authentication);
+        AutofillHostTeardown.setFillHostVisible(true);
         applyPartialHeightWindow();
 
         // Show loading fragment immediately - user must not interact until initialization is complete
@@ -891,6 +892,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Navigat
         // Only cleanup if the activity is actually finishing
         // Don't cleanup if user just backgrounds the app - they might resume
         if (AutofillHostTeardown.shouldReleaseWorklet(isFinishing())) {
+            AutofillHostTeardown.setFillHostVisible(false);
             SecureLog.d(TAG, "Activity is finishing, performing cleanup");
             cleanup();
         } else {

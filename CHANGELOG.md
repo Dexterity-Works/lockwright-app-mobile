@@ -9,6 +9,10 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+### Fixed
+
+- Unlock-to-fill after fingerprint does not replace the live fill response. That replacement crashed the browser. Empty Personal after activate waits for logins instead of caching an empty unlock.
+
 ## [0.0.25] - 2026-09-15
 
 `4e7c54e87feea739d4d360e35f6a9dbfc80e32da`

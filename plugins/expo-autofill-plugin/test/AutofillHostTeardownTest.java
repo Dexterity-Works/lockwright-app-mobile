@@ -12,6 +12,8 @@ public final class AutofillHostTeardownTest {
         finishingReleasesWorklet();
         goneHostSkipsSheetUpdate();
         liveHostAppliesSheetUpdate();
+        biometricPauseMustNotReplaceFillResponse();
+        goneHostAllowsNewFillResponse();
 
         if (failures > 0) {
             System.err.println(failures + " AutofillHostTeardown checks failed");
@@ -35,6 +37,23 @@ public final class AutofillHostTeardownTest {
 
     private static void liveHostAppliesSheetUpdate() {
         expect("live applies", AutofillHostTeardown.shouldApplySheetUpdate(true, false), true);
+    }
+
+    private static void biometricPauseMustNotReplaceFillResponse() {
+        AutofillHostTeardown.setFillHostVisible(true);
+        expect(
+                "fingerprint pause must not replace the live Unlock to fill response",
+                AutofillHostTeardown.shouldReplaceFillResponse(),
+                false);
+        AutofillHostTeardown.setFillHostVisible(false);
+    }
+
+    private static void goneHostAllowsNewFillResponse() {
+        AutofillHostTeardown.setFillHostVisible(false);
+        expect(
+                "no fill host can take a new response",
+                AutofillHostTeardown.shouldReplaceFillResponse(),
+                true);
     }
 
     private static void expect(String label, boolean got, boolean want) {

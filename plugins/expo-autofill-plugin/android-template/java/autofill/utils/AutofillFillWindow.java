@@ -61,6 +61,29 @@ public final class AutofillFillWindow {
         return OVERLAY_GRAVITY;
     }
 
+    /** PendingIntent.FLAG_UPDATE_CURRENT without android.jar. */
+    public static final int FLAG_UPDATE_CURRENT = 1 << 27;
+    /** PendingIntent.FLAG_CANCEL_CURRENT without android.jar. */
+    public static final int FLAG_CANCEL_CURRENT = 1 << 28;
+    /** PendingIntent.FLAG_MUTABLE without android.jar. */
+    public static final int FLAG_MUTABLE = 1 << 25;
+
+    /**
+     * CANCEL_CURRENT on a second fill after fingerprint kills the
+     * live Unlock to fill host and takes the browser with it.
+     */
+    public static boolean cancelsLiveAuthHost(int flags) {
+        return (flags & FLAG_CANCEL_CURRENT) != 0;
+    }
+
+    public static int authPendingIntentFlags(boolean mutableRequired) {
+        int flags = FLAG_UPDATE_CURRENT;
+        if (mutableRequired) {
+            flags |= FLAG_MUTABLE;
+        }
+        return flags;
+    }
+
     /**
      * IME on a floating fill host recreates the activity unless
      * configChanges lists keyboard. Recreate cancels Autofill and

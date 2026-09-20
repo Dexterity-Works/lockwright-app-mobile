@@ -29,6 +29,8 @@ public final class AutofillSheetLoadTest {
         workletDownIsNotEmptyVault();
         failedActivateIsNotEmptyVault();
         forgejoHostFindsForgejoLogin();
+        emptyListAfterActivateIsNotEmptyVault();
+        emptyUnlockMustNotCacheSession();
 
         if (failures > 0) {
             System.err.println(failures + " AutofillSheetLoad checks failed");
@@ -227,6 +229,33 @@ public final class AutofillSheetLoadTest {
                 AutofillSheetLoad.showEmptyAfterLoadFailure(
                         AutofillSheetLoad.isTransientLoadFailure(
                                 new RuntimeException("bad record id"))),
+                true);
+    }
+
+    private static void emptyListAfterActivateIsNotEmptyVault() {
+        expect(
+                "0 records right after activate still wait for the view",
+                AutofillSheetLoad.keepWaitingForRecords(0, 0),
+                true);
+        expect(
+                "3 Personal logins stop waiting",
+                AutofillSheetLoad.keepWaitingForRecords(3, 0),
+                false);
+        expect(
+                "still empty after the wait is a real empty vault",
+                AutofillSheetLoad.keepWaitingForRecords(
+                        0, AutofillSheetLoad.RECORD_WAIT_MS),
+                false);
+    }
+
+    private static void emptyUnlockMustNotCacheSession() {
+        expect(
+                "empty Personal must not unlock the keyboard session",
+                AutofillSheetLoad.cacheUnlockSession(0),
+                false);
+        expect(
+                "3 GitHub logins unlock the keyboard session",
+                AutofillSheetLoad.cacheUnlockSession(3),
                 true);
     }
 

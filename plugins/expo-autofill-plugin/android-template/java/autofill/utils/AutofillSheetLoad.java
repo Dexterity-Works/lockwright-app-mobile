@@ -123,6 +123,25 @@ public final class AutofillSheetLoad {
     }
 
     /**
+     * getVaultById can win before Hyperbee has the logins. 0 records
+     * then is not an empty Personal vault.
+     */
+    public static final long RECORD_WAIT_MS = 2_500L;
+
+    public static boolean keepWaitingForRecords(int recordCount, long elapsedMs) {
+        if (recordCount > 0) return false;
+        return elapsedMs >= 0 && elapsedMs < RECORD_WAIT_MS;
+    }
+
+    /**
+     * Caching an empty unlock makes the next fill send a replacement
+     * response. That replacement crashes the browser.
+     */
+    public static boolean cacheUnlockSession(int loginCount) {
+        return loginCount > 0;
+    }
+
+    /**
      * Autofill Bare IPC died, or getVaultById failed after the main app
      * crashed while both held pearpass/. That is not an empty vault.
      */

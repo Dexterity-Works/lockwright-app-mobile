@@ -30,7 +30,9 @@ import com.pears.pass.autofill.data.AutofillUnlockSession;
 import com.pears.pass.autofill.data.CredentialItem;
 import com.pears.pass.autofill.ui.AuthenticationActivity;
 import com.pears.pass.autofill.utils.AutofillConstants;
+import com.pears.pass.autofill.utils.AutofillFillWindow;
 import com.pears.pass.autofill.utils.AutofillHelper;
+import com.pears.pass.autofill.utils.AutofillHostTeardown;
 import com.pears.pass.autofill.utils.ChipFillDecision;
 import com.pears.pass.autofill.utils.LoginFillPlan;
 import com.pears.pass.autofill.utils.SecureLog;
@@ -66,6 +68,11 @@ public class PearPassAutofillService extends AutofillService {
 
             List<AutofillId> targetIds = parsedFields.getFillTargetIds();
             if (targetIds.isEmpty()) {
+                callback.onSuccess(null);
+                return;
+            }
+
+            if (!AutofillHostTeardown.shouldReplaceFillResponse()) {
                 callback.onSuccess(null);
                 return;
             }
@@ -363,11 +370,8 @@ public class PearPassAutofillService extends AutofillService {
     }
 
     private int pendingIntentFlags() {
-        int flags = PendingIntent.FLAG_CANCEL_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            flags |= PendingIntent.FLAG_MUTABLE;
-        }
-        return flags;
+        return AutofillFillWindow.authPendingIntentFlags(
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S);
     }
 
     private static void putFieldExtras(Intent authIntent, AutofillHelper.ParsedFields parsedFields) {

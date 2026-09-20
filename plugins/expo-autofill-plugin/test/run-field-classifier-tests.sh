@@ -137,11 +137,32 @@ grep -q 'EXTRA_IDENTITY_NAME_ID' "$AUTH"
 grep -q 'IdentityFillPlan.values' "$AUTH"
 grep -q 'TYPE_IDENTITY' "$AUTH"
 
+grep -q 'AutofillHostTeardown.setFillHostVisible(true)' "$AUTH" || {
+  echo "AuthenticationActivity must mark the fill host visible before fingerprint" >&2
+  exit 1
+}
+grep -q 'AutofillHostTeardown.setFillHostVisible(false)' "$AUTH" || {
+  echo "AuthenticationActivity must clear fill host visible only when finishing" >&2
+  exit 1
+}
+
 SERVICE="$ROOT/android-template/java/autofill/service/PearPassAutofillService.java"
 grep -q 'LoginFillPlan.values' "$SERVICE"
 grep -q 'fillOtp' "$SERVICE"
 grep -q 'ChipFillDecision.openAppForTotp' "$SERVICE"
 grep -q 'EXTRA_PRESELECT_RECORD_ID' "$SERVICE"
+grep -q 'AutofillHostTeardown.shouldReplaceFillResponse' "$SERVICE" || {
+  echo "fill service must not replace a live Unlock to fill response" >&2
+  exit 1
+}
+grep -q 'AutofillFillWindow.authPendingIntentFlags' "$SERVICE" || {
+  echo "fill auth PI must use AutofillFillWindow.authPendingIntentFlags" >&2
+  exit 1
+}
+if grep -q 'FLAG_CANCEL_CURRENT' "$SERVICE"; then
+  echo "fill auth PI must not use FLAG_CANCEL_CURRENT" >&2
+  exit 1
+fi
 
 COMBINED="$ROOT/android-template/java/autofill/ui/CombinedItemsFragment.java"
 grep -q 'TYPE_IDENTITY' "$COMBINED"
@@ -189,6 +210,14 @@ grep -q 'AutofillSheetLoad.showEmptyAfterLoadFailure' "$COMBINED" || {
 }
 grep -q 'AutofillSheetLoad.isTransientLoadFailure' "$COMBINED" || {
   echo "CombinedItems must not treat a dead worklet as an empty vault" >&2
+  exit 1
+}
+grep -q 'AutofillSheetLoad.keepWaitingForRecords' "$COMBINED" || {
+  echo "CombinedItems must wait for Personal logins after activate" >&2
+  exit 1
+}
+grep -q 'AutofillSheetLoad.cacheUnlockSession' "$COMBINED" || {
+  echo "CombinedItems must not cache an empty unlock session" >&2
   exit 1
 }
 grep -q 'applyingPrefill' "$COMBINED" || {
