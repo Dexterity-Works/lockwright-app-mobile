@@ -3,6 +3,7 @@ package com.pears.pass.autofill.data;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import com.pears.pass.autofill.utils.FillLog;
 import com.pears.pass.autofill.utils.SecureLog;
 import java.io.IOException;
 import java.io.InputStream;
@@ -200,53 +201,22 @@ public class BareHelper {
             return;
         }
 
-        SecureLog.d(TAG, "Sending message: " + message);
+        SecureLog.d(TAG, "Sending message bytes=" + messageData.length);
 
         try {
             ByteBuffer writeBuffer = ByteBuffer.wrap(messageData);
-            
+
             ipc.write(writeBuffer, (writeException) -> {
                 if (writeException != null) {
-                    SecureLog.e(TAG, "Write failed", writeException);
+                    SecureLog.e(TAG, "Write failed bytes=" + messageData.length);
                     if (callback != null) {
                         callback.onResponse(null, writeException);
                     }
                     return;
                 }
 
-                SecureLog.d(TAG, "Message written successfully, now reading response");
-
-                // Read inside the write callback, exactly like the example
-                ipc.read((replyData, readException) -> {
-                    if (readException != null) {
-                        SecureLog.e(TAG, "Read failed", readException);
-                        if (callback != null) {
-                            callback.onResponse(null, readException);
-                        }
-                        return;
-                    }
-
-                    if (replyData == null || replyData.remaining() == 0) {
-                        SecureLog.w(TAG, "No reply data received");
-                        if (callback != null) {
-                            callback.onResponse(null, new Exception("No reply data received"));
-                        }
-                        return;
-                    }
-
-                    try {
-                        String reply = StandardCharsets.UTF_8.decode(replyData).toString();
-                        SecureLog.d(TAG, "Received reply: " + reply);
-                        if (callback != null) {
-                            callback.onResponse(reply, null);
-                        }
-                    } catch (Exception e) {
-                        SecureLog.e(TAG, "Failed to decode reply", e);
-                        if (callback != null) {
-                            callback.onResponse(null, e);
-                        }
-                    }
-                });
+                SecureLog.d(TAG, "Message written, reading response");
+                readReply(new FillLog.Assembly(), callback);
             });
 
         } catch (Exception e) {
@@ -258,6 +228,55 @@ public class BareHelper {
     }
 
 
+
+    /**
+     * The pipe returns one chunk per read. A vault list is larger than
+     * that chunk, so keep reading until the JSON value is closed.
+     */
+    private void readReply(FillLog.Assembly assembly, SendCallback callback) {
+        ipc.read((replyData, readException) -> {
+            if (readException != null) {
+                SecureLog.e(TAG, FillLog.diagnostic(0, assembly.bytes(), assembly.reads(), "read"));
+                if (callback != null) {
+                    callback.onResponse(null, readException);
+                }
+                return;
+            }
+
+            if (replyData == null || replyData.remaining() == 0) {
+                String line = FillLog.diagnostic(
+                        0, assembly.bytes(), assembly.reads(),
+                        assembly.bytes() == 0 ? "empty" : "incomplete");
+                SecureLog.e(TAG, line);
+                if (callback != null) {
+                    callback.onResponse(null, new Exception(
+                            assembly.bytes() == 0 ? "No reply data received" : line));
+                }
+                return;
+            }
+
+            byte[] chunk = new byte[replyData.remaining()];
+            replyData.get(chunk);
+            boolean complete = assembly.add(chunk);
+            if (assembly.tooLarge()) {
+                String line = FillLog.diagnostic(0, assembly.bytes(), assembly.reads(), "too-large");
+                SecureLog.e(TAG, line);
+                if (callback != null) {
+                    callback.onResponse(null, new Exception(line));
+                }
+                return;
+            }
+            if (!complete) {
+                readReply(assembly, callback);
+                return;
+            }
+
+            SecureLog.d(TAG, FillLog.diagnostic(0, assembly.bytes(), assembly.reads(), "ok"));
+            if (callback != null) {
+                callback.onResponse(assembly.text(), null);
+            }
+        });
+    }
 
     public void shutdown() {
         SecureLog.d(TAG, "Shutting down");

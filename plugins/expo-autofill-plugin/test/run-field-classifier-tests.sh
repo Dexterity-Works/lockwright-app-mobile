@@ -60,6 +60,11 @@ javac -d "$TMP" \
 java -cp "$TMP" com.pears.pass.autofill.utils.AutofillSheetLoadTest
 
 javac -d "$TMP" \
+    "$ROOT/android-template/java/autofill/utils/FillLog.java" \
+    "$ROOT/test/FillLogTest.java"
+java -cp "$TMP" com.pears.pass.autofill.utils.FillLogTest
+
+javac -d "$TMP" \
   "$ROOT/android-template/java/autofill/utils/UriMatchHelper.java" \
   "$ROOT/test/UriMatchHelperTest.java"
 java -cp "$TMP" com.pears.pass.autofill.utils.UriMatchHelperTest

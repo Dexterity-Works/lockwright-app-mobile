@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.pears.pass.autofill.utils.OtpCodeResponse;
 import com.pears.pass.autofill.utils.RecordStoreKeys;
+import com.pears.pass.autofill.utils.FillLog;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.utils.UriMatchHelper;
 import com.pears.pass.autofill.utils.VaultMigrationGate;
@@ -241,8 +242,8 @@ public class PearPassVaultClient {
 
         log("Starting BareKit initialization with BareHelper");
 
-        // Create BareHelper with bundle name, type, and 64MB memory limit
-        bareHelper = new BareHelper(context, "extension", "bundle", 64);
+        // 64MB aborted while listing passkey records. See FillLog.WORKLET_MEMORY_MB.
+        bareHelper = new BareHelper(context, "extension", "bundle", FillLog.WORKLET_MEMORY_MB);
         log("BareHelper created successfully");
 
         // Start the worklet
@@ -372,8 +373,9 @@ public class PearPassVaultClient {
                             clearCurrentRequest(future);
                         }
                     } catch (JSONException e) {
-                        logError("Failed to parse response for command " + command + ": " + e.getMessage());
-                        future.completeExceptionally(new PearPassVaultException("Failed to parse response: " + e.getMessage()));
+                        String line = FillLog.parseFailure(command, reply);
+                        logError(line);
+                        future.completeExceptionally(new PearPassVaultException(line));
                         clearCurrentRequest(future);
                     }
                 } else {

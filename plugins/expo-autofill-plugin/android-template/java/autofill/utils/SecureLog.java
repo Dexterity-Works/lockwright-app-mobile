@@ -125,17 +125,7 @@ public final class SecureLog {
             return null;
         }
 
-        return message
-            // Remove password values
-            .replaceAll("(?i)password[\"']?\\s*[:=]\\s*[\"']?[^\"'\\s,}]+", "password=***")
-            // Remove token values
-            .replaceAll("(?i)token[\"']?\\s*[:=]\\s*[\"']?[^\"'\\s,}]+", "token=***")
-            // Remove key values
-            .replaceAll("(?i)(api[_-]?key|secret[_-]?key)[\"']?\\s*[:=]\\s*[\"']?[^\"'\\s,}]+", "$1=***")
-            // Remove credential values
-            .replaceAll("(?i)credential[\"']?\\s*[:=]\\s*[\"']?[^\"'\\s,}]+", "credential=***")
-            // Remove challenge values (WebAuthn)
-            .replaceAll("(?i)challenge[\"']?\\s*[:=]\\s*[\"']?[^\"'\\s,}]+", "challenge=***");
+        return FillLog.redact(message);
     }
 
     /**
