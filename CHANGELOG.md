@@ -9,6 +9,14 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.27] - 2026-09-22
+
+`BUMP_SHA`
+
+### Changed
+
+- Autofill logs a vault-list reply that does not fit one pipe read: the command, the byte length, and why parsing stopped. The browser crash is still open.
+
 ## [0.0.26] - 2026-09-21
 
 `ec25ef988a7947ac468e58726b18eb0e70073196`
@@ -130,7 +138,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - A locked initialized vault counts as set up. Unlock-to-fill setup no longer loops.
 
-[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/ec25ef988a7947ac468e58726b18eb0e70073196...HEAD
+[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/BUMP_SHA...HEAD
+[0.0.27]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/ec25ef988a7947ac468e58726b18eb0e70073196...BUMP_SHA
 [0.0.26]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/4e7c54e87feea739d4d360e35f6a9dbfc80e32da...ec25ef988a7947ac468e58726b18eb0e70073196
 [0.0.25]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4...4e7c54e87feea739d4d360e35f6a9dbfc80e32da
 [0.0.24]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/f674ba47ac1c2ca5fdc674ebadbebc7563d40d7b...4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4
