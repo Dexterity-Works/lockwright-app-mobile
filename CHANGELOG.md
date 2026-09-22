@@ -15,6 +15,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ### Changed
 
+- Play versionCode 17.
+
 - Autofill logs a vault-list reply that does not fit one pipe read: the command, the byte length, and why parsing stopped. The browser crash is still open.
 
 ## [0.0.26] - 2026-09-21
