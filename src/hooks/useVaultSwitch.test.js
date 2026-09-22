@@ -1,11 +1,11 @@
 import { renderHook, act } from '@testing-library/react-native'
-import { useVault } from '@tetherto/pearpass-lib-vault'
+import { useVault } from 'lockwright-lib-vault'
 
 import { useVaultSwitch } from './useVaultSwitch'
 import { useGlobalLoading } from '../context/LoadingContext'
 import { useModal } from '../context/ModalContext'
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useVault: jest.fn(),
   useVaults: jest.fn()
 }))

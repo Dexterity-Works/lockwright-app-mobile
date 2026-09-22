@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro'
 import { useNavigation } from '@react-navigation/native'
-import { MOBILE_2FA_IMPORTS_ENABLED } from '@tetherto/pearpass-lib-constants'
+import { MOBILE_2FA_IMPORTS_ENABLED } from 'lockwright-lib-constants'
 import {
   Button,
   Link,
@@ -11,13 +11,13 @@ import {
   UploadField,
   UploadedFile,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   KeyboardArrowLeftOutlined,
   KeyboardArrowRightOutlined,
   QrCode,
   UploadFileFilled
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { useEffect, useState } from 'react'
 import { Linking, Pressable, View } from 'react-native'
 import { BottomSheetQrScannerSheet } from 'src/containers/BottomSheetQrScannerContent/Sheet'

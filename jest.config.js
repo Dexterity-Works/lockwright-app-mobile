@@ -3,14 +3,14 @@ export default {
   transform: { '^.+\\.[jt]sx?$': 'babel-jest' },
   moduleNameMapper: {
     '^src/(.*)$': '<rootDir>/src/$1',
-    '^@tetherto/pearpass-lib-ui-theme-provider/native$':
-      '<rootDir>/node_modules/@tetherto/pearpass-lib-ui-theme-provider/native/index.js',
-    '^@tetherto/pearpass-lib-ui-theme-provider$':
-      '<rootDir>/node_modules/@tetherto/pearpass-lib-ui-theme-provider/native/index.js'
+    '^lockwright-lib-ui-theme-provider/native$':
+      '<rootDir>/node_modules/lockwright-lib-ui-theme-provider/native/index.js',
+    '^lockwright-lib-ui-theme-provider$':
+      '<rootDir>/node_modules/lockwright-lib-ui-theme-provider/native/index.js'
   },
   testPathIgnorePatterns: ['/node_modules/', '/.yalc/', '/packages/'],
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-native-community|react-redux|@reduxjs/toolkit|immer|styled-components|@testing-library/react-native|expo|expo-local-authentication|@tetherto|pearpass-lib-ui-react-native-components|pearpass-lib-ui-theme-provider|pearpass-lib-ui-theme-provider/native|pearpass-utils-password-check|@react-navigation/bottom-tabs|@gorhom/bottom-sheet|pearpass-utils-password-generator|expo-clipboard|expo-constants|expo-crypto|expo-haptics|expo-document-picker|expo-file-system|expo-modules-core|expo-sharing|wdk-react-native-passkey-internal|react-native-passkey|axios|react-native-config|pearpass-lib-data-export|pearpass-lib-constants|react-native-toast-message|react-native-reanimated|react-native-vision-camera|react-native-worklets-core|vision-camera-zxing)/)'
+    'node_modules/(?!(react-native|@react-native|@react-native-community|react-redux|@reduxjs/toolkit|immer|styled-components|@testing-library/react-native|expo|expo-local-authentication|@tetherto|pearpass-lib-ui-react-native-components|lockwright-lib-ui-theme-provider|lockwright-lib-ui-theme-provider/native|pearpass-utils-password-check|@react-navigation/bottom-tabs|@gorhom/bottom-sheet|pearpass-utils-password-generator|expo-clipboard|expo-constants|expo-crypto|expo-haptics|expo-document-picker|expo-file-system|expo-modules-core|expo-sharing|wdk-react-native-passkey-internal|react-native-passkey|axios|react-native-config|pearpass-lib-data-export|pearpass-lib-constants|react-native-toast-message|react-native-reanimated|react-native-vision-camera|react-native-worklets-core|vision-camera-zxing)/)'
   ],
   setupFilesAfterEnv: ['./jest.setup.js']
 }

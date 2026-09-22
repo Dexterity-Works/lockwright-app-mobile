@@ -1,6 +1,6 @@
-import { Button, useTheme } from '@tetherto/pearpass-lib-ui-kit'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
+import { Button, useTheme } from 'lockwright-lib-ui-react-native-components'
 import { Dimensions, Platform, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg'

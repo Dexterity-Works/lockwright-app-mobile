@@ -14,7 +14,7 @@ jest.mock('@lingui/react/macro', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-constants', () => ({
+jest.mock('lockwright-lib-constants', () => ({
   LANGUAGES: [
     { value: 'en' },
     { value: 'it' },

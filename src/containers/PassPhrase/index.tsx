@@ -5,9 +5,9 @@ import {
   DEFAULT_SELECTED_TYPE,
   PASSPHRASE_WORD_COUNTS,
   VALID_WORD_COUNTS
-} from '@tetherto/pearpass-lib-constants'
+} from 'lockwright-lib-constants'
 import {
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import {
   Button,
   FieldError,
@@ -16,8 +16,8 @@ import {
   rawTokens,
   Text,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { ContentCopy, ContentPaste } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { ContentCopy, ContentPaste } from 'lockwright-lib-ui-react-native-components/icons'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

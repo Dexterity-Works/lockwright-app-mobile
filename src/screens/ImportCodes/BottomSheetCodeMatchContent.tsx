@@ -5,8 +5,8 @@ import {
   rawTokens,
   Text,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Link, LinkOff } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { Link, LinkOff } from 'lockwright-lib-ui-react-native-components/icons'
 import { useState } from 'react'
 import { StyleSheet, useWindowDimensions, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'

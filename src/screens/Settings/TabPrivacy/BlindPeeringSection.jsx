@@ -2,14 +2,14 @@ import { useCallback, useState, useEffect, useMemo, useRef } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
 import {
   BLIND_PEER_TYPE,
   BLIND_PEERS_LEARN_MORE,
   BLIND_PEERS_LIMIT,
   BLIND_PEER_FORM_NAME,
   BLIND_PEERS_FORM_NAME
-} from '@tetherto/pearpass-lib-constants'
+} from 'lockwright-lib-constants'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
 import {
   Button,
   InputField,
@@ -21,9 +21,9 @@ import {
   ToggleSwitch,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Add, Close } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useBlindMirrors } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { Add, Close } from 'lockwright-lib-ui-react-native-components/icons'
+import { useBlindMirrors } from 'lockwright-lib-vault'
 import { Linking, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { Layout } from 'src/containers/Layout'

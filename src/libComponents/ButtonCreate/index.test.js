@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react-native'
-import { KeyboardArrowBottom } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { KeyboardArrowBottom } from 'lockwright-lib-ui-react-native-components/icons'
 import { ThemeProvider } from 'src/utils/colors'
 
 import { ButtonCreate } from './index'

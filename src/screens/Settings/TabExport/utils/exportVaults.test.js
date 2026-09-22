@@ -1,8 +1,5 @@
-import {
-  parseDataToCsvText,
-  parseDataToJson
-} from '@tetherto/pearpass-lib-data-export'
-import { encryptExportData } from '@tetherto/pearpass-lib-vault'
+import { parseDataToCsvText, parseDataToJson } from 'lockwright-lib-data-export'
+import { encryptExportData } from 'lockwright-lib-vault'
 
 import { downloadFile } from './downloadFile'
 import { downloadZip } from './downloadZip'
@@ -11,8 +8,8 @@ import {
   handleExportJsonPerVault
 } from './exportVaults'
 
-jest.mock('@tetherto/pearpass-lib-data-export')
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-data-export')
+jest.mock('lockwright-lib-vault', () => ({
   encryptExportData: jest.fn()
 }))
 jest.mock('./downloadFile', () => ({

@@ -30,7 +30,7 @@ jest.mock('@react-navigation/native', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   ContentPaste: () => null,
   QrCode: () => null
 }))
@@ -46,7 +46,7 @@ jest.mock('src/utils/colors', () => ({
   }
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useVault: () => ({
     refetch: jest.fn(),
     addDevice: jest.fn()

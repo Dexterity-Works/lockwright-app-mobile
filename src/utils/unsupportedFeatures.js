@@ -1,3 +1,3 @@
-import { UNSUPPORTED } from '@tetherto/pearpass-lib-constants'
+import { UNSUPPORTED } from 'lockwright-lib-constants'
 
 export const unsupportedFeaturesEnabled = () => UNSUPPORTED === true

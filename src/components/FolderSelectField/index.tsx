@@ -7,11 +7,11 @@ import {
   MultiSlotInput,
   SelectField,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   Close,
   KeyboardArrowBottom
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { openAfterKeyboardDismiss } from '../../utils/openAfterKeyboardDismiss'
 import { BottomSheetFolderSelectorContent } from '../../containers/BottomSheetFolderSelectorContent'
 

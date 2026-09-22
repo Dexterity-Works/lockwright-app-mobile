@@ -2,8 +2,13 @@ import { useEffect, useRef } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { Button, Text, Title, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { OpenInNew } from '@tetherto/pearpass-lib-ui-kit/icons'
+import {
+  Button,
+  Text,
+  Title,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
+import { OpenInNew } from 'lockwright-lib-ui-react-native-components/icons'
 import { AppState, Dimensions, Platform, StyleSheet, View } from 'react-native'
 
 import { LogoLock } from '../../../svgs/LogoLock'

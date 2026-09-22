@@ -7,7 +7,7 @@ import {
   PageHeader,
   ToggleSwitch,
   rawTokens
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { Keyboard, StyleSheet, View } from 'react-native'
 
 import {

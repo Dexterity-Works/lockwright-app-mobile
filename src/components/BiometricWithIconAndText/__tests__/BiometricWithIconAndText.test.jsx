@@ -18,7 +18,7 @@ beforeAll(() => {
 })
 
 // Mock icon components to simple test components
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   FaceId: (props) => <mock-FaceId testID="face-icon" {...props} />,
   Fingerprint: (props) => (
     <mock-Fingerprint testID="fingerprint-icon" {...props} />

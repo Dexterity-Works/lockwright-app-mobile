@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { useRecords, useVault } from '@tetherto/pearpass-lib-vault'
+import { useRecords, useVault } from 'lockwright-lib-vault'
 
 import { SORT_BY_TYPE } from '../../constants/sortOptions'
 import { ContentHeader } from '../../containers/ContentHeader'

@@ -9,7 +9,7 @@ import {
 } from 'react'
 
 import BottomSheet from '@gorhom/bottom-sheet'
-import { rawTokens, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import { rawTokens, useTheme } from 'lockwright-lib-ui-react-native-components'
 
 import { BackDrop } from '../components/BottomSheetBackdrop'
 

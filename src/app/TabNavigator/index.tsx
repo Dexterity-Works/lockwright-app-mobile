@@ -2,8 +2,8 @@ import { useCallback } from 'react'
 
 import { createBottomTabNavigator, type BottomTabBarButtonProps } from '@react-navigation/bottom-tabs'
 import { useLingui } from '@lingui/react/macro'
-import { AUTHENTICATOR_ENABLED } from '@tetherto/pearpass-lib-constants'
-import { useTheme, rawTokens, Text } from '@tetherto/pearpass-lib-ui-kit'
+import { AUTHENTICATOR_ENABLED } from 'lockwright-lib-constants'
+import { useTheme, rawTokens, Text } from 'lockwright-lib-ui-react-native-components'
 import {
   LockFilled,
   LockOutlined,
@@ -13,7 +13,7 @@ import {
   Settings as SettingsIcon,
   SettingsOutlined,
   SyncLock,
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { type GestureResponderEvent, Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

@@ -1,4 +1,4 @@
-import { NavbarListItem } from '@tetherto/pearpass-lib-ui-kit'
+import { NavbarListItem } from 'lockwright-lib-ui-react-native-components'
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

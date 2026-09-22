@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { formatDate } from '@tetherto/pear-apps-utils-date'
+import { formatDate } from 'lockwright-utils-date'
 import {
   checkPassphraseStrength,
   checkPasswordStrength
-} from '@tetherto/pearpass-utils-password-check'
+} from 'lockwright-utils-password-check'
 import {
   generatePassphrase,
   generatePassword
-} from '@tetherto/pearpass-utils-password-generator'
+} from 'lockwright-utils-password-generator'
 import {
   Button,
   PasswordIndicator,
@@ -21,14 +21,14 @@ import {
   ToggleSwitch,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { css } from 'react-strict-dom'
 import { Pressable, StyleSheet, View } from 'react-native'
 
 import { ScreenHeader } from '../../containers/ScreenHeader'
 import { BackScreenHeader } from '../../containers/ScreenHeader/BackScreenHeader'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
-import { ContentCopy } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { ContentCopy } from 'lockwright-lib-ui-react-native-components/icons'
 import { Layout } from 'src/containers/Layout'
 import {
   appendHistory,

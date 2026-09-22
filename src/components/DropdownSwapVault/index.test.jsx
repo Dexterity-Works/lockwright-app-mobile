@@ -16,7 +16,7 @@ jest.mock('@lingui/react/macro', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useVault: () => ({
     refetch: jest.fn(),
     isVaultProtected: jest.fn().mockResolvedValue(false)

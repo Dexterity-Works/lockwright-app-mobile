@@ -2,7 +2,7 @@ import { Buffer } from 'buffer'
 
 import { useCallback, useEffect, useRef } from 'react'
 
-import { vaultGetFile } from '@tetherto/pearpass-lib-vault'
+import { vaultGetFile } from 'lockwright-lib-vault'
 
 import { useLoadingContext } from '../context/LoadingContext'
 import { areFilesEqual } from '../utils/areFilesEqual'

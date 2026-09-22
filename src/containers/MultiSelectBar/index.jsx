@@ -2,14 +2,18 @@ import { useMemo } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { Button, Text, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import {
+  Button,
+  Text,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
 import {
   ArrowBackOutined,
   DriveFileMoveOutlined,
   StarOutlined,
   TrashOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useRecords } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useRecords } from 'lockwright-lib-vault'
 import { View } from 'react-native'
 
 import { createStyles } from './styles'

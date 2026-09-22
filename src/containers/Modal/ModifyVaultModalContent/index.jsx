@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
 import {
   AlertMessage,
   Button,
@@ -11,10 +10,11 @@ import {
   PasswordField,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { ReportProblem } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useVault } from '@tetherto/pearpass-lib-vault'
-import { validatePasswordChange } from '@tetherto/pearpass-utils-password-check'
+} from 'lockwright-lib-ui-react-native-components'
+import { ReportProblem } from 'lockwright-lib-ui-react-native-components/icons'
+import { useVault } from 'lockwright-lib-vault'
+import { validatePasswordChange } from 'lockwright-utils-password-check'
+import { Validator } from 'lockwright-utils-validator'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

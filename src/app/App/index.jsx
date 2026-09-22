@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
-import { rawTokens } from '@tetherto/pearpass-lib-ui-kit'
-import { OtpRefreshProvider, useVault } from '@tetherto/pearpass-lib-vault'
+import { rawTokens } from 'lockwright-lib-ui-react-native-components'
+import { OtpRefreshProvider, useVault } from 'lockwright-lib-vault'
 import { View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

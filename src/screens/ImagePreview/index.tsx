@@ -1,8 +1,8 @@
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
 
-import { Button, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { Share as ShareIcon } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { Button, useTheme } from 'lockwright-lib-ui-react-native-components'
+import { Share as ShareIcon } from 'lockwright-lib-ui-react-native-components/icons'
 import { shareAsync } from 'expo-sharing'
 import { useState } from 'react'
 import {

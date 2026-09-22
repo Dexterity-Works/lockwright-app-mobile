@@ -1,15 +1,15 @@
 import { ReactNode, useEffect, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { MAX_FILE_SIZE_MB } from '@tetherto/pearpass-lib-constants'
+import { MAX_FILE_SIZE_MB } from 'lockwright-lib-constants'
 import {
   Button,
   ContextMenu,
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Close } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { Close } from 'lockwright-lib-ui-react-native-components/icons'
 import { StyleSheet, View } from 'react-native'
 
 import { useAutoLockContext } from '../../context/AutoLockContext'

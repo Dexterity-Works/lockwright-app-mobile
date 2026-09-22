@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { QrCode } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { usePair, useVault } from '@tetherto/pearpass-lib-vault'
+import { QrCode } from 'lockwright-lib-ui-react-native-components/icons'
+import { usePair, useVault } from 'lockwright-lib-vault'
 import {
   ActivityIndicator,
   Platform,

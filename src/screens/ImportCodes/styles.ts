@@ -1,4 +1,4 @@
-import { rawTokens } from '@tetherto/pearpass-lib-ui-kit'
+import { rawTokens } from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({

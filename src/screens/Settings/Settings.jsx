@@ -2,14 +2,14 @@ import { useMemo, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { MOBILE_2FA_IMPORTS_ENABLED } from '@tetherto/pearpass-lib-constants'
+import { MOBILE_2FA_IMPORTS_ENABLED } from 'lockwright-lib-constants'
 import {
   NavbarListItem,
   rawTokens,
   SearchField,
   Text,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   BugReportFilled,
   SecurityFilled,
@@ -29,7 +29,7 @@ import {
   KeyboardArrowBottom,
   TerminalTone,
   TwoFactorAuthenticationOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { StyleSheet, View } from 'react-native'
 
 import { Layout } from '../../containers/Layout'

@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { usePair, useVault } from '@tetherto/pearpass-lib-vault'
+import { usePair, useVault } from 'lockwright-lib-vault'
 
 type ImportVaultState = {
   isLoading: boolean

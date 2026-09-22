@@ -1,17 +1,14 @@
 import { useMemo } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { AUTHENTICATOR_ENABLED } from '@tetherto/pearpass-lib-constants'
+import { AUTHENTICATOR_ENABLED } from 'lockwright-lib-constants'
 import {
   NavbarListItem,
   useBottomSheetClose,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { TwoFactorAuthenticationOutlined } from '@tetherto/pearpass-lib-ui-kit/icons'
-import {
-  RECORD_TYPES,
-  useRecordCountsByType
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { TwoFactorAuthenticationOutlined } from 'lockwright-lib-ui-react-native-components/icons'
+import { RECORD_TYPES, useRecordCountsByType } from 'lockwright-lib-vault'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useSharedFilter } from '../../context/SharedFilterContext'

@@ -1,9 +1,13 @@
 import { useEffect, useRef } from 'react'
 
 import { useNavigation } from '@react-navigation/native'
-import { generateAvatarInitials } from '@tetherto/pear-apps-utils-avatar-initials'
-import { rawTokens, Text, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { useFavicon, useRecordById } from '@tetherto/pearpass-lib-vault'
+import {
+  rawTokens,
+  Text,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
+import { useFavicon, useRecordById } from 'lockwright-lib-vault'
+import { generateAvatarInitials } from 'lockwright-utils-avatar-initials'
 import { Image, StyleSheet, View } from 'react-native'
 
 import { RecordDetailsContent } from './RecordDetailsContentWrapper'

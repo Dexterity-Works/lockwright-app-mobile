@@ -6,7 +6,7 @@ import {
   View,
   ViewStyle
 } from 'react-native'
-import { useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import { useTheme } from 'lockwright-lib-ui-react-native-components'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ScrollView } from 'react-native-gesture-handler'
 

@@ -10,13 +10,13 @@ import {
   Title,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   Add,
   ContentCopy,
   ImportOutlined,
   SwapVert
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import {
   RECORD_TYPES,
   formatOtpCode,
@@ -24,8 +24,8 @@ import {
   isExpiring,
   useOtpWatch,
   useRecords
-} from '@tetherto/pearpass-lib-vault'
-import { MOBILE_2FA_IMPORTS_ENABLED } from '@tetherto/pearpass-lib-constants'
+} from 'lockwright-lib-vault'
+import { MOBILE_2FA_IMPORTS_ENABLED } from 'lockwright-lib-constants'
 import {
   FlatList,
   Pressable,

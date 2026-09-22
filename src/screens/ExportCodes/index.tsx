@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
-import { MOBILE_2FA_IMPORTS_ENABLED } from '@tetherto/pearpass-lib-constants'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-utils-validator'
+import { MOBILE_2FA_IMPORTS_ENABLED } from 'lockwright-lib-constants'
 import {
   Button,
   PasswordField,
@@ -11,7 +11,7 @@ import {
   Text as TextComponent,
   ToggleSwitch,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native'
 import Animated, {

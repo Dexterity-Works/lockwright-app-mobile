@@ -2,7 +2,7 @@ import {
   ErrorFilled,
   Check,
   ReportProblem
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 
 import { NoticeTextComponent, NoticeTextWrapper } from './styles'
 

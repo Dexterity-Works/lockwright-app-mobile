@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import {
   KeyboardArrowBottom,
   UnfoldMoreOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { View } from 'react-native'
 import { Title, TitleWrapper, Wrapper } from './styles'
 

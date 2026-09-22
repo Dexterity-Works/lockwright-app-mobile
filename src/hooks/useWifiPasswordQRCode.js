@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { generateQRCodeSVG } from '@tetherto/pear-apps-utils-qr'
+import { generateQRCodeSVG } from 'lockwright-utils-qr'
 
 import { logger } from '../utils/logger'
 

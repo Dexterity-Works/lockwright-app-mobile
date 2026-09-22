@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { CommonActions, useNavigation } from '@react-navigation/native'
-import { Button } from '@tetherto/pearpass-lib-ui-kit'
+import { Button } from 'lockwright-lib-ui-react-native-components'
 
 import { Layout } from '../../containers/Layout'
 import { BackScreenHeader } from '../../containers/ScreenHeader/BackScreenHeader'

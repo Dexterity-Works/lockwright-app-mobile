@@ -2,15 +2,15 @@ import { useEffect } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useCountDown } from '@tetherto/pear-apps-lib-ui-react-hooks'
+import { useCountDown } from 'lockwright-lib-ui-react-hooks'
 import {
   rawTokens,
   Text,
   PageHeader,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { WatchLater } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useUserData } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { WatchLater } from 'lockwright-lib-ui-react-native-components/icons'
+import { useUserData } from 'lockwright-lib-vault'
 import { AppState, ScrollView, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

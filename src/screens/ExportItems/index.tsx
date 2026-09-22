@@ -9,15 +9,15 @@ import {
   Text as TextComponent,
   ToggleSwitch,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+} from 'lockwright-lib-ui-react-native-components'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-utils-validator'
 import {
   getVaultById,
   getMasterEncryption,
   listRecords,
   useVault
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-vault'
 import { useCallback, useEffect, useState } from 'react'
 import { Keyboard, KeyboardAvoidingView, Platform, Text, View } from 'react-native'
 import Animated, {

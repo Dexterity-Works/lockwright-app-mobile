@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { rawTokens } from '@tetherto/pearpass-lib-ui-kit'
+import { rawTokens } from 'lockwright-lib-ui-react-native-components'
 
 export const styles = StyleSheet.create({
   actionButtonsContainer: {

@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { DATE_FORMAT } from '@tetherto/pearpass-lib-constants'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { DATE_FORMAT } from 'lockwright-lib-constants'
 import {
   AttachmentField,
   InputField,
@@ -11,7 +11,7 @@ import {
   PasswordField,
   Text,
   rawTokens
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 
 import { useAutoLockContext } from '../../context/AutoLockContext'

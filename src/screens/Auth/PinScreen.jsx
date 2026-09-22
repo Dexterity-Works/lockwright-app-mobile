@@ -2,9 +2,14 @@ import { useState, useCallback, useEffect } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { Text, Title, useTheme, Link } from '@tetherto/pearpass-lib-ui-kit'
-import { useVaults } from '@tetherto/pearpass-lib-vault'
 import * as SecureStore from 'expo-secure-store'
+import {
+  Text,
+  Title,
+  useTheme,
+  Link
+} from 'lockwright-lib-ui-react-native-components'
+import { useVaults } from 'lockwright-lib-vault'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { colors } from 'src/utils/colors'

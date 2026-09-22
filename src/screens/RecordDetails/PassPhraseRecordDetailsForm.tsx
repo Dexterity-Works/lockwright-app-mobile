@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
 import {
   AttachmentField,
   InputField,
@@ -11,7 +11,7 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 
 import { PassPhrase } from '../../containers/PassPhrase'

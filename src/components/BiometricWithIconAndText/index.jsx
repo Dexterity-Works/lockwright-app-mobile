@@ -1,6 +1,9 @@
 import { useLingui } from '@lingui/react/macro'
-import { FaceId, Fingerprint } from '@tetherto/pearpass-lib-ui-kit/icons'
 import * as LocalAuthentication from 'expo-local-authentication'
+import {
+  FaceId,
+  Fingerprint
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { colors } from 'src/utils/colors'
 
 import { Wrapper, PressableText } from './styles'

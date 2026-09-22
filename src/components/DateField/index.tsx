@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react'
 
-import { InputField } from '@tetherto/pearpass-lib-ui-kit'
+import { InputField } from 'lockwright-lib-ui-react-native-components'
 
 export type DateFieldPickerMode = 'date' | 'time' | 'datetime' | 'month-year'
 

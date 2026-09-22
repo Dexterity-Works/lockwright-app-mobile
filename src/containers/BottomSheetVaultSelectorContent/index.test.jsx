@@ -30,7 +30,7 @@ jest.mock('../../hooks/useVaultSwitch', () => ({
   useVaultSwitch: () => ({ switchVault: mockSwitchVault })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useVaults: () => mockUseVaults(),
   useVault: () => mockUseVault()
 }))
@@ -46,7 +46,7 @@ jest.mock('../../utils/modifyVaultModalFlag', () => ({
   isModifyVaultModalEnabled: () => mockIsModifyVaultModalEnabled()
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => {
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => {
   const RN = require('react-native')
   return {
     Add: () => <RN.View testID="icon-add" />,
@@ -56,7 +56,7 @@ jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
   return {
     Button: ({ onClick, children, 'aria-label': ariaLabel }) => (

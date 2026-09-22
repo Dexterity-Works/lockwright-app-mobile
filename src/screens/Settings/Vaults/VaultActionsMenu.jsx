@@ -1,19 +1,19 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useLingui } from '@lingui/react/macro'
-import { PROTECTED_VAULT_ENABLED } from '@tetherto/pearpass-lib-constants'
+import { PROTECTED_VAULT_ENABLED } from 'lockwright-lib-constants'
 import {
   Button,
   ContextMenu,
   NavbarListItem,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   Devices,
   EditOutlined,
   Key,
   MoreVert,
   TrashOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

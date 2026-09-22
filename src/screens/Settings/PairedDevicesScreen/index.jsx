@@ -11,9 +11,12 @@ import {
   Text,
   useBottomSheetClose,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { DoNotDisturb, MoreVert } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { getMyDeviceId, useVault } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import {
+  DoNotDisturb,
+  MoreVert
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { getMyDeviceId, useVault } from 'lockwright-lib-vault'
 import { Platform, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

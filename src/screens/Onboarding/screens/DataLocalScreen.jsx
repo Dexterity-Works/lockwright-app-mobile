@@ -2,10 +2,15 @@ import { useEffect, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { Button, useTheme, Text, Title } from '@tetherto/pearpass-lib-ui-kit'
-import { KeyboardArrowRightFilled } from '@tetherto/pearpass-lib-ui-kit/icons'
 import { Asset } from 'expo-asset'
 import { useVideoPlayer as useExpoVideoPlayer, VideoView } from 'expo-video'
+import {
+  Button,
+  useTheme,
+  Text,
+  Title
+} from 'lockwright-lib-ui-react-native-components'
+import { KeyboardArrowRightFilled } from 'lockwright-lib-ui-react-native-components/icons'
 import { Dimensions, Platform, StyleSheet, View } from 'react-native'
 
 import { OnboardingLayout } from '../components/OnboardingLayout'

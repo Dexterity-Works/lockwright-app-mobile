@@ -4,8 +4,8 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { ReportProblem } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { ReportProblem } from 'lockwright-lib-ui-react-native-components/icons'
 import { ScrollView, StyleSheet, View } from 'react-native'
 
 import { OnboardingLayout } from '../Onboarding/components/OnboardingLayout'

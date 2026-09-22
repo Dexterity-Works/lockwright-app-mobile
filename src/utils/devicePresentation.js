@@ -4,7 +4,7 @@ import {
   LaptopWindows,
   PhoneIphone,
   Tablet
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 
 /**
  * @param {string | number | Date} dateInput

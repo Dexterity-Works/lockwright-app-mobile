@@ -1,4 +1,4 @@
-import { AlertMessage } from '@tetherto/pearpass-lib-ui-kit'
+import { AlertMessage } from 'lockwright-lib-ui-react-native-components'
 import Toast from 'react-native-toast-message'
 
 import { TOAST_CONFIG } from '../constants/toast'

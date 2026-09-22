@@ -6,12 +6,9 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { NavigationContainer } from '@react-navigation/native'
-import { ThemeProvider as UIKitProvider } from '@tetherto/pearpass-lib-ui-kit'
-import {
-  setPearpassVaultClient,
-  VaultProvider
-} from '@tetherto/pearpass-lib-vault'
 import { StatusBar } from 'expo-status-bar'
+import { ThemeProvider as UIKitProvider } from 'lockwright-lib-ui-react-native-components'
+import { setPearpassVaultClient, VaultProvider } from 'lockwright-lib-vault'
 import { Platform, StyleSheet, Text } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'

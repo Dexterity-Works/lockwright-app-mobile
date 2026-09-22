@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { LANGUAGES } from '@tetherto/pearpass-lib-constants'
+import { LANGUAGES } from 'lockwright-lib-constants'
 
 export const useLanguageOptions = () => {
   const { t } = useLingui()

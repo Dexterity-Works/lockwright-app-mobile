@@ -8,11 +8,11 @@ import messages from '../../locales/en/messages'
 i18n.load('en', messages)
 i18n.activate('en')
 
-jest.mock('@tetherto/pearpass-lib-constants', () => ({
+jest.mock('lockwright-lib-constants', () => ({
   AUTHENTICATOR_ENABLED: true
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   RECORD_TYPES: {
     LOGIN: 'LOGIN',
     CREDIT_CARD: 'CREDIT_CARD',
@@ -35,11 +35,11 @@ jest.mock('@tetherto/pearpass-lib-vault', () => ({
   }))
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   TwoFactorAuthenticationOutlined: () => null
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const { Text, TouchableOpacity, View } = require('react-native')
 
   return {

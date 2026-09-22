@@ -28,12 +28,12 @@ jest.mock('../../hooks/useKeyboardVisibility', () => ({
   useKeyboardVisibility: (...args) => mockUseKeyboardVisibility(...args)
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useUserData: () => mockUseUserData()
 }))
 
 /** Mirrors `useCountDown` from pear-apps without importing the package (Jest ESM chain). */
-jest.mock('@tetherto/pear-apps-lib-ui-react-hooks', () => {
+jest.mock('lockwright-lib-ui-react-hooks', () => {
   const ReactImport = require('react')
   const MS_PER_SECOND = 1000
   const SECONDS_PER_MINUTE = 60
@@ -92,7 +92,7 @@ const rawTokensMock = {
   weightMedium: '500'
 }
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
 
   return {
@@ -115,7 +115,7 @@ jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   WatchLater: () => {
     const RN = require('react-native')
     return <RN.View testID="watch-later-icon" />

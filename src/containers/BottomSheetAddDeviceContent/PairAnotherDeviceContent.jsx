@@ -2,9 +2,12 @@ import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { ContentPaste, QrCode } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { usePair, useVault } from '@tetherto/pearpass-lib-vault'
 import * as Clipboard from 'expo-clipboard'
+import {
+  ContentPaste,
+  QrCode
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { usePair, useVault } from 'lockwright-lib-vault'
 import {
   ActivityIndicator,
   StyleSheet,

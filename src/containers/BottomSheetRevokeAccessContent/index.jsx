@@ -7,8 +7,8 @@ import {
   rawTokens,
   useBottomSheetClose,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { kickDevice } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { kickDevice } from 'lockwright-lib-vault'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'

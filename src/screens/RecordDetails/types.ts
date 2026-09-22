@@ -1,4 +1,4 @@
-import type { OtpPublic } from '@tetherto/pearpass-lib-vault/src/types'
+import type { OtpPublic } from 'lockwright-lib-vault/src/types'
 
 export interface CustomField {
   type: string

@@ -23,7 +23,7 @@ jest.mock('@react-navigation/native', () => ({
   }
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
 
   return {
@@ -42,12 +42,12 @@ jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   FaceId: () => null,
   Fingerprint: () => null
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useVaults: () => ({
     data: [{ id: 'vault-1' }]
   }),
@@ -56,7 +56,7 @@ jest.mock('@tetherto/pearpass-lib-vault', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault/src/utils/buffer', () => ({
+jest.mock('lockwright-lib-vault/src/utils/buffer', () => ({
   clearBuffer: jest.fn(),
   stringToBuffer: jest.fn()
 }))

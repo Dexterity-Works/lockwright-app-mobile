@@ -6,13 +6,21 @@ import {
   useNavigation,
   useRoute
 } from '@react-navigation/native'
-import { Button, Text, Title, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { FaceId, Fingerprint } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useVault, useVaults } from '@tetherto/pearpass-lib-vault'
+import {
+  Button,
+  Text,
+  Title,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
+import {
+  FaceId,
+  Fingerprint
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useVault, useVaults } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
-} from '@tetherto/pearpass-lib-vault/src/utils/buffer'
+} from 'lockwright-lib-vault/src/utils/buffer'
 import { Dimensions, Platform, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import Rive from 'rive-react-native'

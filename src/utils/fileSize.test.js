@@ -1,4 +1,4 @@
-import { MAX_FILE_SIZE_MB } from '@tetherto/pearpass-lib-constants'
+import { MAX_FILE_SIZE_MB } from 'lockwright-lib-constants'
 
 import { getBase64SizeMB, validateBase64Size } from './fileSize'
 

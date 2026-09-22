@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { ContentPaste } from '@tetherto/pearpass-lib-ui-kit/icons'
 import * as Clipboard from 'expo-clipboard'
+import { ContentPaste } from 'lockwright-lib-ui-react-native-components/icons'
 import Toast from 'react-native-toast-message'
 import { colors } from 'src/utils/colors'
 /**

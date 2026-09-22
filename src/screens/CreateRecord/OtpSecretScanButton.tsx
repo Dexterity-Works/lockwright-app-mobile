@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { Button, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { QrCode } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { Button, useTheme } from 'lockwright-lib-ui-react-native-components'
+import { QrCode } from 'lockwright-lib-ui-react-native-components/icons'
 
 import { BottomSheetQrScannerSheet } from '../../containers/BottomSheetQrScannerContent/Sheet'
 

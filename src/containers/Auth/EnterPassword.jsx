@@ -2,13 +2,13 @@ import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
-import { useUserData, useVaults } from '@tetherto/pearpass-lib-vault'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { useUserData, useVaults } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
-} from '@tetherto/pearpass-lib-vault/src/utils/buffer'
+} from 'lockwright-lib-vault/src/utils/buffer'
+import { Validator } from 'lockwright-utils-validator'
 import {
   ActivityIndicator,
   ScrollView,

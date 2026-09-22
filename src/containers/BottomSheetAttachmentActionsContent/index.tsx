@@ -1,8 +1,8 @@
 import { useBottomSheetModal } from '@gorhom/bottom-sheet'
 import { useLingui } from '@lingui/react/macro'
 import { ReactNode } from 'react'
-import { Button, ContextMenu, Text, rawTokens, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { Close, EditOutlined, TrashOutlined } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { Button, ContextMenu, Text, rawTokens, useTheme } from 'lockwright-lib-ui-react-native-components'
+import { Close, EditOutlined, TrashOutlined } from 'lockwright-lib-ui-react-native-components/icons'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

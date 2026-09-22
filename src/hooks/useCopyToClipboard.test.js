@@ -11,7 +11,7 @@ import messages from '../locales/en/messages'
 i18n.load('en', messages)
 i18n.activate('en')
 
-jest.mock('@tetherto/pearpass-lib-constants', () => ({
+jest.mock('lockwright-lib-constants', () => ({
   CLIPBOARD_CLEAR_TIMEOUT: 30000
 }))
 
@@ -28,7 +28,7 @@ jest.mock('react-native-toast-message', () => ({
   show: jest.fn()
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   ContentCopy: jest.fn(() => null)
 }))
 

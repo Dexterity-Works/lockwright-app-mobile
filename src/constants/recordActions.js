@@ -7,7 +7,7 @@ import {
   Checklist,
   StarFilled,
   WatchLater
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 
 export const RECORD_ACTION_ICON_BY_TYPE = {
   copy: ContentCopy,

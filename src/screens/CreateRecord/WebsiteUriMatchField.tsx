@@ -7,11 +7,11 @@ import {
   InputField,
   NavbarListItem,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   KeyboardArrowBottom,
   TrashOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { StyleSheet, View } from 'react-native'
 
 import { openAfterKeyboardDismiss } from '../../utils/openAfterKeyboardDismiss'

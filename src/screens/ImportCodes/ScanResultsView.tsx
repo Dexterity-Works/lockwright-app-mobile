@@ -6,13 +6,13 @@ import {
   rawTokens,
   Text,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   Close,
   ExpandMore,
   Link,
   LinkOff
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { useState } from 'react'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { RecordItemIcon } from 'src/components/RecordItemIcon'

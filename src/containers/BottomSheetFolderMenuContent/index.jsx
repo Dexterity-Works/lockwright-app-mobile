@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet'
 import { useNavigation } from '@react-navigation/native'
-import { useFolders } from '@tetherto/pearpass-lib-vault'
+import { useFolders } from 'lockwright-lib-vault'
 
 import { MenuActionItem } from '../../components/MenuActionItem'
 import { useBottomSheet } from '../../context/BottomSheetContext'

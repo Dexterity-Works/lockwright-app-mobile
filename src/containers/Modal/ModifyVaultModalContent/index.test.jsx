@@ -15,7 +15,7 @@ const mockValidatePasswordChange = jest.fn()
 const mockCloseModal = jest.fn()
 const mockLoggerError = jest.fn()
 
-jest.mock('@tetherto/pear-apps-lib-ui-react-hooks', () => {
+jest.mock('lockwright-lib-ui-react-hooks', () => {
   const React = require('react')
 
   return {
@@ -56,7 +56,7 @@ jest.mock('@tetherto/pear-apps-lib-ui-react-hooks', () => {
   }
 })
 
-jest.mock('@tetherto/pear-apps-utils-validator', () => ({
+jest.mock('lockwright-utils-validator', () => ({
   Validator: {
     string: () => {
       const validator = {
@@ -83,7 +83,7 @@ jest.mock('@tetherto/pear-apps-utils-validator', () => ({
   }
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
 
   return {
@@ -149,15 +149,15 @@ jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   ReportProblem: () => null
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useVault: () => mockUseVault()
 }))
 
-jest.mock('@tetherto/pearpass-utils-password-check', () => ({
+jest.mock('lockwright-utils-password-check', () => ({
   checkPasswordStrength: () => ({
     type: 'safe'
   }),

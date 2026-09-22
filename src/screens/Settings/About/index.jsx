@@ -1,10 +1,11 @@
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
+import * as Clipboard from 'expo-clipboard'
 import {
   PEARPASS_WEBSITE,
   PRIVACY_POLICY,
   TERMS_OF_USE
-} from '@tetherto/pearpass-lib-constants'
+} from 'lockwright-lib-constants'
 import {
   Link,
   NavbarListItem,
@@ -12,8 +13,7 @@ import {
   rawTokens,
   Text,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import * as Clipboard from 'expo-clipboard'
+} from 'lockwright-lib-ui-react-native-components'
 import { Linking, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

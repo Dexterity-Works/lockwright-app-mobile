@@ -29,7 +29,7 @@ jest.mock('@react-navigation/native', () => ({
   useRoute: () => ({ params: mockParams })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useRecords: () => ({
     deleteRecords: mockDeleteRecords,
     updateRecords: mockUpdateRecords
@@ -41,7 +41,7 @@ jest.mock('react-native-toast-message', () => ({
   default: { show: (...args) => mockToastShow(...args) }
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const React = require('react')
   const { TouchableOpacity, Text } = require('react-native')
   return {

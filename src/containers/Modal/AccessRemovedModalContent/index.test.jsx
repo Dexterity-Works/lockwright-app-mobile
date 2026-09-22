@@ -13,7 +13,7 @@ jest.mock('../../../context/ModalContext', () => ({
   useModal: jest.fn()
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const { View, Text: RNText, Pressable } = require('react-native')
   return {
     rawTokens: new Proxy({}, { get: () => 0 }),

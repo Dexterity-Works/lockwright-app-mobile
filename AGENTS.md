@@ -1,21 +1,21 @@
 # UI conventions for pearpass-app-mobile-tether
 
-This is the React Native + Expo mobile app for Lockwright, written in JavaScript + TypeScript. UI is built on the shared component library `@tetherto/pearpass-lib-ui-kit`.
+This is the React Native + Expo mobile app for Lockwright, written in JavaScript + TypeScript. UI is built on the shared component library `lockwright-lib-ui-react-native-components`.
 
 This document is for **anyone contributing UI** to the repo — new hires, current engineers, and AI coding assistants (Claude Code, Cursor, Codex, etc.). It captures the component catalog, styling conventions, and patterns we use when building UI in this app. Read it once before your first UI change; keep it open when you're in doubt.
 
 ## Golden rules
 
 1. **Check the catalog below before creating any component.** If it exists in the kit, use it — never wrap or reimplement.
-2. **All new UI goes through `@tetherto/pearpass-lib-ui-kit`.** New `.tsx`/`.jsx` files must import from the kit, **not** from [src/libComponents/](src/libComponents/). That tree is legacy and is being phased out — migrate callers to the kit equivalents when you touch them.
+2. **All new UI goes through `lockwright-lib-ui-react-native-components`.** New `.tsx`/`.jsx` files must import from the kit, **not** from [src/libComponents/](src/libComponents/). That tree is legacy and is being phased out — migrate callers to the kit equivalents when you touch them.
 3. **Never add variants under [src/libComponents/](src/libComponents/)** (`ButtonThin`, `ButtonPrimary`, `ButtonLittle`, `InputPasswordPearPass`, etc.). The kit's `Button` takes variants — use it.
 4. **Style with tokens.** `useTheme()` + `rawTokens`. No hardcoded hex colors or design-system spacing.
-5. **Icons come from the kit.** `@tetherto/pearpass-lib-ui-kit/icons` has 530 icons. Do not add new SVGs under `src/`.
+5. **Icons come from the kit.** `lockwright-lib-ui-react-native-components/icons` has 530 icons. Do not add new SVGs under `src/`.
 6. **If the kit lacks something you need, stop and ask.** Don't silently roll a custom component.
 
 ## Component catalog (33 components)
 
-Import pattern: `import { ComponentName } from '@tetherto/pearpass-lib-ui-kit'`
+Import pattern: `import { ComponentName } from 'lockwright-lib-ui-react-native-components'`
 
 ### Actions
 - `Button` — all CTAs. Takes variants; use instead of `ButtonThin`, `ButtonPrimary`, `ButtonSecondary`, `ButtonFilter`, `ButtonLittle`, `ButtonCreate`, `ButtonUniversal`.
@@ -23,7 +23,7 @@ Import pattern: `import { ComponentName } from '@tetherto/pearpass-lib-ui-kit'`
 - `Link` — text links.
 
 ### Forms
-- `Form` — form wrapper; pair with `useForm` from `@tetherto/pear-apps-lib-ui-react-hooks`.
+- `Form` — form wrapper; pair with `useForm` from `lockwright-lib-ui-react-hooks`.
 - `InputField` — text input. Use instead of the legacy `InputField` / `PearPassInputField`.
 - `PasswordField` — password input with strength indicator. Use instead of legacy `PasswordField` / `InputPasswordPearPass`.
 - `SearchField`, `SelectField`, `Dropdown`, `TextArea`
@@ -50,9 +50,9 @@ Import pattern: `import { ComponentName } from '@tetherto/pearpass-lib-ui-kit'`
 - `ButtonVariant` — `'primary' | 'secondary' | 'tertiary' | 'destructive'`
 - `ButtonSize` — `'small' | 'medium'`
 
-Import types with `import type { ... } from '@tetherto/pearpass-lib-ui-kit'`.
+Import types with `import type { ... } from 'lockwright-lib-ui-react-native-components'`.
 
-For components not listed, open `node_modules/@tetherto/pearpass-lib-ui-kit/dist/components/<Name>/types.d.ts`.
+For components not listed, open `node_modules/lockwright-lib-ui-react-native-components/dist/components/<Name>/types.d.ts`.
 
 ## Component props (15 most-used)
 
@@ -89,7 +89,7 @@ No styled-components. No `createStyles(colors)` factory. The mobile convention i
 **Example** (from [src/containers/Modal/ModifyVaultModalContent/index.jsx](src/containers/Modal/ModifyVaultModalContent/index.jsx)):
 
 ```jsx
-import { rawTokens, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import { rawTokens, useTheme } from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 
 export const Component = () => {
@@ -135,7 +135,7 @@ Usage: `borderRadius: rawTokens.radius8`, `padding: rawTokens.spacing16`, `gap: 
 
 ### `theme.colors` — common keys seen in this repo
 
-`colorSurfacePrimary`, `colorSurfaceHover`, `colorBorderPrimary`, `colorBorderSecondary`, `colorTextPrimary`, `colorTextSecondary`, `colorTextTertiary`, `colorLinkText`. If you need one you haven't seen, inspect the `ThemeColors` type from `@tetherto/pearpass-lib-ui-kit`.
+`colorSurfacePrimary`, `colorSurfaceHover`, `colorBorderPrimary`, `colorBorderSecondary`, `colorTextPrimary`, `colorTextSecondary`, `colorTextTertiary`, `colorLinkText`. If you need one you haven't seen, inspect the `ThemeColors` type from `lockwright-lib-ui-react-native-components`.
 
 ### When hardcoded values are OK
 
@@ -144,7 +144,7 @@ Tokens cover the design-system primitives. Feature-specific layout values (a car
 ## Icons
 
 ```tsx
-import { Add, Download, Folder, OpenInNew } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { Add, Download, Folder, OpenInNew } from 'lockwright-lib-ui-react-native-components/icons'
 ```
 
 530 icons, mostly Material Design, with style variants as suffixes: `Filled`, `Outlined`, `Round`, `Sharp`, `Tone` (e.g. `LockFilled`, `InfoOutlined`, `KeyboardArrowRightRound`). If a name has no suffix, it exists as a single variant.
@@ -159,7 +159,7 @@ import { Add, Download, Folder, OpenInNew } from '@tetherto/pearpass-lib-ui-kit/
 - **Settings:** `SettingsApplicationsFilled`, `PaletteOutlined`, `Translate`, `Sync`, `Devices`, `SystemSecurityUpdateFilled`
 - **Misc:** `Logout`, `Login`, `HubFilled`, `BugReportFilled`, `OpenInNew`
 
-**Discovering others:** `ls node_modules/@tetherto/pearpass-lib-ui-kit/dist/icons/components/ | grep -i <keyword>` — names are PascalCase, grep is case-insensitive friendly.
+**Discovering others:** `ls node_modules/lockwright-lib-ui-react-native-components/dist/icons/components/ | grep -i <keyword>` — names are PascalCase, grep is case-insensitive friendly.
 
 ## Anti-patterns to avoid
 
@@ -183,6 +183,6 @@ If you encounter a file still importing from `src/libComponents/`, migrate it to
 
 ## When the kit truly lacks something
 
-1. Confirm by grepping `node_modules/@tetherto/pearpass-lib-ui-kit/dist/components/` for the concept.
+1. Confirm by grepping `node_modules/lockwright-lib-ui-react-native-components/dist/components/` for the concept.
 2. Check if a composition of existing kit primitives covers it (e.g. `Pressable` + `Text` + tokens).
 3. If still missing, surface it to the user: "The kit doesn't export X — options are (a) compose from Y + Z, (b) request X be added upstream, (c) temporary local component. Which?" Do not silently create (c).

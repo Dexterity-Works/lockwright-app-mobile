@@ -1,4 +1,4 @@
-declare module '@tetherto/pear-apps-utils-validator' {
+declare module 'lockwright-utils-validator' {
   export class Validator {
     constructor(type: string, objectSchema?: Record<string, Validator>)
 

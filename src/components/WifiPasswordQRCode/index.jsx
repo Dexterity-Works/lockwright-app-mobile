@@ -1,5 +1,9 @@
 import { useLingui } from '@lingui/react/macro'
-import { Text, rawTokens, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import {
+  Text,
+  rawTokens,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 

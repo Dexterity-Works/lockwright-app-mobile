@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro'
-import { useRecords, useVault } from '@tetherto/pearpass-lib-vault'
-import { rawTokens, Text, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import { useRecords, useVault } from 'lockwright-lib-vault'
+import { rawTokens, Text, useTheme } from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 
 import { VaultPreviewCard } from './VaultPreviewCard'

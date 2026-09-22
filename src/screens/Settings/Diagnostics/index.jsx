@@ -9,7 +9,7 @@ import {
   ToggleSwitch,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { Platform, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

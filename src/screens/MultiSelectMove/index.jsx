@@ -8,9 +8,9 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { FolderOpen } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useFolders, useRecords } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { FolderOpen } from 'lockwright-lib-ui-react-native-components/icons'
+import { useFolders, useRecords } from 'lockwright-lib-vault'
 import { ScrollView, View } from 'react-native'
 
 import { createStyles } from './styles'

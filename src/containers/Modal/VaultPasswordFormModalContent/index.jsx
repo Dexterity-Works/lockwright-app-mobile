@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
-import { Close } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Close } from 'lockwright-lib-ui-react-native-components/icons'
+import { Validator } from 'lockwright-utils-validator'
 
 import {
   Actions,

@@ -8,11 +8,11 @@ import {
   Key,
   Check,
   ReportProblem
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import {
   checkPassphraseStrength,
   checkPasswordStrength
-} from '@tetherto/pearpass-utils-password-check'
+} from 'lockwright-utils-password-check'
 import { View } from 'react-native'
 
 import { ButtonLittle } from '../ButtonLittle'

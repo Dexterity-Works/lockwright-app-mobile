@@ -1,4 +1,4 @@
-jest.mock('@tetherto/pearpass-utils-password-check', () => ({
+jest.mock('lockwright-utils-password-check', () => ({
   checkPassphraseStrength: jest.fn(),
   checkPasswordStrength: jest.fn(),
   PASSWORD_STRENGTH: {
@@ -11,7 +11,7 @@ jest.mock('@tetherto/pearpass-utils-password-check', () => ({
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { fireEvent, render } from '@testing-library/react-native'
-import { checkPasswordStrength } from '@tetherto/pearpass-utils-password-check'
+import { checkPasswordStrength } from 'lockwright-utils-password-check'
 import { Text } from 'react-native'
 import { ThemeProvider } from 'src/utils/colors'
 

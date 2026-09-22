@@ -1,12 +1,12 @@
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-utils-validator'
 import {
   RECORD_TYPES,
   useCreateRecord,
   useRecords
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-vault'
 import {
   Button,
   InputField,
@@ -15,8 +15,8 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Add, SyncLock, TrashOutlined } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { Add, SyncLock, TrashOutlined } from 'lockwright-lib-ui-react-native-components/icons'
 import { Keyboard, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

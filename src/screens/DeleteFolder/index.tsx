@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { useLingui } from '@lingui/react/macro'
 import type { NavigationProp } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
-import { useFolders, useRecords } from '@tetherto/pearpass-lib-vault'
-import { UNSUPPORTED } from '@tetherto/pearpass-lib-constants'
+import { useFolders, useRecords } from 'lockwright-lib-vault'
+import { UNSUPPORTED } from 'lockwright-lib-constants'
 import { View } from 'react-native'
 
 import {
@@ -13,7 +13,7 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { BackScreenHeader } from 'src/containers/ScreenHeader/BackScreenHeader'
 import { useSharedFilter } from 'src/context/SharedFilterContext'
 import { Layout } from 'src/containers/Layout'

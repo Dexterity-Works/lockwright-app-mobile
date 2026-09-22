@@ -11,7 +11,7 @@ jest.mock('react-native-bare-kit', () => ({
   }))
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault-core', () => ({
+jest.mock('lockwright-lib-vault-core', () => ({
   PearpassVaultClient: jest
     .fn()
     .mockImplementation(function PearpassVaultClient() {
@@ -56,7 +56,7 @@ describe('createPearpassVaultClient', () => {
   beforeEach(() => {
     jest.resetModules()
     PearpassVaultClient =
-      require('@tetherto/pearpass-lib-vault-core').PearpassVaultClient
+      require('lockwright-lib-vault-core').PearpassVaultClient
     FileSystem = require('expo-file-system')
     Platform = require('react-native').Platform
     Worklet = require('react-native-bare-kit').Worklet

@@ -29,7 +29,7 @@ jest.mock('src/utils/colors', () => ({
   }
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => ({
+jest.mock('lockwright-lib-ui-react-native-components', () => ({
   rawTokens: { spacing16: 16 },
   useTheme: () => ({
     theme: {

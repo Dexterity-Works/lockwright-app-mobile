@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { generateQRCodeSVG } from '@tetherto/pear-apps-utils-qr'
-import { useInvite } from '@tetherto/pearpass-lib-vault'
+import { generateQRCodeSVG } from 'lockwright-utils-qr'
+import { useInvite } from 'lockwright-lib-vault'
 import { AppState } from 'react-native'
 
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'

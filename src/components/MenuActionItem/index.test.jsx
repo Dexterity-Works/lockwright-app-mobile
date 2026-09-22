@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react-native'
 
 import { MenuActionItem } from './index'
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   Check: (props) => <mockCheck {...props} testID="check-icon" />,
   MoreVert: (props) => <mockMoreVert {...props} testID="kebab-menu-icon" />
 }))

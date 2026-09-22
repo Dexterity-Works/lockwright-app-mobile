@@ -13,7 +13,7 @@ jest.mock('../../../utils/unsupportedFeatures', () => ({
 i18n.load('en', messages)
 i18n.activate('en')
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
 
   return {
@@ -83,7 +83,7 @@ jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   KeyboardArrowRightFilled: () => null
 }))
 

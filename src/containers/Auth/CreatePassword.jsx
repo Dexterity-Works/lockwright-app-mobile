@@ -2,19 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
-import { TERMS_OF_USE } from '@tetherto/pearpass-lib-constants'
-import {
-  closeAllInstances,
-  useUserData,
-  useVaults
-} from '@tetherto/pearpass-lib-vault'
+import { TERMS_OF_USE } from 'lockwright-lib-constants'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { closeAllInstances, useUserData, useVaults } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
-} from '@tetherto/pearpass-lib-vault/src/utils/buffer'
-import { checkPasswordStrength } from '@tetherto/pearpass-utils-password-check'
+} from 'lockwright-lib-vault/src/utils/buffer'
+import { checkPasswordStrength } from 'lockwright-utils-password-check'
+import { Validator } from 'lockwright-utils-validator'
 import {
   ActivityIndicator,
   KeyboardAvoidingView,

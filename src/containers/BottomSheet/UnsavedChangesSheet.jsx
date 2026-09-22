@@ -1,5 +1,9 @@
 import { useLingui } from '@lingui/react/macro'
-import { Button, Text, rawTokens } from '@tetherto/pearpass-lib-ui-kit'
+import {
+  Button,
+  Text,
+  rawTokens
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

@@ -23,20 +23,20 @@ describe("Lockwright app id", () => {
     expect(Number.isInteger(app.expo.android.versionCode)).toBe(true);
   });
 
-  it("pins @tetherto/pearpass-lib-constants to Dexterity-Works git, not Tether or file:", () => {
+  it("pins lockwright-lib-constants to Dexterity-Works git, not Tether or file:", () => {
     const pkg = JSON.parse(
       readFileSync(path.resolve(__dirname, "../package.json"), "utf8"),
     );
-    expect(pkg.dependencies["@tetherto/pearpass-lib-constants"]).toBe(
+    expect(pkg.dependencies["lockwright-lib-constants"]).toBe(
       "git+https://github.com/Dexterity-Works/lockwright-lib-constants.git#0221dba94373926c7316c675d9bff774daf8464f",
     );
   });
 
-  it("pins @tetherto/pearpass-lib-ui-kit to Dexterity-Works git, not Tether", () => {
+  it("pins lockwright-lib-ui-react-native-components to Dexterity-Works git, not Tether", () => {
     const pkg = JSON.parse(
       readFileSync(path.resolve(__dirname, "../package.json"), "utf8"),
     );
-    expect(pkg.dependencies["@tetherto/pearpass-lib-ui-kit"]).toBe(
+    expect(pkg.dependencies["lockwright-lib-ui-react-native-components"]).toBe(
       "git+https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components.git#design-system-v2",
     );
   });

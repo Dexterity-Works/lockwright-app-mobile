@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
-import { useTheme, rawTokens, Text, Button } from '@tetherto/pearpass-lib-ui-kit'
-import { ArrowBackOutined } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { useTheme, rawTokens, Text, Button } from 'lockwright-lib-ui-react-native-components'
+import { ArrowBackOutined } from 'lockwright-lib-ui-react-native-components/icons'
 
 import { ScreenHeader } from './index'
 

@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
-import { useVault, useVaults } from '@tetherto/pearpass-lib-vault'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { useVault, useVaults } from 'lockwright-lib-vault'
+import { Validator } from 'lockwright-utils-validator'
 import {
   ActivityIndicator,
   KeyboardAvoidingView,

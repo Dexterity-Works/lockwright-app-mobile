@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { useCreateVault, useVault } from '@tetherto/pearpass-lib-vault'
+import { useTheme } from 'lockwright-lib-ui-react-native-components'
+import { useCreateVault, useVault } from 'lockwright-lib-vault'
 import { View, StyleSheet, ActivityIndicator } from 'react-native'
 import Toast from 'react-native-toast-message'
 

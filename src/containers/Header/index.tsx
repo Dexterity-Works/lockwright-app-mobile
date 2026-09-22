@@ -10,8 +10,8 @@ import {
   Button,
   ContextMenu,
   SearchField
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Add, ImportOutlined } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { Add, ImportOutlined } from 'lockwright-lib-ui-react-native-components/icons'
 import { View, StyleSheet } from 'react-native'
 
 import { BottomSheetCategorySelectorContent } from '../BottomSheetCategorySelectorContent'

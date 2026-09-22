@@ -1,9 +1,9 @@
-import { Title, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import { Title, useTheme } from 'lockwright-lib-ui-react-native-components'
 import {
   Backspace,
   FaceId,
   Fingerprint
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { Pressable, View } from 'react-native'
 
 import { styles } from './styles'

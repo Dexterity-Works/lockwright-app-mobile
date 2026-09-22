@@ -2,14 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useCountDown } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { generateQRCodeSVG } from '@tetherto/pear-apps-utils-qr'
+import { useCountDown } from 'lockwright-lib-ui-react-hooks'
 import {
   KeyboardArrowBottom,
   ArrowBackOutined,
   ContentCopy
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useInvite } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useInvite } from 'lockwright-lib-vault'
+import { generateQRCodeSVG } from 'lockwright-utils-qr'
 import {
   KeyboardAvoidingView,
   Platform,

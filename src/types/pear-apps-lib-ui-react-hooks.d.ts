@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-declare module '@tetherto/pear-apps-lib-ui-react-hooks' {
+declare module 'lockwright-lib-ui-react-hooks' {
   import type * as React from 'react'
 
   type ArrayItem<T> = T extends Array<infer U> ? U : never

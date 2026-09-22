@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { useTheme, ListItem, rawTokens } from '@tetherto/pearpass-lib-ui-kit'
+import { useTheme, ListItem, rawTokens } from 'lockwright-lib-ui-react-native-components'
 import {
   LockOutlined,
   KeyboardArrowRightFilled
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { View, StyleSheet } from 'react-native'
 import Animated, {
   useSharedValue,

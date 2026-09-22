@@ -6,14 +6,14 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { ContentCopy } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { ContentCopy } from 'lockwright-lib-ui-react-native-components/icons'
 import {
   formatOtpCode,
   OTP_TYPE,
   useOtp,
   useTimerAnimation
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-vault'
 import { StyleSheet, View } from 'react-native'
 import Animated, {
   Easing,
@@ -22,7 +22,7 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated'
 
-import type { OtpPublic } from '@tetherto/pearpass-lib-vault/src/types'
+import type { OtpPublic } from 'lockwright-lib-vault/src/types'
 
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
 

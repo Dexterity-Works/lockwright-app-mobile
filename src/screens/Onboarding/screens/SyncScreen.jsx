@@ -1,7 +1,12 @@
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { Button, Text, Title, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { KeyboardArrowRightFilled } from '@tetherto/pearpass-lib-ui-kit/icons'
+import {
+  Button,
+  Text,
+  Title,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
+import { KeyboardArrowRightFilled } from 'lockwright-lib-ui-react-native-components/icons'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import Rive from 'rive-react-native'
 

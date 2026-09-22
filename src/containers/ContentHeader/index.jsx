@@ -7,7 +7,7 @@ import {
   ContextMenu,
   Text,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   ExpandMore,
   FolderCopy,
@@ -15,8 +15,8 @@ import {
   Layers,
   LockFilled,
   SwapVert
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useVault } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useVault } from 'lockwright-lib-vault'
 import { ScrollView, View } from 'react-native'
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg'
 

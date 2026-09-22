@@ -4,12 +4,12 @@ import {
   ListItem,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   LockOutlined,
   PersonAdd,
   LockPerson
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { StyleSheet, View } from 'react-native'
 
 import { VaultActionsMenu } from './VaultActionsMenu'

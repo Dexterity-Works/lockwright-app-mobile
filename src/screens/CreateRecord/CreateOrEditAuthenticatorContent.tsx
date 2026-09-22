@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-utils-validator'
 import {
   RECORD_TYPES,
   matchLoginRecords,
@@ -12,7 +12,7 @@ import {
   useFindOtpDuplicates,
   useRecords,
   validateOtpInput
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-vault'
 import {
   AlertMessage,
   Button,
@@ -20,7 +20,7 @@ import {
   InputField,
   PasswordField,
   rawTokens
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

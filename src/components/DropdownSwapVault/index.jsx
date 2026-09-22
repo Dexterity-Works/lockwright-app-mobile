@@ -6,7 +6,7 @@ import {
   UnfoldMoreOutlined,
   Check,
   LockFilled
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { ActivityIndicator, Animated, FlatList, Text } from 'react-native'
 import { colors } from 'src/utils/colors'
 

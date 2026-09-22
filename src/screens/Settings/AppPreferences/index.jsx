@@ -2,11 +2,12 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
+import * as SecureStore from 'expo-secure-store'
 import {
   AUTO_LOCK_TIMEOUT_OPTIONS,
   CLIPBOARD_CLEAR_TIMEOUT,
   UNSUPPORTED
-} from '@tetherto/pearpass-lib-constants'
+} from 'lockwright-lib-constants'
 import {
   Button,
   Checkbox,
@@ -17,15 +18,14 @@ import {
   ToggleSwitch,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   ExpandMore,
   InfoOutlined,
   Key,
   MoreVert,
   TrashOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import * as SecureStore from 'expo-secure-store'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { AppState, Platform, Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

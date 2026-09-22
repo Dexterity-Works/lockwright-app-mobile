@@ -2,8 +2,8 @@ import { useCallback, useMemo } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useBottomSheetClose } from '@tetherto/pearpass-lib-ui-kit'
-import { RECORD_TYPES, useRecords } from '@tetherto/pearpass-lib-vault'
+import { useBottomSheetClose } from 'lockwright-lib-ui-react-native-components'
+import { RECORD_TYPES, useRecords } from 'lockwright-lib-vault'
 
 import { useCopyToClipboard } from './useCopyToClipboard'
 import { SORT_KEYS } from '../constants/sortOptions'

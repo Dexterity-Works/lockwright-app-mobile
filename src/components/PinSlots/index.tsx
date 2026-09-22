@@ -1,6 +1,6 @@
 import { useEffect, useRef, createRef, type RefObject } from 'react'
 
-import { InputField } from '@tetherto/pearpass-lib-ui-kit'
+import { InputField } from 'lockwright-lib-ui-react-native-components'
 import { View } from 'react-native'
 
 import { styles } from './styles'

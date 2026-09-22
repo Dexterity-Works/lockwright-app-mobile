@@ -1,12 +1,12 @@
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-utils-validator'
 import {
   RECORD_TYPES,
   useCreateRecord,
   useRecords
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-vault'
 import {
   Button,
   InputField,
@@ -15,7 +15,7 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 
@@ -30,7 +30,7 @@ import { logger } from '../../utils/logger'
 import { AttachmentFields } from '../../components/AttachmentFields'
 import { FolderSelectField } from '../../components/FolderSelectField'
 import { adaptRegister } from './CreateOrEditLoginContent'
-import { Add, TrashOutlined } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { Add, TrashOutlined } from 'lockwright-lib-ui-react-native-components/icons'
 
 type CreditCardAttachment = {
   base64?: string

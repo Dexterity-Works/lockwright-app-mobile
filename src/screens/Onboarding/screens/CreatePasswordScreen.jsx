@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { PRIVACY_POLICY } from '@tetherto/pearpass-lib-constants'
+import { PRIVACY_POLICY } from 'lockwright-lib-constants'
 import {
   AlertMessage,
   Button,
@@ -10,8 +10,8 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { KeyboardArrowRightFilled } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { KeyboardArrowRightFilled } from 'lockwright-lib-ui-react-native-components/icons'
 import { Keyboard, Modal, Pressable, StyleSheet, View } from 'react-native'
 
 import { NAVIGATION_ROUTES } from '../../../constants/navigation'

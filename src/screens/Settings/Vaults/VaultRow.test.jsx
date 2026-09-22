@@ -8,7 +8,7 @@ import messages from '../../../locales/en/messages'
 i18n.load('en', messages)
 i18n.activate('en')
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => {
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => {
   const RN = require('react-native')
   return {
     LockOutlined: () => <RN.View testID="icon-lock" />,
@@ -23,7 +23,7 @@ jest.mock('./VaultActionsMenu', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
   return {
     Button: ({ onClick, children }) => (

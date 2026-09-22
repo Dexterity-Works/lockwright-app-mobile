@@ -3,7 +3,7 @@ import {
   ErrorFilled,
   Check,
   ReportProblem
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { ThemeProvider } from 'src/utils/colors'
 
 import { NoticeText } from './index'

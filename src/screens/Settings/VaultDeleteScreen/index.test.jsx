@@ -7,7 +7,7 @@ import {
   useUserData,
   useVault,
   useVaults
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-vault'
 import Toast from 'react-native-toast-message'
 
 import { VaultDeleteScreen } from './index'
@@ -21,7 +21,7 @@ jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({ goBack: jest.fn() })
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const { View, Text: RNText, TextInput, Pressable } = require('react-native')
   return {
     rawTokens: new Proxy({}, { get: () => 0 }),
@@ -65,7 +65,7 @@ jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   broadcastDeleteVault: jest.fn(),
   useCreateVault: jest.fn(),
   useUserData: jest.fn(),
@@ -73,7 +73,7 @@ jest.mock('@tetherto/pearpass-lib-vault', () => ({
   useVaults: jest.fn()
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault/src/utils/buffer', () => ({
+jest.mock('lockwright-lib-vault/src/utils/buffer', () => ({
   stringToBuffer: (s) => s,
   clearBuffer: jest.fn()
 }))

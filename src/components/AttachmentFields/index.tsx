@@ -6,13 +6,13 @@ import {
   Button,
   MultiSlotInput,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { View } from 'react-native'
 import {
   Add,
   TrashOutlined,
   UploadFileFilled
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 
 import { BottomSheetAttachmentActionsContent } from '../../containers/BottomSheetAttachmentActionsContent'
 import { BottomSheetUploadFileContent } from '../../containers/BottomSheetUploadFileContent'

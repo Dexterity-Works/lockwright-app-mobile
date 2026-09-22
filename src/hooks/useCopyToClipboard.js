@@ -1,10 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { CLIPBOARD_CLEAR_TIMEOUT } from '@tetherto/pearpass-lib-constants'
-import { ContentCopy } from '@tetherto/pearpass-lib-ui-kit/icons'
 import * as Clipboard from 'expo-clipboard'
 import * as SecureStore from 'expo-secure-store'
+import { CLIPBOARD_CLEAR_TIMEOUT } from 'lockwright-lib-constants'
+import { ContentCopy } from 'lockwright-lib-ui-react-native-components/icons'
 import Toast from 'react-native-toast-message'
 import { colors } from 'src/utils/colors'
 

@@ -18,7 +18,7 @@ jest.mock('react-native-toast-message', () => ({
   show: jest.fn()
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   ContentPaste: ({ color }) => `ContentPaste-${color}`
 }))
 

@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 
 import { useNavigation } from '@react-navigation/native'
-import {
-  closeAllInstances,
-  useUserData,
-  useVaults
-} from '@tetherto/pearpass-lib-vault'
+import { closeAllInstances, useUserData, useVaults } from 'lockwright-lib-vault'
 import { AppState, Keyboard, Platform } from 'react-native'
 
 import { useRouteHelper } from './useRouteHelper'

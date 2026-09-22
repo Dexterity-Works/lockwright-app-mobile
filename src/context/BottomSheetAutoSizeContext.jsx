@@ -8,7 +8,7 @@ import {
 } from 'react'
 
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
-import { rawTokens, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import { rawTokens, useTheme } from 'lockwright-lib-ui-react-native-components'
 import { Animated, View, useWindowDimensions } from 'react-native'
 
 import { BottomSheetContext } from './BottomSheetContext'

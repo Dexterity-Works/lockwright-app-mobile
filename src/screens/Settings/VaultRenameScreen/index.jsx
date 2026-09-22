@@ -7,8 +7,8 @@ import {
   InputField,
   PasswordField,
   rawTokens
-} from '@tetherto/pearpass-lib-ui-kit'
-import { useVault } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { useVault } from 'lockwright-lib-vault'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

@@ -4,8 +4,8 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Close } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { Close } from 'lockwright-lib-ui-react-native-components/icons'
 import { View } from 'react-native'
 
 const styles = {

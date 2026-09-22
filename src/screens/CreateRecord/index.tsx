@@ -1,5 +1,5 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { RECORD_TYPES } from '@tetherto/pearpass-lib-vault'
+import { RECORD_TYPES } from 'lockwright-lib-vault'
 
 import { CreateOrEditAuthenticatorContent } from './CreateOrEditAuthenticatorContent'
 import { CreateOrEditCreditCardContent } from './CreateOrEditCreditCardContent'

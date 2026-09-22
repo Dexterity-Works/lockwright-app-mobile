@@ -18,11 +18,11 @@ jest.mock('@react-navigation/native', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useVault: () => mockUseVault()
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
   return {
     Button: ({ children, disabled, onClick, testID }) => (

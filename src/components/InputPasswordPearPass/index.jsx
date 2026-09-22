@@ -5,7 +5,7 @@ import {
   EyeFilled,
   EyeOutlined,
   LockFilled
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 
 import {
   AdditionalItems,

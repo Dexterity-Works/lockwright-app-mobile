@@ -8,8 +8,11 @@ import {
   Text,
   Title,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Add, ImportOutlined } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import {
+  Add,
+  ImportOutlined
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { ScrollView, View } from 'react-native'
 
 import { createStyles } from './styles'

@@ -1,7 +1,7 @@
-import { generateAvatarInitials } from '@tetherto/pear-apps-utils-avatar-initials'
-import { rawTokens, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { StarFilled } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useFavicon } from '@tetherto/pearpass-lib-vault'
+import { generateAvatarInitials } from 'lockwright-utils-avatar-initials'
+import { rawTokens, useTheme } from 'lockwright-lib-ui-react-native-components'
+import { StarFilled } from 'lockwright-lib-ui-react-native-components/icons'
+import { useFavicon } from 'lockwright-lib-vault'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import { RECORD_COLOR_BY_TYPE } from '../../constants/recordColorByType'

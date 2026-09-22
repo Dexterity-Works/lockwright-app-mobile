@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { UNSUPPORTED } from '@tetherto/pearpass-lib-constants'
+import { UNSUPPORTED } from 'lockwright-lib-constants'
 import {
   NavbarListItem,
   useBottomSheetClose,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   CheckBox,
   CopyAll,
@@ -15,8 +15,8 @@ import {
   Share,
   StarOutlined,
   TrashOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useCreateRecord, vaultGetFile } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useCreateRecord, vaultGetFile } from 'lockwright-lib-vault'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useRecordActionItems } from '../../hooks/useRecordActionItems'

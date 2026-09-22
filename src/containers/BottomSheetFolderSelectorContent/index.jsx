@@ -7,15 +7,15 @@ import {
   NavbarListItem,
   useBottomSheetClose,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   CreateNewFolder,
   Folder,
   FolderCopy,
   MoreVert,
   StarOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useFolders, useRecordCountsByType } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useFolders, useRecordCountsByType } from 'lockwright-lib-vault'
 import { View, useWindowDimensions } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

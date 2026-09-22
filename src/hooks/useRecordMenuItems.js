@@ -11,8 +11,8 @@ import {
   LockOutlined,
   Note,
   WiFi
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import { RECORD_TYPES } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { RECORD_TYPES } from 'lockwright-lib-vault'
 
 /**
  * @param {{

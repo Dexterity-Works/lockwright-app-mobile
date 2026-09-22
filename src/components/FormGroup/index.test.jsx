@@ -4,7 +4,7 @@ import { ThemeProvider } from 'src/utils/colors'
 
 import { FormGroup } from './index'
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   KeyboardArrowBottom: () => 'KeyboardArrowBottom',
   UnfoldMoreOutlined: () => 'UnfoldMoreOutlined'
 }))

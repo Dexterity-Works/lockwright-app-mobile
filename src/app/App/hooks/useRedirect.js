@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { useUserData } from '@tetherto/pearpass-lib-vault'
+import { useUserData } from 'lockwright-lib-vault'
 
 import { hasOrphanedVaultData } from '../../../utils/hasOrphanedVaultData'
 import { logger } from '../../../utils/logger'

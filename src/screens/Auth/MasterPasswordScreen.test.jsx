@@ -18,7 +18,7 @@ jest.mock('@react-navigation/native', () => ({
   })
 }))
 
-jest.mock('@tetherto/pear-apps-lib-ui-react-hooks', () => ({
+jest.mock('lockwright-lib-ui-react-hooks', () => ({
   useForm: () => ({
     register: () => ({ value: '', onChange: jest.fn(), error: undefined }),
     handleSubmit: (fn) => () => fn({ password: '' }),
@@ -27,7 +27,7 @@ jest.mock('@tetherto/pear-apps-lib-ui-react-hooks', () => ({
   })
 }))
 
-jest.mock('@tetherto/pear-apps-utils-validator', () => ({
+jest.mock('lockwright-utils-validator', () => ({
   Validator: {
     object: () => ({
       validate: () => ({})
@@ -38,7 +38,7 @@ jest.mock('@tetherto/pear-apps-utils-validator', () => ({
   }
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
+jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
 
   return {
@@ -68,11 +68,11 @@ jest.mock('@tetherto/pearpass-lib-ui-kit', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   KeyboardArrowRightFilled: () => null
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useUserData: () => ({
     logIn: jest.fn(),
     refreshMasterPasswordStatus: jest.fn()
@@ -82,7 +82,7 @@ jest.mock('@tetherto/pearpass-lib-vault', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault/src/utils/buffer', () => ({
+jest.mock('lockwright-lib-vault/src/utils/buffer', () => ({
   clearBuffer: jest.fn(),
   stringToBuffer: jest.fn()
 }))

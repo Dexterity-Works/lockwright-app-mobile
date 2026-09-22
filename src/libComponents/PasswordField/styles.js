@@ -1,4 +1,4 @@
-import { PASSWORD_STRENGTH } from '@tetherto/pearpass-utils-password-check'
+import { PASSWORD_STRENGTH } from 'lockwright-utils-password-check'
 import { StyleSheet, Text, View } from 'react-native'
 import { colors } from 'src/utils/colors'
 

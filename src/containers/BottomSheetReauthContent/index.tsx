@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-utils-validator'
 import {
   Button,
   Link,
@@ -11,13 +11,13 @@ import {
   Text,
   useBottomSheetClose,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { KeyboardArrowRightFilled } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useUserData, useVaults } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { KeyboardArrowRightFilled } from 'lockwright-lib-ui-react-native-components/icons'
+import { useUserData, useVaults } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
-} from '@tetherto/pearpass-lib-vault/src/utils/buffer'
+} from 'lockwright-lib-vault/src/utils/buffer'
 import * as SecureStore from 'expo-secure-store'
 import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

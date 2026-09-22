@@ -4,12 +4,8 @@ import { useLingui } from '@lingui/react/macro'
 import {
   Logout,
   AccountCircleOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import {
-  closeAllInstances,
-  useVault,
-  useVaults
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { closeAllInstances, useVault, useVaults } from 'lockwright-lib-vault'
 import { ActivityIndicator } from 'react-native'
 import { colors } from 'src/utils/colors'
 

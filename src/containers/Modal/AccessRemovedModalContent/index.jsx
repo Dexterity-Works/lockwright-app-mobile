@@ -5,7 +5,7 @@ import {
   rawTokens,
   Text,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 
 import { useModal } from '../../../context/ModalContext'

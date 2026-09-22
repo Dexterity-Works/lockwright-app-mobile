@@ -2,25 +2,25 @@ import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
 import {
   AlertMessage,
   Button,
   PageHeader,
   PasswordField,
   rawTokens
-} from '@tetherto/pearpass-lib-ui-kit'
-import { ReportProblem } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useUserData } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { ReportProblem } from 'lockwright-lib-ui-react-native-components/icons'
+import { useUserData } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
-} from '@tetherto/pearpass-lib-vault/src/utils/buffer'
+} from 'lockwright-lib-vault/src/utils/buffer'
 import {
   checkPasswordStrength,
   validatePasswordChange
-} from '@tetherto/pearpass-utils-password-check'
+} from 'lockwright-utils-password-check'
+import { Validator } from 'lockwright-utils-validator'
 import { Keyboard, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { Layout } from 'src/containers/Layout'

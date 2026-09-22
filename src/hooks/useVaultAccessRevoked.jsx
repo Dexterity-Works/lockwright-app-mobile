@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import {
-  useCreateVault,
-  useVault,
-  useVaults
-} from '@tetherto/pearpass-lib-vault'
-import { pearpassVaultClient } from '@tetherto/pearpass-lib-vault/src/instances'
+import { useCreateVault, useVault, useVaults } from 'lockwright-lib-vault'
+import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 import Toast from 'react-native-toast-message'
 
 import { useVaultSwitch } from './useVaultSwitch'

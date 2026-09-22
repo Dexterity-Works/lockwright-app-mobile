@@ -19,15 +19,15 @@ jest.mock('@react-navigation/native', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useVault: () => mockUseVault()
 }))
 
-jest.mock('@tetherto/pearpass-utils-password-check', () => ({
+jest.mock('lockwright-utils-password-check', () => ({
   validatePasswordChange: (...args) => mockValidatePasswordChange(...args)
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   ArrowBackOutined: (props) => {
     const { View } = require('react-native')
     return <View {...props} testID="back-icon" />

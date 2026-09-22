@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-native'
-import { getCanonicalRecord } from '@tetherto/pearpass-lib-vault'
+import { getCanonicalRecord } from 'lockwright-lib-vault'
 import { AppState } from 'react-native'
 import { useSelector } from 'react-redux'
 
@@ -13,7 +13,7 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn()
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useCreateRecord: jest.fn(() => ({
     createRecord: jest.fn()
   })),
@@ -23,7 +23,7 @@ jest.mock('@tetherto/pearpass-lib-vault', () => ({
   getCanonicalRecord: jest.fn()
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault/src/instances', () => ({
+jest.mock('lockwright-lib-vault/src/instances', () => ({
   pearpassVaultClient: {
     activeVaultGet: jest.fn(),
     readJobQueue: jest.fn(),
@@ -31,7 +31,7 @@ jest.mock('@tetherto/pearpass-lib-vault/src/instances', () => ({
   }
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault/src/selectors/selectVault', () => ({
+jest.mock('lockwright-lib-vault/src/selectors/selectVault', () => ({
   selectVault: jest.fn()
 }))
 

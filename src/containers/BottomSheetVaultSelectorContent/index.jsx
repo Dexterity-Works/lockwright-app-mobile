@@ -7,15 +7,15 @@ import {
   ListItem,
   useBottomSheetClose,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   Add,
   LockFilled,
   LockPerson,
   MoreVert,
   PersonAdd
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useVault, useVaults } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useVault, useVaults } from 'lockwright-lib-vault'
 import { View, useWindowDimensions } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

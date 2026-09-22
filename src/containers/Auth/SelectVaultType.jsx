@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useVault, useVaults } from '@tetherto/pearpass-lib-vault'
+import { useVault, useVaults } from 'lockwright-lib-vault'
 import { View, ScrollView, Text, StyleSheet } from 'react-native'
 import { colors } from 'src/utils/colors'
 

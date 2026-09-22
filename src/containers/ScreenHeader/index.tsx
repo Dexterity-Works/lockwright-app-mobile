@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useTheme, rawTokens } from '@tetherto/pearpass-lib-ui-kit'
+import { useTheme, rawTokens } from 'lockwright-lib-ui-react-native-components'
 
 type ScreenHeaderProps = {
   leftSlot?: ReactNode

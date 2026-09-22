@@ -1,4 +1,8 @@
-import { Form, PasswordField, rawTokens } from '@tetherto/pearpass-lib-ui-kit'
+import {
+  Form,
+  PasswordField,
+  rawTokens
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet } from 'react-native'
 
 export const ConfirmablePasswordFields = ({

@@ -1,6 +1,11 @@
 import { useCallback, useRef, useState } from 'react'
 
-import { Text, Title, rawTokens, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import {
+  Text,
+  Title,
+  rawTokens,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
 import {
   KeyboardAvoidingView,
   Platform,

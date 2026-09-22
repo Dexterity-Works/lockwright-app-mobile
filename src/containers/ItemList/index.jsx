@@ -7,12 +7,12 @@ import {
   ListItem,
   Text,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   ErrorFilled,
   ExpandMore,
   StarFilled
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { Pressable, SectionList, View } from 'react-native'
 
 import { createStyles } from './styles'

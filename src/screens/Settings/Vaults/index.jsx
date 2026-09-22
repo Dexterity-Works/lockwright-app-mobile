@@ -8,9 +8,9 @@ import {
   rawTokens,
   useTheme,
   Text
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Add } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useVault, useVaults } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { Add } from 'lockwright-lib-ui-react-native-components/icons'
+import { useVault, useVaults } from 'lockwright-lib-vault'
 import { StyleSheet, View } from 'react-native'
 import { Layout } from 'src/containers/Layout'
 import { BackScreenHeader } from 'src/containers/ScreenHeader/BackScreenHeader'

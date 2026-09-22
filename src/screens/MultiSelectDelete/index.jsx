@@ -2,8 +2,13 @@ import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { Button, ListItem, Text, useTheme } from '@tetherto/pearpass-lib-ui-kit'
-import { useRecords } from '@tetherto/pearpass-lib-vault'
+import {
+  Button,
+  ListItem,
+  Text,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
+import { useRecords } from 'lockwright-lib-vault'
 import { ScrollView, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

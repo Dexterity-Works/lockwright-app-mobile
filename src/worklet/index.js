@@ -1,6 +1,6 @@
 /* global __DEV__ */
-import { PearpassVaultClient } from '@tetherto/pearpass-lib-vault-core'
 import * as FileSystem from 'expo-file-system'
+import { PearpassVaultClient } from 'lockwright-lib-vault-core'
 import { Platform } from 'react-native'
 import { Worklet } from 'react-native-bare-kit'
 

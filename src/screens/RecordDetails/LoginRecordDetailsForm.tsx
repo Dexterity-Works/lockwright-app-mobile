@@ -2,8 +2,8 @@ import { useEffect, useMemo } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { isBefore, subtractDateUnits } from '@tetherto/pear-apps-utils-date'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { isBefore, subtractDateUnits } from 'lockwright-utils-date'
 import {
   AlertMessage,
   AttachmentField,
@@ -14,8 +14,8 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { OpenInNew } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { OpenInNew } from 'lockwright-lib-ui-react-native-components/icons'
 import { Linking, StyleSheet, View } from 'react-native'
 
 import { OtpCodeField } from '../../components/OtpCodeField'

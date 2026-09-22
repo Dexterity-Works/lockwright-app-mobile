@@ -2,8 +2,8 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import * as SecureStore from 'expo-secure-store'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
 import {
   AlertMessage,
   Button,
@@ -13,14 +13,14 @@ import {
   Title,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { KeyboardArrowRightFilled } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useUserData, useVaults } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { KeyboardArrowRightFilled } from 'lockwright-lib-ui-react-native-components/icons'
+import { useUserData, useVaults } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
-} from '@tetherto/pearpass-lib-vault/src/utils/buffer'
-import * as SecureStore from 'expo-secure-store'
+} from 'lockwright-lib-vault/src/utils/buffer'
+import { Validator } from 'lockwright-utils-validator'
 import {
   KeyboardAvoidingView,
   Platform,

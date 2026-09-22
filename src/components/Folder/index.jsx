@@ -1,5 +1,8 @@
 import { useLingui } from '@lingui/react/macro'
-import { Check, MoreVert } from '@tetherto/pearpass-lib-ui-kit/icons'
+import {
+  Check,
+  MoreVert
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { colors } from 'src/utils/colors'
 
 import {

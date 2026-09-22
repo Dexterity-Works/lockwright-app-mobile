@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { useCountDown } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { generateQRCodeSVG } from '@tetherto/pear-apps-utils-qr'
-import { ContentCopy, WatchLater } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useInvite } from '@tetherto/pearpass-lib-vault'
+import { useCountDown } from 'lockwright-lib-ui-react-hooks'
+import {
+  ContentCopy,
+  WatchLater
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useInvite } from 'lockwright-lib-vault'
+import { generateQRCodeSVG } from 'lockwright-utils-qr'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 import { colors } from 'src/utils/colors'

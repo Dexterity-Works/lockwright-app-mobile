@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react-native'
 
 import { ListItem } from './index'
 
-jest.mock('@tetherto/pear-apps-utils-date', () => ({
+jest.mock('lockwright-utils-date', () => ({
   formatDate: jest.fn().mockReturnValue('01/01/2023')
 }))
 
@@ -36,7 +36,7 @@ jest.mock('./styles', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   PaletteOutlined: () => 'PaletteOutlined',
   Check: () => 'Check',
   TrashOutlined: () => 'TrashOutlined',

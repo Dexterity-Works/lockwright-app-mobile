@@ -1,5 +1,5 @@
-import { deriveUrisFromWebsites } from '@tetherto/pearpass-lib-vault'
 import * as FileSystem from 'expo-file-system'
+import { deriveUrisFromWebsites } from 'lockwright-lib-vault'
 
 import { logger } from '../../utils/logger'
 import { getAttachmentsFolderPath } from '../JobFileReader'

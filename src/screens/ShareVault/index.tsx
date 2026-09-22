@@ -7,9 +7,9 @@ import {
   useTheme,
   rawTokens,
   Text
-} from '@tetherto/pearpass-lib-ui-kit'
-import { ContentCopy } from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useVault } from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-ui-react-native-components'
+import { ContentCopy } from 'lockwright-lib-ui-react-native-components/icons'
+import { useVault } from 'lockwright-lib-vault'
 import { Modal, Pressable, StyleSheet, View } from 'react-native'
 import Animated, {
   Easing,

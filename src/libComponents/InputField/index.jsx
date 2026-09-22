@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 
-import { ErrorFilled } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { ErrorFilled } from 'lockwright-lib-ui-react-native-components/icons'
 import {
   Platform,
   StyleSheet,

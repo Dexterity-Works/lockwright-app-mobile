@@ -1,4 +1,4 @@
-import { ContentCopy } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { ContentCopy } from 'lockwright-lib-ui-react-native-components/icons'
 import { TouchableOpacity } from 'react-native'
 import { colors } from 'src/utils/colors'
 

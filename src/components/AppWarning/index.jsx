@@ -1,4 +1,4 @@
-import { ReportProblem } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { ReportProblem } from 'lockwright-lib-ui-react-native-components/icons'
 import { View, Text, StyleSheet } from 'react-native'
 import { colors } from 'src/utils/colors'
 

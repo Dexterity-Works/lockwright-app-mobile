@@ -4,9 +4,9 @@ import {
   getCanonicalRecord,
   useCreateRecord,
   useRecords
-} from '@tetherto/pearpass-lib-vault'
-import { pearpassVaultClient } from '@tetherto/pearpass-lib-vault/src/instances'
-import { selectVault } from '@tetherto/pearpass-lib-vault/src/selectors/selectVault'
+} from 'lockwright-lib-vault'
+import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
+import { selectVault } from 'lockwright-lib-vault/src/selectors/selectVault'
 import { AppState } from 'react-native'
 import { useSelector } from 'react-redux'
 

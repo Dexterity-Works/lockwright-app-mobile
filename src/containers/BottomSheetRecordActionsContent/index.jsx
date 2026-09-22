@@ -5,7 +5,7 @@ import {
   NavbarListItem,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   ContentCopy,
   DriveFileMoveOutlined,
@@ -14,7 +14,7 @@ import {
   StarBorder,
   StarFilled,
   TrashOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

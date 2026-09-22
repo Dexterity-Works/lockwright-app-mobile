@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 import { colors } from 'src/utils/colors'
-import { useTimerAnimation } from '@tetherto/pearpass-lib-vault'
+import { useTimerAnimation } from 'lockwright-lib-vault'
 import { View } from 'react-native'
 import Animated, {
   Easing,

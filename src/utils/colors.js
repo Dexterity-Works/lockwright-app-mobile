@@ -1,6 +1,6 @@
 /**
  * V1 color palette, inlined locally to drop the
- * `@tetherto/pearpass-lib-ui-theme-provider` dependency (which transitively
+ * `lockwright-lib-ui-theme-provider` dependency (which transitively
  * pulled in `styled-components`). Each entry has `mode1` plus optional
  * `option1`, `dark`, `white` slots — same shape consumers expect.
  */

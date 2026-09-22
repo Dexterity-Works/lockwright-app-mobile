@@ -2,8 +2,7 @@ import { useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
 import {
   AlertMessage,
   Button,
@@ -12,18 +11,19 @@ import {
   rawTokens,
   Text,
   ToggleSwitch
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   broadcastDeleteVault,
   useCreateVault,
   useUserData,
   useVault,
   useVaults
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
-} from '@tetherto/pearpass-lib-vault/src/utils/buffer'
+} from 'lockwright-lib-vault/src/utils/buffer'
+import { Validator } from 'lockwright-utils-validator'
 import { Keyboard, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

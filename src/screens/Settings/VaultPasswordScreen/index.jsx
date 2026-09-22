@@ -5,9 +5,9 @@ import { useNavigation } from '@react-navigation/native'
 import {
   ArrowBackOutined,
   EyeOutlined
-} from '@tetherto/pearpass-lib-ui-kit/icons'
-import { useVault } from '@tetherto/pearpass-lib-vault'
-import { validatePasswordChange } from '@tetherto/pearpass-utils-password-check'
+} from 'lockwright-lib-ui-react-native-components/icons'
+import { useVault } from 'lockwright-lib-vault'
+import { validatePasswordChange } from 'lockwright-utils-password-check'
 import {
   Keyboard,
   KeyboardAvoidingView,

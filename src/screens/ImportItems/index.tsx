@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-utils-validator'
 import {
   MAX_IMPORT_RECORDS,
   PEARPASS_WEBSITE
-} from '@tetherto/pearpass-lib-constants'
+} from 'lockwright-lib-constants'
 import {
   decryptBitwardenJson,
   decryptKeePassKdbx,
@@ -16,7 +16,7 @@ import {
   parseNordPassData,
   parsePearPassData,
   parseProtonPassData
-} from '@tetherto/pearpass-lib-data-import'
+} from 'lockwright-lib-data-import'
 import {
   AlertMessage,
   Button,
@@ -29,17 +29,17 @@ import {
   UploadedFile,
   UploadField,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import {
   KeyboardArrowLeftOutlined,
   KeyboardArrowRightOutlined,
   UploadFileFilled
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import {
   decryptExportData,
   useCreateRecord
-} from '@tetherto/pearpass-lib-vault'
-import { pearpassVaultClient } from '@tetherto/pearpass-lib-vault/src/instances'
+} from 'lockwright-lib-vault'
+import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 import { useCallback, useState } from 'react'
 import { ActivityIndicator, Linking, Pressable, View } from 'react-native'
 import Toast from 'react-native-toast-message'

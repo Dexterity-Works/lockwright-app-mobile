@@ -1,4 +1,4 @@
-declare module '@tetherto/pearpass-lib-vault' {
+declare module 'lockwright-lib-vault' {
   import type * as React from 'react'
 
   // ─── Constants ────────────────────────────────────────────────────────────

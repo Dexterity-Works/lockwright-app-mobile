@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { useNavigation } from '@react-navigation/native'
-import { useVault, useVaults } from '@tetherto/pearpass-lib-vault'
+import { useVault, useVaults } from 'lockwright-lib-vault'
 
 import { NAVIGATION_ROUTES } from '../../../constants/navigation'
 import {

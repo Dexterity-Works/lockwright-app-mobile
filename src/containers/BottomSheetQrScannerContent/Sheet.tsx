@@ -7,7 +7,7 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { Dimensions, Keyboard, StyleSheet, View } from 'react-native'
 import { Camera } from 'react-native-vision-camera'
 

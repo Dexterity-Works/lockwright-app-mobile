@@ -3,8 +3,11 @@ import {
   NavbarListItem,
   useBottomSheetClose,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
-import { CalendarToday, SortByAlpha } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import {
+  CalendarToday,
+  SortByAlpha
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { SORT_KEYS } from '../../constants/sortOptions'

@@ -9,7 +9,7 @@ import messages from '../../locales/en/messages'
 i18n.load('en', messages)
 i18n.activate('en')
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => {
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => {
   const { Text } = require('react-native')
   return {
     ButtonLittle: (props) => (

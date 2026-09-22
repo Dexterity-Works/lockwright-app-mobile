@@ -19,7 +19,7 @@ jest.mock('@react-navigation/native', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useInvite: () => ({
     createInvite: mockCreateInvite,
     deleteInvite: mockDeleteInvite,
@@ -29,15 +29,15 @@ jest.mock('@tetherto/pearpass-lib-vault', () => ({
   })
 }))
 
-jest.mock('@tetherto/pear-apps-lib-ui-react-hooks', () => ({
+jest.mock('lockwright-lib-ui-react-hooks', () => ({
   useCountDown: jest.fn(() => '0:24')
 }))
 
-jest.mock('@tetherto/pear-apps-utils-qr', () => ({
+jest.mock('lockwright-utils-qr', () => ({
   generateQRCodeSVG: jest.fn(() => Promise.resolve('<svg />'))
 }))
 
-jest.mock('@tetherto/pearpass-lib-ui-kit/icons', () => ({
+jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   KeyboardArrowBottom: (props) => {
     const { View } = require('react-native')
     return <View {...props} testID="arrow-down-icon" />

@@ -1,14 +1,14 @@
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { PEARPASS_WEBSITE } from '@tetherto/pearpass-lib-constants'
+import { PEARPASS_WEBSITE } from 'lockwright-lib-constants'
 import {
   Button,
   PageHeader,
   rawTokens,
   useTheme,
   Text
-} from '@tetherto/pearpass-lib-ui-kit'
-import { Send } from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components'
+import { Send } from 'lockwright-lib-ui-react-native-components/icons'
 import { Linking, StyleSheet, View } from 'react-native'
 import { Layout } from 'src/containers/Layout'
 import { BackScreenHeader } from 'src/containers/ScreenHeader/BackScreenHeader'

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Constants from 'expo-constants'
 import {
   GITHUB_LATEST_RELEASE_URLS,
   VERSION_CHECK_CONFIG
-} from '@tetherto/pearpass-lib-constants'
-import Constants from 'expo-constants'
+} from 'lockwright-lib-constants'
 import { Platform } from 'react-native'
 
 import { isFdroid } from '../constants/distribution'

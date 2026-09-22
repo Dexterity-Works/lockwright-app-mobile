@@ -16,7 +16,7 @@ const mockCreateVault = jest.fn()
 const mockAddDevice = jest.fn()
 const mockClearBuffer = jest.fn()
 
-jest.mock('@tetherto/pear-apps-lib-ui-react-hooks', () => {
+jest.mock('lockwright-lib-ui-react-hooks', () => {
   const React = require('react')
 
   return {
@@ -68,7 +68,7 @@ jest.mock('@tetherto/pear-apps-lib-ui-react-hooks', () => {
   }
 })
 
-jest.mock('@tetherto/pear-apps-utils-validator', () => ({
+jest.mock('lockwright-utils-validator', () => ({
   Validator: {
     string: () => {
       const validator = {
@@ -95,7 +95,7 @@ jest.mock('@tetherto/pear-apps-utils-validator', () => ({
   }
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => ({
+jest.mock('lockwright-lib-vault', () => ({
   useCreateVault: () => ({
     createVault: mockCreateVault
   }),
@@ -112,7 +112,7 @@ jest.mock('@tetherto/pearpass-lib-vault', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault/src/utils/buffer', () => ({
+jest.mock('lockwright-lib-vault/src/utils/buffer', () => ({
   clearBuffer: (...args) => mockClearBuffer(...args),
   stringToBuffer: (value) => `buffer:${value}`
 }))

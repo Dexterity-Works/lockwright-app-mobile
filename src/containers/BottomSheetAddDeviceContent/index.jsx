@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro'
 import {
   KeyboardArrowLeftOutlined,
   ReportProblem
-} from '@tetherto/pearpass-lib-ui-kit/icons'
+} from 'lockwright-lib-ui-react-native-components/icons'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { colors } from 'src/utils/colors'
 

@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { act, renderHook } from '@testing-library/react-native'
-import { RECORD_TYPES } from '@tetherto/pearpass-lib-vault'
+import { RECORD_TYPES } from 'lockwright-lib-vault'
 
 import { useRecordActionItems } from './useRecordActionItems'
 import messages from '../locales/en/messages'
@@ -23,7 +23,7 @@ jest.mock('@react-navigation/native', () => ({
   })
 }))
 
-jest.mock('@tetherto/pearpass-lib-vault', () => {
+jest.mock('lockwright-lib-vault', () => {
   const deleteRecordsMock = jest.fn(() => Promise.resolve())
 
   return {
@@ -45,7 +45,7 @@ jest.mock('@tetherto/pearpass-lib-vault', () => {
   }
 })
 
-jest.mock('@tetherto/pearpass-lib-ui-kit', () => ({
+jest.mock('lockwright-lib-ui-react-native-components', () => ({
   useBottomSheetClose: () => jest.fn()
 }))
 

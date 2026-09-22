@@ -1,6 +1,10 @@
 import { useLingui } from '@lingui/react/macro'
-import { APP_STORE_URL, PLAY_STORE_URL } from '@tetherto/pearpass-lib-constants'
-import { Button, rawTokens, useTheme } from '@tetherto/pearpass-lib-ui-kit'
+import { APP_STORE_URL, PLAY_STORE_URL } from 'lockwright-lib-constants'
+import {
+  Button,
+  rawTokens,
+  useTheme
+} from 'lockwright-lib-ui-react-native-components'
 import { Linking, Platform, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 

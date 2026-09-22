@@ -1,13 +1,13 @@
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { useForm } from '@tetherto/pear-apps-lib-ui-react-hooks'
-import { Validator } from '@tetherto/pear-apps-utils-validator'
-import { VALID_WORD_COUNTS } from '@tetherto/pearpass-lib-constants'
+import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-utils-validator'
+import { VALID_WORD_COUNTS } from 'lockwright-lib-constants'
 import {
   RECORD_TYPES,
   useCreateRecord,
   useRecords
-} from '@tetherto/pearpass-lib-vault'
+} from 'lockwright-lib-vault'
 import {
   Button,
   InputField,
@@ -16,7 +16,7 @@ import {
   Text,
   rawTokens,
   useTheme
-} from '@tetherto/pearpass-lib-ui-kit'
+} from 'lockwright-lib-ui-react-native-components'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 
@@ -30,7 +30,7 @@ import { useGetMultipleFiles } from '../../hooks/useGetMultipleFiles'
 import { convertBase64FilesToUint8 } from '../../utils/convertBase64FilesToUint8'
 import { getRecordAttachments } from '../../utils/getRecordAttachments'
 import { logger } from '../../utils/logger'
-import { Add, TrashOutlined } from '@tetherto/pearpass-lib-ui-kit/icons'
+import { Add, TrashOutlined } from 'lockwright-lib-ui-react-native-components/icons'
 
 type PassphraseAttachment = {
   base64?: string
