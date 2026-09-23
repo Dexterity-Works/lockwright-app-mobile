@@ -38,7 +38,10 @@ import { URI_MATCH_TYPES, type UriMatchType } from '../../utils/uriMatch/constan
 import { buildLoginUris, websiteRowsFromRecord } from '../../utils/uriMatch'
 import { OtpSecretScanButton } from './OtpSecretScanButton'
 import { WebsiteUriMatchField } from './WebsiteUriMatchField'
-import { resolveHistoryContext } from '../../utils/passwordGeneratorHistoryContext'
+import {
+  historyUses,
+  markHistoryUsed
+} from '../../utils/passwordGeneratorHistory'
 
 type LoginAttachment = {
   base64?: string
@@ -90,7 +93,9 @@ type CreatePasswordItemNavigation = {
     screen: 'CreatePasswordItem',
     params: {
       onPasswordInsert: (value: string) => void
-      historyContext?: { contextLabel: string; contextKind: 'site' | 'entry' } | null
+      historyContext?: {
+        uses?: Array<{ contextLabel: string; contextKind: 'site' | 'entry' }>
+      } | null
     }
   ) => void
   goBack: () => void
@@ -250,6 +255,14 @@ export const CreateOrEditLoginContent = ({
       }
     }
 
+    const uses = historyUses({
+      title: values.title,
+      websiteUrl: websiteRows[0]?.website
+    })
+    if (values.password && uses.length) {
+      void markHistoryUsed(values.password, { uses, onlyExisting: true })
+    }
+
     try {
       setIsLoading(true)
 
@@ -284,10 +297,12 @@ export const CreateOrEditLoginContent = ({
     Keyboard.dismiss()
     navigation.navigate('CreatePasswordItem', {
       onPasswordInsert: (value: string) => setValue('password', value),
-      historyContext: resolveHistoryContext({
-        title: values.title,
-        websiteUrl: websitesList?.[0]?.website
-      })
+      historyContext: {
+        uses: historyUses({
+          title: values.title,
+          websiteUrl: websitesList?.[0]?.website
+        })
+      }
     })
   }
 

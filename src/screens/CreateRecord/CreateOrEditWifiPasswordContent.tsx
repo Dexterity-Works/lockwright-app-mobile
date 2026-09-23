@@ -30,7 +30,10 @@ import { convertBase64FilesToUint8 } from '../../utils/convertBase64FilesToUint8
 import { getRecordAttachments } from '../../utils/getRecordAttachments'
 import { logger } from '../../utils/logger'
 import { getPasswordIndicatorVariant } from '../../utils/passwordPolicy'
-import { resolveHistoryContext } from '../../utils/passwordGeneratorHistoryContext'
+import {
+  historyUses,
+  markHistoryUsed
+} from '../../utils/passwordGeneratorHistory'
 
 type WifiAttachment = {
   base64?: string
@@ -65,7 +68,9 @@ type CreatePasswordItemNavigation = {
     screen: 'CreatePasswordItem',
     params: {
       onPasswordInsert: (value: string) => void
-      historyContext?: { contextLabel: string; contextKind: 'site' | 'entry' } | null
+      historyContext?: {
+        uses?: Array<{ contextLabel: string; contextKind: 'site' | 'entry' }>
+      } | null
     }
   ) => void
   goBack: () => void
@@ -165,6 +170,11 @@ export const CreateOrEditWifiPasswordContent = ({
       }
     }
 
+    const uses = historyUses({ title: formValues.title })
+    if (formValues.password && uses.length) {
+      void markHistoryUsed(formValues.password, { uses, onlyExisting: true })
+    }
+
     try {
       setIsLoading(true)
 
@@ -207,7 +217,7 @@ export const CreateOrEditWifiPasswordContent = ({
     Keyboard.dismiss()
     navigation.navigate('CreatePasswordItem', {
       onPasswordInsert: (value: string) => setValue('password', value),
-      historyContext: resolveHistoryContext({ title: values.title })
+      historyContext: { uses: historyUses({ title: values.title }) }
     })
   }
 

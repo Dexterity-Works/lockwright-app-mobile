@@ -11,10 +11,18 @@ import { generateUniqueId } from 'lockwright-utils-generate-unique-id'
  * Key: `app/password-generator-history`
  * Document: `{ entries: HistoryEntry[] }` (newest first)
  *
+ * Entry shape:
+ * `{ id, value, createdAt, contextLabel?, contextKind?: 'site'|'entry', usedAt?, uses? }`
+ * `uses` is every distinct site or entry this value was used for.
+ * `contextLabel` stays the latest use so older readers still show one label.
+ *
  * Contract:
  * - `appendHistory(value)` — unlabeled generate events (no context).
- * - `markHistoryUsed(value, { contextLabel, contextKind })` — stamp on USE only
- *   (fill/insert into a field or site), not bare Copy from the Generator page.
+ * - `markHistoryUsed(value, { contextLabel, contextKind } | { uses, onlyExisting? })`
+ *   — stamp on USE (fill/insert) or on save of a record that already contains
+ *   this generated value. Not bare Copy from the Generator page.
+ *   Finds the newest entry with the same value (creates one if missing, unless
+ *   `onlyExisting`), appends each distinct label, caps entries at 500.
  */
 export const PASSWORD_GENERATOR_HISTORY_KEY = 'app/password-generator-history'
 export const PASSWORD_GENERATOR_HISTORY_MAX = 500
@@ -59,15 +67,110 @@ export const appendHistory = async (value) => {
   return next
 }
 
+const asUse = (use) => {
+  const contextLabel =
+    typeof use?.contextLabel === 'string' ? use.contextLabel.trim() : ''
+  const contextKind = use?.contextKind
+  if (!contextLabel || (contextKind !== 'site' && contextKind !== 'entry')) {
+    return null
+  }
+  return { contextLabel, contextKind }
+}
+
+const incomingUses = (context) => {
+  if (Array.isArray(context?.uses)) {
+    return context.uses.map(asUse).filter(Boolean)
+  }
+  const one = asUse(context)
+  return one ? [one] : []
+}
+
+const priorUses = (entry) => {
+  if (Array.isArray(entry?.uses) && entry.uses.length) {
+    return entry.uses.map(asUse).filter(Boolean)
+  }
+  const legacy = asUse(entry)
+  return legacy ? [legacy] : []
+}
+
+const hostnameFromUrl = (url) => {
+  if (typeof url !== 'string' || !url.trim()) return ''
+  const trimmed = url.trim()
+  const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`
+  try {
+    return new URL(withScheme).hostname || ''
+  } catch {
+    return ''
+  }
+}
+
+export const historyUses = ({ title, websiteUrl } = {}) => {
+  const uses = []
+  const hostname = hostnameFromUrl(websiteUrl)
+  if (hostname) {
+    uses.push({ contextLabel: hostname, contextKind: 'site' })
+  }
+  const label = typeof title === 'string' ? title.trim() : ''
+  if (label && label !== hostname) {
+    uses.push({ contextLabel: label, contextKind: 'entry' })
+  }
+  return uses
+}
+
+export const historyUseLabels = (entry) => {
+  if (Array.isArray(entry?.uses) && entry.uses.length) {
+    return entry.uses
+      .map((use) =>
+        typeof use?.contextLabel === 'string' ? use.contextLabel : ''
+      )
+      .filter(Boolean)
+  }
+  return typeof entry?.contextLabel === 'string' && entry.contextLabel
+    ? [entry.contextLabel]
+    : []
+}
+
+// ponytail: distinct labels only, cap 20. Drop oldest when a reused password is tagged past that.
+const USES_MAX = 20
+
+const mergeUses = (prior, incoming, usedAt) => {
+  let next = prior.map((use) => ({ ...use }))
+  for (const use of incoming) {
+    const index = next.findIndex(
+      (item) =>
+        item.contextKind === use.contextKind &&
+        item.contextLabel === use.contextLabel
+    )
+    const stamped = { ...use, usedAt }
+    if (index === -1) {
+      next = [...next, stamped].slice(-USES_MAX)
+    } else {
+      next = next.map((item, i) => (i === index ? stamped : item))
+    }
+  }
+  return next
+}
+
+const stampEntry = (entry, uses, usedAt) => {
+  const latest = uses[uses.length - 1]
+  return {
+    ...entry,
+    contextLabel: latest.contextLabel,
+    contextKind: latest.contextKind,
+    usedAt,
+    uses
+  }
+}
+
 export const markHistoryUsed = async (value, context = {}) => {
   if (typeof value !== 'string' || !value) {
     return loadHistory()
   }
 
-  const contextLabel =
-    typeof context.contextLabel === 'string' ? context.contextLabel.trim() : ''
-  const contextKind = context.contextKind
-  if (!contextLabel || (contextKind !== 'site' && contextKind !== 'entry')) {
+  const uses = incomingUses(context)
+  if (!uses.length) {
     return loadHistory()
   }
 
@@ -77,21 +180,25 @@ export const markHistoryUsed = async (value, context = {}) => {
 
   let next
   if (matchIndex === -1) {
+    if (context.onlyExisting) {
+      return current
+    }
     next = [
-      {
-        id: generateUniqueId(),
-        value,
-        createdAt: usedAt,
-        contextLabel,
-        contextKind,
+      stampEntry(
+        {
+          id: generateUniqueId(),
+          value,
+          createdAt: usedAt
+        },
+        mergeUses([], uses, usedAt),
         usedAt
-      },
+      ),
       ...current
     ].slice(0, PASSWORD_GENERATOR_HISTORY_MAX)
   } else {
     next = current.map((entry, index) =>
       index === matchIndex
-        ? { ...entry, contextLabel, contextKind, usedAt }
+        ? stampEntry(entry, mergeUses(priorUses(entry), uses, usedAt), usedAt)
         : entry
     )
   }

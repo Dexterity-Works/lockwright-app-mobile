@@ -33,6 +33,7 @@ import { Layout } from 'src/containers/Layout'
 import {
   appendHistory,
   clearHistory,
+  historyUseLabels,
   loadHistory,
   markHistoryUsed
 } from '../../utils/passwordGeneratorHistory'
@@ -73,6 +74,11 @@ type PassphraseRules = {
   words: number
 }
 
+type HistoryUse = {
+  contextLabel: string
+  contextKind: 'site' | 'entry'
+}
+
 type HistoryEntry = {
   id: string
   value: string
@@ -80,11 +86,13 @@ type HistoryEntry = {
   contextLabel?: string
   contextKind?: 'site' | 'entry'
   usedAt?: number
+  uses?: HistoryUse[]
 }
 
 type HistoryContext = {
-  contextLabel: string
-  contextKind: 'site' | 'entry'
+  contextLabel?: string
+  contextKind?: 'site' | 'entry'
+  uses?: HistoryUse[]
 }
 
 const HISTORY_DISPLAY_LIMIT = 20
@@ -315,8 +323,13 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
 
   const handlePrimaryAction = () => {
     if (onPasswordInsert) {
-      if (historyContext?.contextLabel) {
-        void markHistoryUsed(generatedValue, historyContext)
+      if (historyContext?.uses?.length) {
+        void markHistoryUsed(generatedValue, { uses: historyContext.uses })
+      } else if (historyContext?.contextLabel && historyContext.contextKind) {
+        void markHistoryUsed(generatedValue, {
+          contextLabel: historyContext.contextLabel,
+          contextKind: historyContext.contextKind
+        })
       }
       onPasswordInsert(generatedValue)
       navigation.goBack()
@@ -647,14 +660,15 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
                 <Text variant="caption" color={theme.colors.colorTextTertiary}>
                   {formatHistoryCreatedAt(entry.createdAt)}
                 </Text>
-                {entry.contextLabel ? (
+                {historyUseLabels(entry).map((label, labelIndex) => (
                   <Text
+                    key={`${entry.id}-${labelIndex}`}
                     variant="caption"
                     color={theme.colors.colorTextTertiary}
                   >
-                    {entry.contextLabel}
+                    {label}
                   </Text>
-                ) : null}
+                ))}
               </View>
               <Button
                 variant="tertiary"
