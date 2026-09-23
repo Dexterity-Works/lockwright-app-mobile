@@ -9,6 +9,18 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.28] - 2026-09-24
+
+`BUMP_SHA`
+
+### Changed
+
+- Play versionCode 18.
+
+### Fixed
+
+- Generator history shows each site and entry a generated password was used for.
+
 ## [0.0.27] - 2026-09-22
 
 `d70e254eeab8cb114ca335938635a452047a8975`
@@ -140,7 +152,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - A locked initialized vault counts as set up. Unlock-to-fill setup no longer loops.
 
-[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/d70e254eeab8cb114ca335938635a452047a8975...HEAD
+[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/BUMP_SHA...HEAD
+[0.0.28]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/d70e254eeab8cb114ca335938635a452047a8975...BUMP_SHA
 [0.0.27]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/ec25ef988a7947ac468e58726b18eb0e70073196...d70e254eeab8cb114ca335938635a452047a8975
 [0.0.26]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/4e7c54e87feea739d4d360e35f6a9dbfc80e32da...ec25ef988a7947ac468e58726b18eb0e70073196
 [0.0.25]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/4b889ab19581cd1c1393e5bbf0fdcf1cec0ad7a4...4e7c54e87feea739d4d360e35f6a9dbfc80e32da
