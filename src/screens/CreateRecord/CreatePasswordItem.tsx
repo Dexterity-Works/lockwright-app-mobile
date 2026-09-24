@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useRecords } from 'lockwright-lib-vault'
 import { formatDate } from 'lockwright-utils-date'
 import {
@@ -199,6 +199,34 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
   })
   const [history, setHistory] = useState<HistoryEntry[]>([])
   const { data: records } = useRecords({ shouldSkip: true })
+  // A read that started before or during a write is stale. Only the latest write lands.
+  const historyWrites = useRef({ started: 0, settled: 0 })
+
+  const writeHistory = useCallback((write: () => Promise<unknown>) => {
+    const seq = ++historyWrites.current.started
+    const land = (entries: unknown) => {
+      if (seq === historyWrites.current.started) {
+        setHistory(entries as HistoryEntry[])
+      }
+    }
+    void write()
+      .then(land, () => loadHistory().then(land))
+      .finally(() => {
+        historyWrites.current.settled++
+      })
+  }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      const { started, settled } = historyWrites.current
+      if (started !== settled) return
+      void loadHistory().then((entries) => {
+        if (historyWrites.current.started === started) {
+          setHistory(entries as HistoryEntry[])
+        }
+      })
+    }, [])
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -238,16 +266,10 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
   useEffect(() => {
     if (!generatedValue) return
     const timer = setTimeout(() => {
-      void appendHistory(generatedValue)
-        .then((entries) => setHistory(entries as HistoryEntry[]))
-        .catch(() => {
-          void loadHistory().then((entries) =>
-            setHistory(entries as HistoryEntry[])
-          )
-        })
+      writeHistory(() => appendHistory(generatedValue))
     }, 250)
     return () => clearTimeout(timer)
-  }, [generatedValue])
+  }, [generatedValue, writeHistory])
 
   const strength = useMemo(() => {
     if (selectedOption === PASSWORD_OPTIONS.passphrase) {
@@ -630,11 +652,7 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
             <Button
               variant="tertiary"
               size="small"
-              onClick={() => {
-                void clearHistory()
-                  .then((entries) => setHistory(entries as HistoryEntry[]))
-                  .catch(() => setHistory([]))
-              }}
+              onClick={() => writeHistory(clearHistory)}
             >
               {t`Clear history`}
             </Button>
