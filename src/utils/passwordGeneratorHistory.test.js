@@ -3,6 +3,7 @@ import {
   PASSWORD_GENERATOR_HISTORY_MAX,
   appendHistory,
   clearHistory,
+  historyEntryLabels,
   historyUseLabels,
   historyUses,
   loadHistory,
@@ -225,6 +226,49 @@ describe('passwordGeneratorHistory', () => {
       })
 
       expect(mockAdd).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('historyEntryLabels', () => {
+    const records = [
+      {
+        data: {
+          title: 'Bank',
+          password: 'same',
+          websites: ['https://bank.example/login']
+        }
+      },
+      { data: { title: 'Home wifi', password: 'same' } },
+      { data: { title: 'Other', password: 'different' } }
+    ]
+
+    it('names vault records that hold the password, after stamped uses', () => {
+      const entry = {
+        id: 'a',
+        value: 'same',
+        createdAt: 1,
+        uses: [
+          { contextLabel: 'bank.example', contextKind: 'site' },
+          { contextLabel: 'Old name', contextKind: 'entry' }
+        ]
+      }
+
+      expect(historyEntryLabels(entry, records)).toEqual([
+        'bank.example',
+        'Old name',
+        'Bank',
+        'Home wifi'
+      ])
+    })
+
+    it('returns only stamped labels when no record matches', () => {
+      expect(
+        historyEntryLabels(
+          { id: 'b', value: 'unused', createdAt: 1, contextLabel: 'x.com' },
+          records
+        )
+      ).toEqual(['x.com'])
+      expect(historyEntryLabels({ id: 'c', value: 'unused' })).toEqual([])
     })
   })
 
