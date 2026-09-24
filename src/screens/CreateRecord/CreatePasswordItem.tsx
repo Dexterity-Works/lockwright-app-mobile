@@ -198,6 +198,7 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
     }
   })
   const [history, setHistory] = useState<HistoryEntry[]>([])
+  const [generationNonce, setGenerationNonce] = useState(0)
   const { data: records } = useRecords({ shouldSkip: true })
   // A read that started before or during a write is stale. Only the latest write lands.
   const historyWrites = useRef({ started: 0, settled: 0 })
@@ -261,7 +262,7 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
       upperCase: selectedRules.password.capitalLetters,
       numbers: selectedRules.password.numbers
     })
-  }, [selectedOption, selectedRules])
+  }, [selectedOption, selectedRules, generationNonce])
 
   useEffect(() => {
     if (!generatedValue) return
@@ -385,18 +386,28 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
         )
       }
       footer={
-        <Button
-          variant="primary"
-          fullWidth
-          onClick={handlePrimaryAction}
-          iconBefore={
-            onPasswordInsert ? undefined : (
-              <ContentCopy color={theme.colors.colorOnPrimary} />
-            )
-          }
-        >
-          {onPasswordInsert ? t`Use Password` : t`Copy Password`}
-        </Button>
+        <View style={styles.footer}>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setGenerationNonce((n) => n + 1)}
+            testID="password-generator-generate"
+          >
+            {t`Generate`}
+          </Button>
+          <Button
+            variant="primary"
+            fullWidth
+            onClick={handlePrimaryAction}
+            iconBefore={
+              onPasswordInsert ? undefined : (
+                <ContentCopy color={theme.colors.colorOnPrimary} />
+              )
+            }
+          >
+            {onPasswordInsert ? t`Use Password` : t`Copy Password`}
+          </Button>
+        </View>
       }
     >
       <View style={styles.section}>
@@ -706,6 +717,9 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
 }
 
 const styles = StyleSheet.create({
+  footer: {
+    gap: rawTokens.spacing12
+  },
   content: {
     paddingTop: rawTokens.spacing16,
     paddingHorizontal: rawTokens.spacing16,
