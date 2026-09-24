@@ -23,45 +23,8 @@ public final class FillLog {
 
     public static boolean isComplete(String text) {
         if (text == null || text.isEmpty()) return false;
-        int i = 0;
-        int n = text.length();
-        while (i < n && Character.isWhitespace(text.charAt(i))) i++;
-        if (i >= n) return false;
-        char start = text.charAt(i);
-        if (start != '{' && start != '[') return false;
-        int depth = 0;
-        boolean inString = false;
-        boolean escape = false;
-        for (; i < n; i++) {
-            char c = text.charAt(i);
-            if (inString) {
-                if (escape) {
-                    escape = false;
-                    continue;
-                }
-                if (c == '\\') {
-                    escape = true;
-                    continue;
-                }
-                if (c == '"') inString = false;
-                continue;
-            }
-            if (c == '"') {
-                inString = true;
-                continue;
-            }
-            if (c == '{' || c == '[') depth++;
-            else if (c == '}' || c == ']') {
-                depth--;
-                if (depth == 0) {
-                    i++;
-                    while (i < n && Character.isWhitespace(text.charAt(i))) i++;
-                    return i == n;
-                }
-                if (depth < 0) return false;
-            }
-        }
-        return false;
+        // Cap 0: scan only, hold none of the text.
+        return new Assembly(0).add(text.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String diagnostic(int command, int bytes, int reads, String reason) {
@@ -102,24 +65,78 @@ public final class FillLog {
         return line + " (" + tr.getClass().getSimpleName() + ")";
     }
 
+    /**
+     * One IPC reply, joined across reads. Each read scans only its own
+     * bytes; JSON structure is ASCII, so a UTF-8 char cut between reads
+     * cannot end the value early. Past the cap the bytes are counted and
+     * dropped: the frame is still read to its end so the next command
+     * does not get this reply's tail.
+     */
     public static final class Assembly {
+        private final int maxBytes;
         private final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        private long total;
         private int reads;
+        private int depth;
+        private boolean started;
+        private boolean inString;
+        private boolean escape;
+        private boolean closed;
+        private boolean broken;
 
-        public boolean add(byte[] chunk) {
-            if (chunk != null && chunk.length > 0) {
-                out.write(chunk, 0, chunk.length);
-            }
-            reads++;
-            return isComplete(text());
+        public Assembly() {
+            this(MAX_REPLY_BYTES);
         }
 
+        Assembly(int maxBytes) {
+            this.maxBytes = maxBytes;
+        }
+
+        /** True once the JSON value closes with nothing but whitespace after it. */
+        public boolean add(byte[] chunk) {
+            reads++;
+            if (chunk != null && chunk.length > 0) {
+                for (byte b : chunk) scan(b);
+                total += chunk.length;
+                if (total <= maxBytes) {
+                    out.write(chunk, 0, chunk.length);
+                } else {
+                    out.reset();
+                }
+            }
+            return closed && !broken;
+        }
+
+        private void scan(byte b) {
+            if (broken) return;
+            if (closed || !started) {
+                if (b == ' ' || b == '\t' || b == '\n' || b == '\r') return;
+                if (closed || (b != '{' && b != '[')) {
+                    broken = true;
+                    return;
+                }
+                started = true;
+                depth = 1;
+                return;
+            }
+            if (inString) {
+                if (escape) escape = false;
+                else if (b == '\\') escape = true;
+                else if (b == '"') inString = false;
+                return;
+            }
+            if (b == '"') inString = true;
+            else if (b == '{' || b == '[') depth++;
+            else if ((b == '}' || b == ']') && --depth == 0) closed = true;
+        }
+
+        /** Text of a reply within the cap; empty once it went over. */
         public String text() {
             return out.toString(StandardCharsets.UTF_8);
         }
 
         public int bytes() {
-            return out.size();
+            return (int) Math.min(total, Integer.MAX_VALUE);
         }
 
         public int reads() {
@@ -127,7 +144,12 @@ public final class FillLog {
         }
 
         public boolean tooLarge() {
-            return out.size() > MAX_REPLY_BYTES;
+            return total > maxBytes;
+        }
+
+        /** Not one JSON object or array: reading on will not fix it. */
+        public boolean broken() {
+            return broken;
         }
     }
 }

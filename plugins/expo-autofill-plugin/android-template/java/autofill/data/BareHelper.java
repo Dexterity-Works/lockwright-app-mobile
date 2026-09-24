@@ -258,16 +258,19 @@ public class BareHelper {
             byte[] chunk = new byte[replyData.remaining()];
             replyData.get(chunk);
             boolean complete = assembly.add(chunk);
-            if (assembly.tooLarge()) {
-                String line = FillLog.diagnostic(0, assembly.bytes(), assembly.reads(), "too-large");
+            if (!complete && !assembly.broken()) {
+                // Past the cap too: drain the frame so the next
+                // command does not read this reply's tail.
+                readReply(assembly, callback);
+                return;
+            }
+            if (!complete || assembly.tooLarge()) {
+                String line = FillLog.diagnostic(0, assembly.bytes(), assembly.reads(),
+                        complete ? "too-large" : "broken");
                 SecureLog.e(TAG, line);
                 if (callback != null) {
                     callback.onResponse(null, new Exception(line));
                 }
-                return;
-            }
-            if (!complete) {
-                readReply(assembly, callback);
                 return;
             }
 

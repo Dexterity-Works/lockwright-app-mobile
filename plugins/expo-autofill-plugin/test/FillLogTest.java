@@ -13,6 +13,9 @@ public final class FillLogTest {
     public static void main(String[] args) {
         truncatedChunkIsNotAReply();
         chunksJoinIntoOneReply();
+        oversizeReplyIsDrainedNotHeld();
+        splitMultibyteCharStillJoins();
+        junkAfterReplyIsBroken();
         failureLineKeepsLengthAndDropsPassword();
         redactDropsPasswordThatContainsBrace();
         errorLineDropsThrowableMessage();
@@ -44,6 +47,44 @@ public final class FillLogTest {
         expect("first IPC read is not the reply", assembly.add(first), false);
         expect("later IPC read finishes the reply", assembly.add(rest), true);
         expect("joined text", assembly.text(), full);
+    }
+
+    /**
+     * #20: stopping mid-frame left the rest of the reply in the pipe for
+     * the next command. Past the cap, read to the end and hold nothing.
+     */
+    private static void oversizeReplyIsDrainedNotHeld() {
+        FillLog.Assembly assembly = new FillLog.Assembly(8);
+        expect("open frame", assembly.add(bytes("{\"data\":\"")), false);
+        expect("still open past the cap", assembly.add(bytes("0123456789")), false);
+        expect("over the cap", assembly.tooLarge(), true);
+        expect("nothing held past the cap", assembly.text(), "");
+        expect("frame closes after the drain", assembly.add(bytes("\"}")), true);
+        expect("counts every byte", assembly.bytes() == 21, true);
+    }
+
+    private static void splitMultibyteCharStillJoins() {
+        String full = "{\"n\":\"caf\u00e9 \\\"}\"}";
+        byte[] raw = bytes(full);
+        int cut = full.indexOf('\u00e9') + 1;
+        byte[] first = new byte[cut];
+        byte[] rest = new byte[raw.length - cut];
+        System.arraycopy(raw, 0, first, 0, cut);
+        System.arraycopy(raw, cut, rest, 0, rest.length);
+        FillLog.Assembly assembly = new FillLog.Assembly();
+        expect("half a UTF-8 char is not the end", assembly.add(first), false);
+        expect("escaped quote and brace stay in the string", assembly.add(rest), true);
+        expect("joined text", assembly.text(), full);
+    }
+
+    private static void junkAfterReplyIsBroken() {
+        FillLog.Assembly assembly = new FillLog.Assembly();
+        expect("junk after the value is not a reply", assembly.add(bytes("{} x")), false);
+        expect("junk after the value is broken", assembly.broken(), true);
+    }
+
+    private static byte[] bytes(String s) {
+        return s.getBytes(StandardCharsets.UTF_8);
     }
 
     private static void failureLineKeepsLengthAndDropsPassword() {

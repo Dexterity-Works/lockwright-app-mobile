@@ -244,6 +244,18 @@ if grep -n 'Failed to parse job.*getMessage()' "$JOBS" "$COMBINED" "$PASSKEY_REG
   exit 1
 fi
 
+# #20: a reply cut short must not be retried as an empty vault, and the
+# rest of an oversize reply must be drained, not left for the next command.
+BARE="$ROOT/android-template/java/autofill/data/BareHelper.java"
+grep -q 'assembly.broken()' "$BARE" || {
+  echo "BareHelper must read an oversize reply to its end and stop on a broken frame" >&2
+  exit 1
+}
+grep -A2 'AutofillSheetLoad.keepWaitingForRecords(' "$COMBINED" | grep -q 'records.size()' || {
+  echo "CombinedItems must re-list only while the vault returns no records at all" >&2
+  exit 1
+}
+
 SESSION="$ROOT/android-template/java/autofill/data/AutofillUnlockSession.java"
 grep -q 'pageUrlsForAutofill' "$SESSION" || {
   echo "Unlock session chips must match androidapp package URIs via pageUrlsForAutofill" >&2

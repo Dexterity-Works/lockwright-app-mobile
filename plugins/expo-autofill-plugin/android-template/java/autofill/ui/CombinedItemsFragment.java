@@ -478,8 +478,10 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                         records = vaultClient.listCanonicalRecords().get();
                     }
                     parsed = parseCredentials(records);
+                    // Wait on the raw list: a vault with no records of this
+                    // type would re-list the whole vault every 150ms.
                     if (!AutofillSheetLoad.keepWaitingForRecords(
-                            parsed.size(),
+                            records == null ? 0 : records.size(),
                             System.currentTimeMillis() - recordsStartedAt)) {
                         break;
                     }
