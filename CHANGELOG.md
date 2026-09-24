@@ -17,6 +17,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - Generator history names the vault entries that hold each password, including ones saved before labels were stamped.
 - Generator history shows as soon as the Generator opens and refreshes when it regains focus.
+- Generator history no longer loses entries when another device writes at the same time or has not synced yet.
 
 ## [0.0.28] - 2026-09-24
 
