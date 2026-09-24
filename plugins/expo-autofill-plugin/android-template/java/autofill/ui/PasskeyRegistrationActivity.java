@@ -498,7 +498,7 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
                         SecureLog.d(TAG, "Added pending UPDATE_PASSKEY job " + job.getId() + " to existing credential selection");
                     }
                 } catch (Exception e) {
-                    SecureLog.e(TAG, "Failed to parse job " + job.getId() + ": " + e.getMessage());
+                    SecureLog.e(TAG, "Failed to parse job " + job.getId(), e);
                 }
             }
 

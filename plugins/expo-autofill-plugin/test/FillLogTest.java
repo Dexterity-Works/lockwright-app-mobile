@@ -15,6 +15,7 @@ public final class FillLogTest {
         chunksJoinIntoOneReply();
         failureLineKeepsLengthAndDropsPassword();
         redactDropsPasswordThatContainsBrace();
+        errorLineDropsThrowableMessage();
         workletMemoryClearsThe64MbAbort();
 
         if (failures > 0) {
@@ -71,6 +72,22 @@ public final class FillLogTest {
             System.err.println("redact left an unquoted secret: " + plain);
             failures++;
         }
+    }
+
+    /**
+     * #19: org.json puts the parsed text in its message ("... of {...}").
+     * A release error line names the throwable, never its message.
+     */
+    private static void errorLineDropsThrowableMessage() {
+        Exception parse = new Exception(
+                "Unterminated object at character 9 of {\"note\":\"hunter2\",\"privateKey\":\"BEGINKEY");
+        String line = FillLog.errorLine("Failed to read pending jobs", new RuntimeException(parse));
+        if (line.contains("hunter2") || line.contains("BEGINKEY")) {
+            System.err.println("error line contains vault text: " + line);
+            failures++;
+        }
+        expect("error line keeps message and throwable type",
+                line, "Failed to read pending jobs (RuntimeException)");
     }
 
     private static void workletMemoryClearsThe64MbAbort() {

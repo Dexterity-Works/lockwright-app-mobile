@@ -142,7 +142,8 @@ public class JobFileManager {
             }
             return jobs;
         } catch (JSONException e) {
-            throw new Exception("Failed to parse job file JSON: " + e.getMessage(), e);
+            // The JSONException message holds the decrypted jobs, private keys included.
+            throw new Exception("Failed to parse job file JSON");
         }
     }
 
@@ -290,7 +291,7 @@ public class JobFileManager {
                     return recordId.equals(payload.getExistingRecordId());
                 }
             } catch (JSONException e) {
-                SecureLog.e(TAG, "Failed to parse job payload during removal: " + e.getMessage());
+                SecureLog.e(TAG, "Failed to parse job payload during removal");
             }
             return false;
         });

@@ -92,6 +92,16 @@ public final class FillLog {
                 "$1=***");
     }
 
+    /**
+     * Release error line: the message and the throwable's type. Its message
+     * and stack are dropped; org.json puts the parsed text in the message.
+     */
+    public static String errorLine(String message, Throwable tr) {
+        String line = redact(message);
+        if (tr == null) return line;
+        return line + " (" + tr.getClass().getSimpleName() + ")";
+    }
+
     public static final class Assembly {
         private final ByteArrayOutputStream out = new ByteArrayOutputStream();
         private int reads;

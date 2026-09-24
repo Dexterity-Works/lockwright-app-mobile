@@ -103,14 +103,19 @@ public final class SecureLog {
     }
 
     /**
-     * Log an error message with throwable. Errors are always logged but sanitized.
+     * Log an error message with throwable. Release logs the throwable's type
+     * only: its message can hold a parsed vault reply or job file.
      *
      * @param tag The log tag
      * @param message The message to log
      * @param tr The throwable to log
      */
     public static void e(String tag, String message, Throwable tr) {
-        Log.e(tag, sanitize(message), tr);
+        if (IS_DEBUG) {
+            Log.e(tag, sanitize(message), tr);
+        } else {
+            Log.e(tag, FillLog.errorLine(message, tr));
+        }
     }
 
     /**

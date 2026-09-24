@@ -999,7 +999,7 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                         ));
                     }
                 } catch (Exception e) {
-                    SecureLog.e(TAG, "Failed to parse job payload for job " + job.getId() + ": " + e.getMessage());
+                    SecureLog.e(TAG, "Failed to parse job payload for job " + job.getId(), e);
                 }
             }
 

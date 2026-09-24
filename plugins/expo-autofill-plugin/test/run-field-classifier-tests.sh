@@ -230,6 +230,20 @@ grep -q 'applyingPrefill' "$COMBINED" || {
   exit 1
 }
 
+# #19: org.json messages carry the parsed text. Job files hold passkey
+# private keys, so a parse error logs a fixed line, not e.getMessage().
+SECURE_LOG="$ROOT/android-template/java/autofill/utils/SecureLog.java"
+grep -q 'FillLog.errorLine' "$SECURE_LOG" || {
+  echo "release SecureLog.e must not print the throwable message" >&2
+  exit 1
+}
+JOBS="$ROOT/android-template/java/autofill/jobs/JobFileManager.java"
+PASSKEY_REG="$ROOT/android-template/java/autofill/ui/PasskeyRegistrationActivity.java"
+if grep -n 'Failed to parse job.*getMessage()' "$JOBS" "$COMBINED" "$PASSKEY_REG"; then
+  echo "job parse errors must not log or rethrow the JSON exception message" >&2
+  exit 1
+fi
+
 SESSION="$ROOT/android-template/java/autofill/data/AutofillUnlockSession.java"
 grep -q 'pageUrlsForAutofill' "$SESSION" || {
   echo "Unlock session chips must match androidapp package URIs via pageUrlsForAutofill" >&2
