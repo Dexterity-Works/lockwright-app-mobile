@@ -1,5 +1,6 @@
 package com.pears.pass.autofill.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,13 +21,14 @@ public final class AutofillSheetLoad {
     }
 
     /**
-     * Text shown in the sheet search field: the page domain when the
+     * Text shown in the sheet search field: the page domain when a
      * browser sent one, else the androidapp URI for a native app.
      * Browsers that omit the page leave this empty so the user can type.
      */
     public static String visibleFillLocation(String webDomain, String packageName) {
-        if (webDomain != null && !webDomain.trim().isEmpty()) {
-            return webDomain.trim();
+        String trusted = UriMatchHelper.trustedWebDomain(webDomain, packageName);
+        if (trusted != null && !trusted.trim().isEmpty()) {
+            return trusted.trim();
         }
         if (packageName == null || packageName.trim().isEmpty()) return "";
         if (UriMatchHelper.isBrowserPackage(packageName)) return "";
@@ -44,7 +46,13 @@ public final class AutofillSheetLoad {
     ) {
         String q = query == null ? "" : query.trim();
         if (q.isEmpty()) return true;
-        List<String> pageUrls = UriMatchHelper.pageUrlsForAutofill(q, packageName);
+        // The field text is the user's choice, so it matches as a page
+        // even in a native app where the reported webDomain is not trusted.
+        List<String> pageUrls = new ArrayList<>();
+        String typed = UriMatchHelper.pageUrlFromWebDomain(q);
+        if (typed != null) pageUrls.add(typed);
+        String app = UriMatchHelper.pageUrlFromAndroidApp(packageName);
+        if (app != null && !app.equals(typed)) pageUrls.add(app);
         if (UriMatchHelper.bestRecordSiteMatchRank(websites, uris, pageUrls) > 0) {
             return true;
         }

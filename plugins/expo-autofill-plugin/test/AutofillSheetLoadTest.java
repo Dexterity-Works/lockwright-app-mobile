@@ -18,6 +18,7 @@ public final class AutofillSheetLoadTest {
         vivaldiShowsGithubLocation();
         vivaldiWithoutPageLeavesLocationEmpty();
         nativeAppShowsAndroidAppLocation();
+        appWebViewDomainIsNotTheFillLocation();
         typedGithubLocationFindsGithubLogin();
         githubDotComFindsTitleGitHub();
         androidAppGithubUriMatchesTypedGithubDotCom();
@@ -77,6 +78,22 @@ public final class AutofillSheetLoadTest {
                 "Twitter app fill shows androidapp URI",
                 AutofillSheetLoad.visibleFillLocation(null, "com.twitter.android"),
                 "androidapp://com.twitter.android");
+    }
+
+    /** #3: another app's WebView domain is not shown or matched as the page. */
+    private static void appWebViewDomainIsNotTheFillLocation() {
+        expect(
+                "non-browser webDomain shows the app URI, not paypal.com",
+                AutofillSheetLoad.visibleFillLocation("paypal.com", "com.evil.app"),
+                "androidapp://com.evil.app");
+        List<String> websites = new ArrayList<>();
+        websites.add("https://paypal.com");
+        expect(
+                "typing paypal.com in the sheet is an explicit choice and still finds it",
+                AutofillSheetLoad.matchesFillQuery(
+                        "X", "user", websites, new ArrayList<UriMatchHelper.UriEntry>(),
+                        "paypal.com", "com.evil.app"),
+                true);
     }
 
     private static void typedGithubLocationFindsGithubLogin() {

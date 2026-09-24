@@ -41,6 +41,18 @@ describe('doesWebsiteMatchPage', () => {
         doesWebsiteMatchPage('https://example.com', 'https://evil-example.com')
       ).toBe(false)
     })
+
+    it('does not let a bare TLD page match every site under it', () => {
+      expect(doesWebsiteMatchPage('https://com', 'https://paypal.com')).toBe(
+        false
+      )
+    })
+
+    it('does not match an app package named like the site', () => {
+      expect(
+        doesWebsiteMatchPage('androidapp://paypal.com', 'https://paypal.com')
+      ).toBe(false)
+    })
   })
 
   describe('host', () => {
@@ -179,6 +191,16 @@ describe('recordMatchesCurrentSite', () => {
         'https://login.example.com'
       )
     ).toBe(true)
+  })
+
+  it('matches an androidapp URI only to the exact package', () => {
+    expect(
+      doesWebsiteMatchPage(
+        'androidapp://com.paypal.evil',
+        'androidapp://com.paypal',
+        URI_MATCH_TYPES.STARTS_WITH
+      )
+    ).toBe(false)
   })
 
   it('matches an androidapp URI to the same app page', () => {

@@ -14,7 +14,11 @@ public final class UriMatchHelperTest {
         keepsAndroidAppUri();
         unwrapsHttpsPrefixedAndroidAppUri();
         androidAppRecordMatchesAndroidAppPage();
-        guessedDomainStillMatchesHttpsWebsite();
+        appPackageDoesNotGuessWebsite();
+        appWebViewDomainIsNotTheSite();
+        packageNamedLikeDomainIsNotTheSite();
+        androidAppMatchIsExactPackage();
+        bareTldPageDoesNotMatchEverySite();
         hostWithPortStillGetsHttps();
         prefixedAndroidAppRecordMatchesPackageFill();
         searchMatchesWebsiteWhenTitleDoesNot();
@@ -62,13 +66,74 @@ public final class UriMatchHelperTest {
                 true);
     }
 
-    private static void guessedDomainStillMatchesHttpsWebsite() {
-        List<String> websites = listOf("https://twitter.com");
-        String page = UriMatchHelper.pageUrlFromWebDomain(
-                UriMatchHelper.packageNameToDomain("com.twitter.android"));
+    /** #3: com.paypal.attacker must not become https://paypal.com. */
+    private static void appPackageDoesNotGuessWebsite() {
+        List<String> websites = listOf("https://paypal.com");
+        List<String> pageUrls =
+                UriMatchHelper.pageUrlsForAutofill(null, "com.paypal.attacker");
         expect(
-                "https website still matches guessed package domain",
-                UriMatchHelper.recordMatchesPage(websites, new ArrayList<>(), page),
+                "native app page URLs do not include a reverse-DNS https guess",
+                pageUrls.contains("https://paypal.com"),
+                false);
+        expect(
+                "com.paypal.attacker does not match a paypal.com login",
+                UriMatchHelper.bestRecordSiteMatchRank(websites, new ArrayList<>(), pageUrls) > 0,
+                false);
+    }
+
+    /** #3: any app's WebView can report webDomain=paypal.com. */
+    private static void appWebViewDomainIsNotTheSite() {
+        List<String> websites = listOf("https://paypal.com");
+        expect(
+                "non-browser webDomain does not match a paypal.com login",
+                UriMatchHelper.bestRecordSiteMatchRank(
+                        websites,
+                        new ArrayList<>(),
+                        UriMatchHelper.pageUrlsForAutofill("paypal.com", "com.evil.app")) > 0,
+                false);
+    }
+
+    /** #3: package paypal.com is androidapp://paypal.com, not the website. */
+    private static void packageNamedLikeDomainIsNotTheSite() {
+        List<String> websites = listOf("https://paypal.com");
+        expect(
+                "androidapp page does not match an https login by host",
+                UriMatchHelper.bestRecordSiteMatchRank(
+                        websites,
+                        new ArrayList<>(),
+                        UriMatchHelper.pageUrlsForAutofill(null, "paypal.com")) > 0,
+                false);
+    }
+
+    private static void androidAppMatchIsExactPackage() {
+        List<String> websites = listOf("androidapp://com.paypal");
+        List<UriMatchHelper.UriEntry> uris = new ArrayList<>();
+        uris.add(new UriMatchHelper.UriEntry("androidapp://com.paypal", "startsWith"));
+        expect(
+                "androidapp startsWith does not match a longer package",
+                UriMatchHelper.recordMatchesPage(
+                        websites, uris, "androidapp://com.paypal.evil"),
+                false);
+        List<UriMatchHelper.UriEntry> domain = new ArrayList<>();
+        domain.add(new UriMatchHelper.UriEntry("androidapp://com.paypal", "baseDomain"));
+        expect(
+                "androidapp domain match does not treat the package as a parent host",
+                UriMatchHelper.recordMatchesPage(
+                        websites, domain, "androidapp://x.com.paypal"),
+                false);
+    }
+
+    /** #3: a page host of com must not match every stored *.com login. */
+    private static void bareTldPageDoesNotMatchEverySite() {
+        expect(
+                "page host com does not match paypal.com",
+                UriMatchHelper.recordMatchesPage(
+                        listOf("https://paypal.com"), new ArrayList<>(), "https://com"),
+                false);
+        expect(
+                "subdomain page still matches the parent login",
+                UriMatchHelper.recordMatchesPage(
+                        listOf("https://paypal.com"), new ArrayList<>(), "https://www.paypal.com"),
                 true);
     }
 

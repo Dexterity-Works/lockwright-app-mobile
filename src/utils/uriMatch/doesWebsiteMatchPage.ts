@@ -41,6 +41,7 @@ const getHostWithPort = (value: string): string | null => {
 /**
  * Registrable-domain stand-in without tldts: equal host, or one host is a
  * subdomain of the other. Avoids last-two-label false positives on co.uk.
+ * A bare label (com) is never the parent, so it cannot match every *.com.
  */
 const matchesDomain = (pageUrl: string, website: string): boolean => {
   const pageHost = getHostname(pageUrl)
@@ -48,8 +49,15 @@ const matchesDomain = (pageUrl: string, website: string): boolean => {
   if (!pageHost || !recordHost) return false
   if (pageHost === recordHost) return true
   return (
-    pageHost.endsWith(`.${recordHost}`) || recordHost.endsWith(`.${pageHost}`)
+    (recordHost.includes('.') && pageHost.endsWith(`.${recordHost}`)) ||
+    (pageHost.includes('.') && recordHost.endsWith(`.${pageHost}`))
   )
+}
+
+/** androidapp://com.x → com.x (lowercase), else null. */
+const getAndroidAppPackage = (value: string): string | null => {
+  const match = /^(?:https?:\/\/)?androidapp:\/\/([^/]+)/i.exec(value.trim())
+  return match ? match[1].toLowerCase() : null
 }
 
 const matchesHost = (pageUrl: string, website: string): boolean => {
@@ -83,6 +91,11 @@ export const doesWebsiteMatchPage = (
   matchType: UriMatchType = URI_MATCH_TYPES.DOMAIN
 ): boolean => {
   if (!website) return false
+
+  // An app is its exact package, never a website host or a longer package.
+  const pagePackage = getAndroidAppPackage(pageUrl)
+  const recordPackage = getAndroidAppPackage(website)
+  if (pagePackage || recordPackage) return pagePackage === recordPackage
 
   const type = isUriMatchType(matchType) ? matchType : URI_MATCH_TYPES.DOMAIN
 

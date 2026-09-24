@@ -217,7 +217,15 @@ public final class UriMatchHelper {
 
     public static boolean doesWebsiteMatchPage(String pageUrl, String website, String matchType) {
         if (website == null || website.trim().isEmpty() || pageUrl == null) return false;
-        if (matchesPage(pageUrl, website, matchType)) return true;
+        // An app is its exact package. Its host must never meet a website
+        // host (package paypal.com) or a longer package (startsWith).
+        String pagePackage = androidAppPackage(pageUrl);
+        if (pagePackage != null) {
+            return pagePackage.equals(androidAppPackage(website));
+        }
+        if (androidAppPackage(website) == null && matchesPage(pageUrl, website, matchType)) {
+            return true;
+        }
         String fromApp = httpsUrlFromAndroidApp(website);
         return fromApp != null && matchesPage(pageUrl, fromApp, matchType);
     }
@@ -295,20 +303,28 @@ public final class UriMatchHelper {
     }
 
     /**
-     * Page URLs to try for an Android fill: browser domain, androidapp
-     * package URI, then the reverse-DNS https guess.
+     * Page URLs to try for an Android fill: the trusted web domain, then
+     * the androidapp package URI. No reverse-DNS https guess: any app can
+     * be named com.paypal.attacker.
      */
     public static List<String> pageUrlsForAutofill(String webDomain, String packageName) {
         List<String> out = new ArrayList<>();
         Set<String> seen = new LinkedHashSet<>();
-        addPageUrl(out, seen, pageUrlFromWebDomain(webDomain));
+        addPageUrl(out, seen, pageUrlFromWebDomain(trustedWebDomain(webDomain, packageName)));
         addPageUrl(out, seen, pageUrlFromAndroidApp(packageName));
-        if (packageName != null
-                && !packageName.trim().isEmpty()
-                && !isBrowserPackage(packageName)) {
-            addPageUrl(out, seen, pageUrlFromWebDomain(packageNameToDomain(packageName)));
-        }
         return out;
+    }
+
+    /**
+     * webDomain is the page only when a known browser reports it. Any other
+     * app's WebView can claim paypal.com (loadDataWithBaseURL). A domain
+     * with no package is the Credential Manager rpId, not a view tree.
+     * ponytail: no Digital Asset Links check yet, so app WebViews never
+     * match a website on their own; the user picks the login in the sheet.
+     */
+    public static String trustedWebDomain(String webDomain, String packageName) {
+        if (packageName == null || packageName.trim().isEmpty()) return webDomain;
+        return isBrowserPackage(packageName) ? webDomain : null;
     }
 
     public static int bestRecordSiteMatchRank(
@@ -351,6 +367,16 @@ public final class UriMatchHelper {
         return "https://" + domain;
     }
 
+    /** androidapp://com.x → com.x (lowercase), else null. */
+    private static String androidAppPackage(String value) {
+        if (value == null) return null;
+        String trimmed = unwrapPrefixedAppUri(value.trim()).toLowerCase(Locale.ROOT);
+        if (!trimmed.startsWith("androidapp://")) return null;
+        String pkg = trimmed.substring("androidapp://".length()).trim();
+        while (pkg.endsWith("/")) pkg = pkg.substring(0, pkg.length() - 1);
+        return pkg.isEmpty() ? null : pkg;
+    }
+
     static boolean isBrowserPackage(String packageName) {
         if (packageName == null) return false;
         String pkg = packageName.trim().toLowerCase(Locale.ROOT);
@@ -373,7 +399,10 @@ public final class UriMatchHelper {
         String recordHost = hostname(website);
         if (pageHost == null || recordHost == null) return false;
         if (pageHost.equals(recordHost)) return true;
-        return pageHost.endsWith("." + recordHost) || recordHost.endsWith("." + pageHost);
+        // ponytail: dotted-parent stand-in for eTLD+1. A bare label (com)
+        // is never a parent; co.uk still is until a public suffix list lands.
+        if (recordHost.contains(".") && pageHost.endsWith("." + recordHost)) return true;
+        return pageHost.contains(".") && recordHost.endsWith("." + pageHost);
     }
 
     private static boolean matchesHost(String pageUrl, String website) {
