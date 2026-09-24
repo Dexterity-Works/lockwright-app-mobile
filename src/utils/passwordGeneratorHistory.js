@@ -132,6 +132,26 @@ export const historyUseLabels = (entry) => {
     : []
 }
 
+/**
+ * Stamped labels plus every vault record whose password is this value.
+ * Display only. Covers passwords saved before stamping or outside the Generator.
+ */
+export const historyEntryLabels = (entry, records = []) => {
+  const labels = historyUseLabels(entry)
+  if (entry?.value) {
+    for (const record of records ?? []) {
+      if (record?.data?.password !== entry.value) continue
+      for (const use of historyUses({
+        title: record.data.title,
+        websiteUrl: record.data.websites?.[0]
+      })) {
+        labels.push(use.contextLabel)
+      }
+    }
+  }
+  return [...new Set(labels)]
+}
+
 // ponytail: distinct labels only, cap 20. Drop oldest when a reused password is tagged past that.
 const USES_MAX = 20
 

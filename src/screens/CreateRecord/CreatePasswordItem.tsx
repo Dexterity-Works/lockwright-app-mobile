@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
+import { useRecords } from 'lockwright-lib-vault'
 import { formatDate } from 'lockwright-utils-date'
 import {
   checkPassphraseStrength,
@@ -33,7 +34,7 @@ import { Layout } from 'src/containers/Layout'
 import {
   appendHistory,
   clearHistory,
-  historyUseLabels,
+  historyEntryLabels,
   loadHistory,
   markHistoryUsed
 } from '../../utils/passwordGeneratorHistory'
@@ -197,6 +198,7 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
     }
   })
   const [history, setHistory] = useState<HistoryEntry[]>([])
+  const { data: records } = useRecords({ shouldSkip: true })
 
   useEffect(() => {
     let cancelled = false
@@ -660,7 +662,7 @@ export const CreatePasswordItem = ({ route }: CreatePasswordItemProps) => {
                 <Text variant="caption" color={theme.colors.colorTextTertiary}>
                   {formatHistoryCreatedAt(entry.createdAt)}
                 </Text>
-                {historyUseLabels(entry).map((label, labelIndex) => (
+                {historyEntryLabels(entry, records).map((label, labelIndex) => (
                   <Text
                     key={`${entry.id}-${labelIndex}`}
                     variant="caption"
