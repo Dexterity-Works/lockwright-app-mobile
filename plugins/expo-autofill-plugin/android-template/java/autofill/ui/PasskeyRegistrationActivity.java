@@ -29,6 +29,8 @@ import com.pears.pass.autofill.jobs.JobFileManager;
 import com.pears.pass.autofill.jobs.PasskeyJobCreator;
 import com.pears.pass.autofill.jobs.UpdatePasskeyPayload;
 import com.pears.pass.autofill.utils.AutofillFillWindow;
+import com.pears.pass.autofill.utils.PasskeyCaller;
+import com.pears.pass.autofill.utils.PasskeyCallerOrigin;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.utils.VaultInitializer;
 
@@ -64,7 +66,7 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
     private String userName = "";
     private String userDisplayName = "";
     private byte[] challenge = new byte[0];
-    private byte[] clientDataHash = new byte[0];
+    private PasskeyCallerOrigin.Plan caller;
 
     // Vault client
     private PearPassVaultClient vaultClient;
@@ -102,6 +104,11 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
 
         // Parse the passkey creation request
         parsePasskeyRequest();
+        if (caller == null) {
+            SecureLog.e(TAG, "Refusing passkey creation: caller not identified");
+            onCancel();
+            return;
+        }
 
         // Initialize vault client with readOnly=true (writes go through job queue)
         initialize();
@@ -148,9 +155,8 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
                     challenge = Base64URLUtils.decode(challengeB64);
                 }
 
-                // Get clientDataHash from request
-                byte[] hash = pkRequest.getClientDataHash();
-                clientDataHash = hash != null ? hash : new byte[0];
+                caller = PasskeyCaller.plan(
+                        providerRequest.getCallingAppInfo(), pkRequest.getClientDataHash());
 
                 SecureLog.d(TAG, "Parsed passkey request - rpId: " + rpId + ", userName: " + userName);
             } else {
@@ -606,9 +612,9 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
                 // Build attestation object
                 byte[] attestationObject = AuthenticatorDataBuilder.encodeAttestationObject(authData);
 
-                // Build client data JSON
+                // Build client data JSON bound to the caller's origin
                 byte[] clientDataJSON = AuthenticatorDataBuilder.buildClientDataJSONForRegistration(
-                        challenge, "https://" + rpId);
+                        challenge, caller.origin);
 
                 // Create response
                 PasskeyResponse response = new PasskeyResponse(

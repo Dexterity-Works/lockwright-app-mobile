@@ -85,6 +85,12 @@ javac -d "$TMP" \
   "$ROOT/test/IdentityFillPlanTest.java"
 java -cp "$TMP" com.pears.pass.autofill.utils.IdentityFillPlanTest
 
+javac -d "$TMP" \
+  "$ROOT/android-template/java/autofill/utils/PasskeyCallerOrigin.java" \
+  "$ROOT/android-template/java/autofill/utils/PrivilegedBrowsers.java" \
+  "$ROOT/test/PasskeyCallerOriginTest.java"
+java -cp "$TMP" com.pears.pass.autofill.utils.PasskeyCallerOriginTest
+
 INIT="$ROOT/android-template/java/autofill/utils/VaultInitializer.java"
 grep -q 'PasswordSetGate.decide' "$INIT"
 grep -q 'VaultStoreReady.keepWaiting' "$INIT"
@@ -255,6 +261,29 @@ grep -A2 'AutofillSheetLoad.keepWaitingForRecords(' "$COMBINED" | grep -q 'recor
   echo "CombinedItems must re-list only while the vault returns no records at all" >&2
   exit 1
 }
+
+# #23: a passkey response is bound to the app that asked. Only a privileged
+# browser's clientDataHash is signed; everyone else gets an apk-key-hash origin.
+grep -q 'PasskeyCaller.plan(' "$AUTH" || {
+  echo "AuthenticationActivity must resolve the passkey caller through PasskeyCaller.plan" >&2
+  exit 1
+}
+grep -q 'passkeyCaller.clientDataHash' "$AUTH" || {
+  echo "AuthenticationActivity must sign only the hash PasskeyCaller allowed" >&2
+  exit 1
+}
+if grep 'apk-key-hash' "$AUTH" | grep -q 'getPackageName()'; then
+  echo "apk-key-hash origin must hash the caller's cert, not name our package" >&2
+  exit 1
+fi
+grep -q 'PasskeyCaller.plan(' "$PASSKEY_REG" || {
+  echo "PasskeyRegistrationActivity must resolve the passkey caller through PasskeyCaller.plan" >&2
+  exit 1
+}
+if grep -q '"https://" + rpId' "$PASSKEY_REG"; then
+  echo "passkey creation must use the caller's origin, not https:// + rpId" >&2
+  exit 1
+fi
 
 SESSION="$ROOT/android-template/java/autofill/data/AutofillUnlockSession.java"
 grep -q 'pageUrlsForAutofill' "$SESSION" || {

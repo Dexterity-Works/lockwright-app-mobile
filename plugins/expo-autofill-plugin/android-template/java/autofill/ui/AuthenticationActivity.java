@@ -32,6 +32,8 @@ import com.pears.pass.autofill.data.AutofillUnlockSession;
 import com.pears.pass.autofill.utils.AutofillConstants;
 import com.pears.pass.autofill.utils.IdentityFillPlan;
 import com.pears.pass.autofill.utils.LoginFillPlan;
+import com.pears.pass.autofill.utils.PasskeyCaller;
+import com.pears.pass.autofill.utils.PasskeyCallerOrigin;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.utils.AutofillFillWindow;
 import com.pears.pass.autofill.utils.AutofillHostTeardown;
@@ -74,7 +76,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Navigat
     private boolean isPasskeyAssertion = false;
     private String passkeyRpId;
     private byte[] passkeyChallenge;
-    private byte[] passkeyClientDataHash;
+    private PasskeyCallerOrigin.Plan passkeyCaller;
 
     // Vault client and initialization state
     private PearPassVaultClient vaultClient;
@@ -137,7 +139,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Navigat
                                 passkeyChallenge = Base64URLUtils.decode(challengeB64);
                             }
 
-                            passkeyClientDataHash = pkOption.getClientDataHash();
+                            passkeyCaller = PasskeyCaller.plan(
+                                    providerRequest.getCallingAppInfo(), pkOption.getClientDataHash());
                             SecureLog.d(TAG, "Passkey rpId: " + passkeyRpId);
                             break;
                         }
@@ -145,6 +148,11 @@ public class AuthenticationActivity extends AppCompatActivity implements Navigat
                 }
             } catch (Exception e) {
                 SecureLog.e(TAG, "Error parsing passkey request: " + e.getMessage());
+            }
+            if (passkeyCaller == null) {
+                SecureLog.e(TAG, "Refusing passkey assertion: caller not identified");
+                onCancel();
+                return;
             }
         }
 
@@ -532,21 +540,22 @@ public class AuthenticationActivity extends AppCompatActivity implements Navigat
                 String rpId = passkeyRpId != null ? passkeyRpId : webDomain;
                 byte[] authData = AuthenticatorDataBuilder.buildForAssertion(rpId);
 
-                // Get or compute client data hash and build clientDataJSON for response
+                // A privileged browser supplied the hash of its own clientDataJSON;
+                // anyone else gets clientDataJSON bound to their apk-key-hash origin.
+                if (passkeyCaller == null) {
+                    throw new Exception("Passkey caller not identified");
+                }
                 byte[] clientDataHash;
                 byte[] clientDataJSON;
-                if (passkeyClientDataHash != null) {
-                    // System provided clientDataHash — it handles clientDataJSON construction
-                    clientDataHash = passkeyClientDataHash;
-                    clientDataJSON = null; // System fills this in the final response
+                if (passkeyCaller.clientDataHash != null) {
+                    clientDataHash = passkeyCaller.clientDataHash;
+                    clientDataJSON = null; // The browser fills this in the final response
                 } else if (passkeyChallenge != null && passkeyChallenge.length > 0) {
-                    // Build our own clientDataJSON from the parsed challenge
-                    String origin = "android:apk-key-hash:" + getPackageName();
                     clientDataJSON = AuthenticatorDataBuilder.buildClientDataJSONForAssertion(
-                            passkeyChallenge, origin);
+                            passkeyChallenge, passkeyCaller.origin);
                     clientDataHash = PasskeyCrypto.sha256(clientDataJSON);
                 } else {
-                    throw new Exception("No clientDataHash from system and no challenge in request");
+                    throw new Exception("No clientDataHash from the browser and no challenge in request");
                 }
 
                 // Sign the assertion
