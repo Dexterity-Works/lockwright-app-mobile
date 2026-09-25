@@ -64,6 +64,30 @@ class NativeClipboardModule(reactContext: ReactApplicationContext) : ReactContex
         }
     }
 
+    /** Copy with no expiry. Still marked sensitive so keyboard history and the
+     *  Android 13+ preview do not show it. */
+    @ReactMethod
+    fun setString(text: String, promise: Promise) {
+        try {
+            val context = reactApplicationContext
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+            val clip = ClipData.newPlainText("", text)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                clip.description.extras = PersistableBundle().apply {
+                    putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+                }
+            }
+
+            clipboard.setPrimaryClip(clip)
+            lastCopiedText = text
+
+            promise.resolve(true)
+        } catch (e: Exception) {
+            promise.reject("CLIPBOARD_ERROR", "Failed to set clipboard", e)
+        }
+    }
+
     @ReactMethod
     fun clearClipboard(promise: Promise) {
         try {

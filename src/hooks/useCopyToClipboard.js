@@ -5,6 +5,7 @@ import * as Clipboard from 'expo-clipboard'
 import * as SecureStore from 'expo-secure-store'
 import { CLIPBOARD_CLEAR_TIMEOUT } from 'lockwright-lib-constants'
 import { ContentCopy } from 'lockwright-lib-ui-react-native-components/icons'
+import { Platform } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { colors } from 'src/utils/colors'
 
@@ -93,7 +94,16 @@ export const useCopyToClipboard = () => {
           clipboardTimeout = Number(storedTimeout)
 
         if (clipboardTimeout === null) {
-          await Clipboard.setStringAsync(text)
+          // Android keeps clipboard history; the native module flags the
+          // copy sensitive. iOS has no such flag, expo-clipboard is fine.
+          if (
+            Platform.OS === 'android' &&
+            (await NativeClipboard.isAvailable())
+          ) {
+            await NativeClipboard.setString(text)
+          } else {
+            await Clipboard.setStringAsync(text)
+          }
         } else {
           const nativeAvailable = await NativeClipboard.isAvailable()
 

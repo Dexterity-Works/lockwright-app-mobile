@@ -6,6 +6,7 @@ const isNativeModuleAvailable = NativeClipboard !== null
 
 const defaultImplementation = {
   isAvailable: () => Promise.resolve(false),
+  setString: () => Promise.reject(new Error('NativeClipboard not available')),
   setStringWithExpiration: () =>
     Promise.reject(new Error('NativeClipboard not available')),
   clearClipboard: () =>
@@ -32,6 +33,14 @@ const NativeClipboardModule = isNativeModuleAvailable
           return false
         }
       },
+
+      /**
+       * Set clipboard content that never expires, marked sensitive so it stays
+       * out of clipboard history and previews
+       * @param {string} text - Text to copy to clipboard
+       * @returns {Promise<boolean>} - Success status
+       */
+      setString: async (text) => await NativeClipboard.setString(text),
 
       /**
        * Set clipboard content with automatic expiration

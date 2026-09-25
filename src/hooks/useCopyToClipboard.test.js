@@ -3,10 +3,13 @@ import { I18nProvider } from '@lingui/react'
 import { renderHook, act } from '@testing-library/react-native'
 import * as Clipboard from 'expo-clipboard'
 import * as SecureStore from 'expo-secure-store'
+import { Platform } from 'react-native'
 import Toast from 'react-native-toast-message'
 
 import { useCopyToClipboard } from './useCopyToClipboard'
+import { SECURE_STORAGE_KEYS } from '../constants/secureStorageKeys'
 import messages from '../locales/en/messages'
+import NativeClipboard from '../native-modules/NativeClipboard'
 
 i18n.load('en', messages)
 i18n.activate('en')
@@ -43,13 +46,15 @@ jest.mock('src/utils/colors', () => ({
 jest.mock('react-native', () => ({
   NativeModules: {
     NativeClipboard: null
-  }
+  },
+  Platform: { OS: 'ios' }
 }))
 
 jest.mock('../native-modules/NativeClipboard', () => ({
   __esModule: true,
   default: {
     isAvailable: jest.fn().mockResolvedValue(false),
+    setString: jest.fn(),
     setStringWithExpiration: jest.fn(),
     clearClipboard: jest.fn(),
     clearIfCurrentMatches: jest.fn()
@@ -191,6 +196,52 @@ describe('useCopyToClipboard', () => {
     })
 
     expect(returnValue).toBe(true)
+  })
+
+  describe('clipboard timeout set to Never', () => {
+    const neverExpires = (key) =>
+      Promise.resolve(
+        key === 'copyToClipboard'
+          ? 'true'
+          : key === SECURE_STORAGE_KEYS.CLIPBOARD_CLEAR_TIMEOUT
+            ? 'null'
+            : null
+      )
+
+    afterEach(() => {
+      Platform.OS = 'ios'
+      NativeClipboard.isAvailable.mockResolvedValue(false)
+    })
+
+    it('marks the copy sensitive through the native module on Android', async () => {
+      Platform.OS = 'android'
+      SecureStore.getItemAsync.mockImplementation(neverExpires)
+      NativeClipboard.isAvailable.mockResolvedValue(true)
+
+      const { result } = renderWithI18n()
+      await act(async () => {})
+      await act(async () => {
+        await result.current.copyToClipboard('secret')
+      })
+
+      expect(NativeClipboard.setString).toHaveBeenCalledWith('secret')
+      expect(NativeClipboard.setStringWithExpiration).not.toHaveBeenCalled()
+      expect(Clipboard.setStringAsync).not.toHaveBeenCalled()
+    })
+
+    it('stays on expo-clipboard on iOS', async () => {
+      SecureStore.getItemAsync.mockImplementation(neverExpires)
+      NativeClipboard.isAvailable.mockResolvedValue(true)
+
+      const { result } = renderWithI18n()
+      await act(async () => {})
+      await act(async () => {
+        await result.current.copyToClipboard('secret')
+      })
+
+      expect(Clipboard.setStringAsync).toHaveBeenCalledWith('secret')
+      expect(NativeClipboard.setString).not.toHaveBeenCalled()
+    })
   })
 
   describe('auto-clear clipboard', () => {
