@@ -133,7 +133,7 @@
       "./plugins/withCustomSplashScreen"
     ],
     "extra": {
-      "appVersion": "0.0.28",
+      "appVersion": "0.0.29",
       "eas": {
         "projectId": "28facb62-e2a2-4b6c-bc3f-0f5469e79415",
         "build": {
