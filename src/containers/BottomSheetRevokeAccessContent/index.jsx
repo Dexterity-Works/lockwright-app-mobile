@@ -54,8 +54,8 @@ export const BottomSheetRevokeAccessContent = ({
     Toast.show({
       type: 'baseToast',
       text1: failures?.length
-        ? t`Couldn't reach the device. It will lose access next time it comes online.`
-        : t`"${deviceName}" no longer has access to this vault`,
+        ? t`Couldn't reach the device. It will lose edit access next time it comes online.`
+        : t`"${deviceName}" can no longer edit this vault`,
       position: 'bottom',
       bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
     })
@@ -72,7 +72,7 @@ export const BottomSheetRevokeAccessContent = ({
         <View style={styles.body}>
           <View>
             <Text variant="label" color={theme.colors.colorTextSecondary}>
-              {t`This will disconnect the device from future syncing.`}
+              {t`Revoking stops this device from making changes. It can still read what has already synced, and anything synced later, until you move your items to a new vault.`}
             </Text>
             <Text variant="label" color={theme.colors.colorTextSecondary}>
               {t`Before you proceed, please note:`}
@@ -93,7 +93,7 @@ export const BottomSheetRevokeAccessContent = ({
                 {'•'}
               </Text>
               <Text variant="label" style={styles.bulletText}>
-                {t`Offline Data: Revoking access prevents future syncing, but it cannot remotely delete data that was already exported.`}
+                {t`Offline Data: Revoking cannot remotely delete data already on the device.`}
               </Text>
             </View>
           </View>
