@@ -9,6 +9,29 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.29] - 2026-09-26
+
+`BUMP_SHA`
+
+### Security
+
+- Passkey assertions are bound to the calling app. A browser on Google's privileged list may assert a web origin; any other app gets an apk-key-hash origin the site checks.
+- Autofill no longer matches an app or WebView domain by guess. A native app matches only a login that stores its `androidapp://` package.
+- Release logs no longer carry vault data on a parse error.
+- Vault screens and the fill sheet block screenshots and recents thumbnails.
+- A copy with the "Never" clipboard timeout is marked sensitive on Android 13+.
+- Cleartext HTTP is off.
+
+### Changed
+
+- Play versionCode 19.
+- The revoke sheet says the device keeps reading until the vault is moved.
+- Pin lib-data-import `5178ac2` (KDBX size cap, linear CSV split).
+
+### Fixed
+
+- An oversize autofill reply is drained instead of corrupting the next read, and the fill sheet stops re-listing the vault every 150 ms.
+
 ## [0.0.28] - 2026-09-24
 
 `651ec59c022888ccbb14d5c44a979ee39bd736d5`
@@ -152,7 +175,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - A locked initialized vault counts as set up. Unlock-to-fill setup no longer loops.
 
-[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/651ec59c022888ccbb14d5c44a979ee39bd736d5...HEAD
+[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/BUMP_SHA...HEAD
+[0.0.29]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/651ec59c022888ccbb14d5c44a979ee39bd736d5...BUMP_SHA
 [0.0.28]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/d70e254eeab8cb114ca335938635a452047a8975...651ec59c022888ccbb14d5c44a979ee39bd736d5
 [0.0.27]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/ec25ef988a7947ac468e58726b18eb0e70073196...d70e254eeab8cb114ca335938635a452047a8975
 [0.0.26]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/4e7c54e87feea739d4d360e35f6a9dbfc80e32da...ec25ef988a7947ac468e58726b18eb0e70073196

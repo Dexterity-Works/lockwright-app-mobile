@@ -3,7 +3,7 @@
     "name": "Lockwright",
     "slug": "pearpass",
     "icon": "./assets/images/appIcons/app-icon.png",
-    "version": "0.0.28",
+    "version": "0.0.29",
     "android": {
       "package": "works.dexterity.lockwright",
       "versionCode": 19,
