@@ -285,6 +285,14 @@ if grep -q '"https://" + rpId' "$PASSKEY_REG"; then
   exit 1
 fi
 
+# #27: FLAG_SECURE before setContentView, or the fill sheet shows in screenshots.
+for f in "$AUTH" "$PASSKEY_REG"; do
+  awk '/void onCreate\(/,/setContentView\(/' "$f" | grep -q 'FLAG_SECURE' || {
+    echo "$(basename "$f") must set FLAG_SECURE before setContentView" >&2
+    exit 1
+  }
+done
+
 SESSION="$ROOT/android-template/java/autofill/data/AutofillUnlockSession.java"
 grep -q 'pageUrlsForAutofill' "$SESSION" || {
   echo "Unlock session chips must match androidapp package URIs via pageUrlsForAutofill" >&2

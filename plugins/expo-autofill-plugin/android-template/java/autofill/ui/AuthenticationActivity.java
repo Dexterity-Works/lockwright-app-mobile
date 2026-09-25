@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.service.autofill.Dataset;
 import android.service.autofill.FillResponse;
 import android.service.autofill.InlinePresentation;
+import android.view.WindowManager;
 import android.view.autofill.AutofillId;
 import android.view.autofill.AutofillManager;
 import android.view.autofill.AutofillValue;
@@ -100,6 +101,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Navigat
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Revealed secrets must not reach screenshots, recordings or the recents thumbnail
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_authentication);
         AutofillHostTeardown.setFillHostVisible(true);
         applyPartialHeightWindow();
