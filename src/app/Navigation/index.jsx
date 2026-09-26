@@ -5,7 +5,7 @@ import { ExportItems } from 'src/screens/ExportItems'
 import { ImportCodes } from 'src/screens/ImportCodes'
 import { ImportItems } from 'src/screens/ImportItems'
 
-import { AuthMasterPasswordScreen, AuthPinScreen } from '../../screens/Auth'
+import { AuthMasterPasswordScreen } from '../../screens/Auth'
 import { CreateFolder } from '../../screens/CreateFolder'
 import { CreateRecord } from '../../screens/CreateRecord'
 import { CreatePasswordItem } from '../../screens/CreateRecord/CreatePasswordItem'
@@ -81,11 +81,6 @@ export const Navigation = ({ initialRouteName }) => (
       name="OnboardingBiometrics"
       component={OnboardingBiometrics}
       options={noGestureNoAnimation}
-    />
-    <Stack.Screen
-      name="AuthPin"
-      component={AuthPinScreen}
-      options={noGesture}
     />
     <Stack.Screen
       name="AuthMasterPassword"

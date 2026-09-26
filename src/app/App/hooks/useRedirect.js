@@ -5,7 +5,6 @@ import { useUserData } from 'lockwright-lib-vault'
 import { hasOrphanedVaultData } from '../../../utils/hasOrphanedVaultData'
 import { logger } from '../../../utils/logger'
 import * as SplashScreen from '../../../utils/SplashScreen'
-import { unsupportedFeaturesEnabled } from '../../../utils/unsupportedFeatures'
 
 /**
  * Custom hook to determine the initial route for navigation.
@@ -52,9 +51,7 @@ export const useRedirect = ({ enabled = true } = {}) => {
           return
         }
 
-        setInitialRouteName(
-          unsupportedFeaturesEnabled() ? 'AuthPin' : 'AuthMasterPassword'
-        )
+        setInitialRouteName('AuthMasterPassword')
       } catch (error) {
         logger.error('Auto-redirect error: ', error)
         setInitialRouteName('Error')

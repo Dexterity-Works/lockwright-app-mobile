@@ -20,7 +20,6 @@ import {
 import { InteractionManager, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { useHapticFeedback } from '../../hooks/useHapticFeedback'
 import { Layout } from '../Layout'
 
 const VaultActionHeader = ({ title, onBack, onClose, showBackButton }) => {
@@ -89,13 +88,11 @@ export const BottomSheetVaultAction = ({
   const { theme } = useTheme()
   const { dismiss, dismissAll } = useBottomSheetModal()
   const { bottom } = useSafeAreaInsets()
-  const { hapticButtonPrimary } = useHapticFeedback()
 
   const handleBack = onBack ?? dismiss
   const handleClose = onClose ?? dismiss
 
   const closeAndRun = (action) => {
-    hapticButtonPrimary()
     if (onClose) {
       onClose()
     } else {

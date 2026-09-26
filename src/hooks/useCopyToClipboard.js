@@ -9,23 +9,16 @@ import { Platform } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { colors } from 'src/utils/colors'
 
-import { useHapticFeedback } from './useHapticFeedback'
 import { IOS_APP_GROUP_ID } from '../constants/iosAppGroup'
 import { SECURE_STORAGE_KEYS } from '../constants/secureStorageKeys'
 import NativeClipboard from '../native-modules/NativeClipboard'
-
-let globalClearTimer = null
-let globalLastCopiedText = null
 
 export const useCopyToClipboard = () => {
   const [isCopyToClipboardEnabled, setIsCopyToClipboardEnabled] =
     useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const timeoutRef = useRef(null)
-  const clearClipboardTimeoutRef = useRef(null)
-  const lastCopiedTextRef = useRef(null)
   const { t } = useLingui()
-  const { hapticSuccess } = useHapticFeedback()
 
   useEffect(() => {
     const loadOptIn = async () => {
@@ -43,17 +36,6 @@ export const useCopyToClipboard = () => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
-      }
-      if (clearClipboardTimeoutRef.current) {
-        clearTimeout(clearClipboardTimeoutRef.current)
-      }
-      if (globalClearTimer) {
-        clearTimeout(globalClearTimer)
-      }
-
-      if (globalLastCopiedText) {
-        globalLastCopiedText = null
-        lastCopiedTextRef.current = null
       }
     }
   }, [])
@@ -75,16 +57,6 @@ export const useCopyToClipboard = () => {
       }
 
       try {
-        lastCopiedTextRef.current = text
-        globalLastCopiedText = text
-
-        if (clearClipboardTimeoutRef.current) {
-          clearTimeout(clearClipboardTimeoutRef.current)
-        }
-        if (globalClearTimer) {
-          clearTimeout(globalClearTimer)
-        }
-
         const storedTimeout = await SecureStore.getItemAsync(
           SECURE_STORAGE_KEYS.CLIPBOARD_CLEAR_TIMEOUT
         )
@@ -96,47 +68,19 @@ export const useCopyToClipboard = () => {
         if (clipboardTimeout === null) {
           // Android keeps clipboard history; the native module flags the
           // copy sensitive. iOS has no such flag, expo-clipboard is fine.
-          if (
-            Platform.OS === 'android' &&
-            (await NativeClipboard.isAvailable())
-          ) {
+          if (Platform.OS === 'android') {
             await NativeClipboard.setString(text)
           } else {
             await Clipboard.setStringAsync(text)
           }
         } else {
-          const nativeAvailable = await NativeClipboard.isAvailable()
-
-          if (nativeAvailable) {
-            await NativeClipboard.setStringWithExpiration(
-              text,
-              clipboardTimeout / 1000
-            )
-          } else {
-            await Clipboard.setStringAsync(text)
-
-            const timerId = setTimeout(async () => {
-              try {
-                const currentClipboardText = await Clipboard.getStringAsync()
-
-                if (
-                  currentClipboardText === lastCopiedTextRef.current ||
-                  currentClipboardText === globalLastCopiedText
-                ) {
-                  await Clipboard.setStringAsync('')
-                  lastCopiedTextRef.current = null
-                  globalLastCopiedText = null
-                }
-              } catch {}
-            }, clipboardTimeout)
-
-            clearClipboardTimeoutRef.current = timerId
-            globalClearTimer = timerId
-          }
+          await NativeClipboard.setStringWithExpiration(
+            text,
+            clipboardTimeout / 1000
+          )
         }
 
         setIsCopied(true)
-        hapticSuccess()
 
         Toast.show({
           type: 'baseToast',
@@ -156,7 +100,7 @@ export const useCopyToClipboard = () => {
         return false
       }
     },
-    [isCopyToClipboardEnabled, t, hapticSuccess]
+    [isCopyToClipboardEnabled, t]
   )
 
   return { copyToClipboard, isCopied, isCopyToClipboardEnabled }

@@ -119,16 +119,6 @@ public class PearPassVaultClient {
         }
     }
 
-    public static class DecryptionKeyResult {
-        public final String key;
-        public final String salt;
-
-        public DecryptionKeyResult(String key, String salt) {
-            this.key = key;
-            this.salt = salt;
-        }
-    }
-
     public static class MasterPasswordEncryption {
         public final String ciphertext;
         public final String nonce;
@@ -425,15 +415,6 @@ public class PearPassVaultClient {
                 .thenAccept(result -> log("Core store options set: readOnly=" + readOnly));
     }
 
-    // Master Vault Methods
-    public CompletableFuture<Void> vaultsInit(String encryptionKey, String hashedPassword) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("encryptionKey", encryptionKey);
-        params.put("hashedPassword", hashedPassword);
-        return sendRequest(API.MASTER_VAULT_INIT.getValue(), params)
-                .thenAccept(result -> log("Initialized vaults with encryption key and hashed password"));
-    }
-
     /**
      * Initializes vaults using the provided master password.
      * @param passwordBuffer The master password as byte array
@@ -489,14 +470,6 @@ public class PearPassVaultClient {
                     }
                     log("Closed master vault");
                 });
-    }
-
-    public CompletableFuture<Void> vaultsAdd(String key, Map<String, Object> data) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("key", key);
-        params.put("data", data);
-        return sendRequest(API.MASTER_VAULT_ADD.getValue(), params)
-                .thenAccept(result -> log("Added vault with key: " + key));
     }
 
     @SuppressWarnings("unchecked")
@@ -782,57 +755,6 @@ public class PearPassVaultClient {
         }
     }
 
-    public CompletableFuture<Map<String, Object>> activeVaultGet(String key) {
-        log("Getting from active vault with key: " + key);
-        return sendRequest(13, createMap("key", key))
-                .thenApply(result -> {
-                    log("Active vault get result for key '" + key + "': " + (result != null ? result : "{}"));
-                    return result != null ? result : new HashMap<>();
-                });
-    }
-
-    public CompletableFuture<List<Map<String, Object>>> initializeVaultAndFetchRecords(Vault vault) {
-        log("Initializing vault " + vault.name + " and fetching records");
-
-        return getVaultEncryptionKey(vault)
-                .thenCompose(encryptionKey -> activeVaultInit(vault.id, encryptionKey))
-                .thenCompose(result -> listCanonicalRecords())
-                .thenApply(records -> {
-                    log("Successfully fetched " + records.size() + " records from vault " + vault.name);
-                    return records;
-                });
-    }
-
-    private CompletableFuture<String> getVaultEncryptionKey(Vault vault) {
-        log("Getting encryption key for vault: " + vault.name);
-
-        return vaultsGet("masterEncryption").thenCompose(masterEncryptionData -> {
-            log("Master encryption data: " + masterEncryptionData);
-
-            String hashedPassword = (String) masterEncryptionData.get("hashedPassword");
-            if (hashedPassword == null) {
-                throw new RuntimeException("No hashed password available in master encryption");
-            }
-
-            if (vault.encryption == null) {
-                throw new RuntimeException("Vault has no encryption data");
-            }
-
-            log("Using hashed password from master encryption to decrypt vault key");
-
-            return decryptVaultKey(vault.encryption.ciphertext, vault.encryption.nonce, hashedPassword)
-                    .thenApply(decryptedKeyResult -> {
-                        String decryptedKey = extractValue(decryptedKeyResult, "value", "key", "data");
-                        if (decryptedKey == null) {
-                            throw new RuntimeException("Decryption failed");
-                        }
-
-                        log("Successfully decrypted vault encryption key");
-                        return decryptedKey;
-                    });
-        });
-    }
-
     /**
      * Extract a value from a map using multiple possible keys.
      * Tries each key in order and returns the first non-null value found.
@@ -1013,55 +935,6 @@ public class PearPassVaultClient {
         });
     }
 
-    /**
-     * Check if a master password was set by looking for existing vaults.
-     * This is a safer approach that doesn't require encryption initialization.
-     */
-    private CompletableFuture<Boolean> checkIfMasterPasswordWasSet() {
-        return vaultsList("vault/").thenApply(vaults -> {
-            boolean hasVaults = !vaults.isEmpty();
-            log("Vault check for master password detection: found " + vaults.size() + " vaults");
-            return hasVaults;
-        }).exceptionally(throwable -> {
-            log("Could not check vaults to detect master password: " + throwable.getMessage());
-            // If we can't check vaults, assume password is set to show master password screen
-            // This is safer than showing missing configuration when a password might exist
-            return true;
-        });
-    }
-
-    /**
-     * Safer version that doesn't cause initialization errors.
-     * Returns null when unable to determine password status safely.
-     */
-    private MasterPasswordEncryption checkIfMasterPasswordWasSetSafely() {
-        try {
-            // Try to check vault status first to see if vaults are initialized
-            VaultStatus status = vaultsGetStatus().get();
-            if (!status.isInitialized) {
-                log("Vaults not initialized, no master password set");
-                return null;
-            }
-
-            // If vaults are initialized, try to list them
-            List<Map<String, Object>> vaults = vaultsList("vault/").get();
-            boolean hasVaults = !vaults.isEmpty();
-            log("Safe vault check for master password detection: found " + vaults.size() + " vaults");
-
-            if (hasVaults) {
-                // Create a minimal encryption object to indicate password is set
-                log("Master password detected based on existing vaults (safe method)");
-                return new MasterPasswordEncryption("", "", "", null);
-            } else {
-                log("No master password detected - no vaults found (safe method)");
-                return null;
-            }
-        } catch (Exception e) {
-            log("Safe check failed, assuming no password set: " + e.getMessage());
-            return null;
-        }
-    }
-
     private CompletableFuture<MasterPasswordEncryption> getMasterEncryption(VaultStatus vaultStatus) {
         CompletableFuture<VaultStatus> statusFuture;
         if (vaultStatus != null) {
@@ -1088,99 +961,6 @@ public class PearPassVaultClient {
         });
     }
 
-    public CompletableFuture<String> hashPassword(String password) {
-        return sendRequest(API.ENCRYPTION_HASH_PASSWORD.getValue(), createMap("password", password))
-                .thenApply(result -> {
-                    String hashedPassword = (String) result.get("hashedPassword");
-                    if (hashedPassword == null) {
-                        throw new RuntimeException("Encryption operation failed");
-                    }
-                    log("Successfully hashed password");
-                    return hashedPassword;
-                });
-    }
-
-    /**
-     * Hashes a password using secure byte buffer.
-     * The password is converted to Base64 for transmission (matching JS pattern).
-     *
-     * @param password The password as byte array
-     * @return CompletableFuture with the hashed password
-     */
-    public CompletableFuture<String> hashPassword(byte[] password) {
-        // Convert password to Base64 for transmission
-        String passwordBase64 = com.pears.pass.autofill.utils.SecureBufferUtils.toBase64(password);
-
-        return sendRequest(API.ENCRYPTION_HASH_PASSWORD.getValue(), createMap("password", passwordBase64))
-                .thenApply(result -> {
-                    String hashedPassword = (String) result.get("hashedPassword");
-                    if (hashedPassword == null) {
-                        throw new RuntimeException("Encryption operation failed");
-                    }
-                    log("Successfully hashed password (buffer)");
-                    return hashedPassword;
-                });
-    }
-
-    public CompletableFuture<DecryptionKeyResult> getDecryptionKey(String salt, String password) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("salt", salt);
-        params.put("password", password);
-
-        return sendRequest(API.ENCRYPTION_GET_DECRYPTION_KEY.getValue(), params)
-                .thenApply(result -> {
-                    String key = (String) result.get("value");
-                    if (key == null) {
-                        key = (String) result.get("key");
-                    }
-                    if (key == null) {
-                        key = (String) result.get("hashedPassword");
-                    }
-                    if (key == null) {
-                        logError("Failed to extract key from getDecryptionKey response: " + result);
-                        throw new RuntimeException("Decryption failed");
-                    }
-
-                    log("Successfully generated decryption key");
-                    return new DecryptionKeyResult(key, salt);
-                });
-    }
-
-    /**
-     * Gets the decryption key using secure byte buffer for password.
-     * The password is converted to Base64 for transmission (matching JS pattern).
-     *
-     * @param salt The salt to use for key derivation
-     * @param password The password as byte array
-     * @return CompletableFuture with the decryption key result
-     */
-    public CompletableFuture<DecryptionKeyResult> getDecryptionKey(String salt, byte[] password) {
-        // Convert password to Base64 for transmission
-        String passwordBase64 = com.pears.pass.autofill.utils.SecureBufferUtils.toBase64(password);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("salt", salt);
-        params.put("password", passwordBase64);
-
-        return sendRequest(API.ENCRYPTION_GET_DECRYPTION_KEY.getValue(), params)
-                .thenApply(result -> {
-                    String key = (String) result.get("value");
-                    if (key == null) {
-                        key = (String) result.get("key");
-                    }
-                    if (key == null) {
-                        key = (String) result.get("hashedPassword");
-                    }
-                    if (key == null) {
-                        logError("Failed to extract key from getDecryptionKey response: " + result);
-                        throw new RuntimeException("Decryption failed");
-                    }
-
-                    log("Successfully generated decryption key (buffer)");
-                    return new DecryptionKeyResult(key, salt);
-                });
-    }
-
     public CompletableFuture<Map<String, Object>> decryptVaultKey(String ciphertext, String nonce, String hashedPassword) {
         Map<String, Object> params = new HashMap<>();
         params.put("ciphertext", ciphertext);
@@ -1194,350 +974,6 @@ public class PearPassVaultClient {
                 });
     }
 
-    public CompletableFuture<Map<String, Object>> encryptionClose() {
-        log("Closing encryption");
-        return sendRequest(API.ENCRYPTION_CLOSE.getValue(), null)
-                .thenApply(result -> {
-                    if (result == null) {
-                        result = new HashMap<>();
-                        result.put("success", true);
-                    } else if (result.containsKey("error")) {
-                        // Worklet returned an error but we still consider it "closed" for cleanup purposes
-                        logError("Encryption close returned error: " + result.get("error"));
-                        Map<String, Object> successResult = new HashMap<>();
-                        successResult.put("success", true);
-                        successResult.put("had_error", true);
-                        return successResult;
-                    }
-                    return result;
-                });
-    }
-
-    /**
-     * Validate vault password without activating the vault
-     */
-    public CompletableFuture<Boolean> validateVaultPassword(String vaultId, String password) {
-        log("Validating password for vault: " + vaultId);
-
-        return listVaults()
-            .thenCompose(vaults -> {
-                // Find the vault with the matching ID
-                Vault targetVault = null;
-                for (Vault vault : vaults) {
-                    if (vault.id.equals(vaultId)) {
-                        targetVault = vault;
-                        break;
-                    }
-                }
-
-                if (targetVault == null) {
-                    throw new RuntimeException("Vault not found with ID: " + vaultId);
-                }
-
-                final Vault vault = targetVault;
-
-                // If vault has no encryption, it's not protected
-                if (vault.encryption == null) {
-                    log("Vault " + vault.name + " is not protected, validation successful");
-                    return CompletableFuture.completedFuture(true);
-                }
-
-                // Check if vault has its own salt (for password-protected vaults)
-                String saltToUse = vault.encryption.salt;
-
-                // If vault doesn't have salt, it's encrypted with master password
-                if (saltToUse == null || saltToUse.isEmpty()) {
-                    log("Vault " + vault.name + " doesn't have its own salt, using master password");
-                    // This vault is encrypted with master password, not its own password
-                    // We should use the master password flow instead
-                    return getMasterPasswordEncryption(null)
-                        .thenCompose(masterPasswordEncryption -> {
-                            if (masterPasswordEncryption == null || masterPasswordEncryption.hashedPassword == null) {
-                                throw new RuntimeException("No master password available");
-                            }
-
-                            // Use the already hashed master password to decrypt
-                            return decryptVaultKey(vault.encryption.ciphertext, vault.encryption.nonce, masterPasswordEncryption.hashedPassword);
-                        })
-                        .thenApply(decryptedData -> {
-                            if (decryptedData == null) {
-                                throw new RuntimeException("Failed to decrypt vault key");
-                            }
-
-                            String encryptionKey = (String) decryptedData.get("value");
-                            if (encryptionKey == null) {
-                                encryptionKey = (String) decryptedData.get("key");
-                            }
-                            if (encryptionKey == null) {
-                                encryptionKey = (String) decryptedData.get("data");
-                            }
-                            if (encryptionKey == null) {
-                                throw new RuntimeException("Failed to decrypt vault key");
-                            }
-
-                            log("Password validation successful");
-                            return true;
-                        });
-                }
-
-                log("Vault " + vault.name + " has its own salt, using vault password");
-
-                // Get decryption key using the vault's salt and password
-                Map<String, Object> decryptionParams = new HashMap<>();
-                decryptionParams.put("password", password);
-                decryptionParams.put("salt", saltToUse);
-
-                return sendRequest(API.ENCRYPTION_GET_DECRYPTION_KEY.getValue(), decryptionParams)
-                    .thenCompose(decryptionResult -> {
-                        // Extract the key from the result
-                        String hashedPassword = extractValue(decryptionResult, "value", "key", "hashedPassword");
-
-                        if (hashedPassword == null) {
-                            throw new RuntimeException("Failed to get decryption key");
-                        }
-
-                        log("Got decryption key, attempting to decrypt vault key");
-
-                        // Decrypt the vault key using the hashed password
-                        return decryptVaultKey(vault.encryption.ciphertext, vault.encryption.nonce, hashedPassword)
-                            .thenApply(decryptedData -> {
-                                if (decryptedData == null) {
-                                    log("Decryption returned null - incorrect password");
-                                    throw new RuntimeException("Failed to decrypt vault key - incorrect password");
-                                }
-
-                                String encryptionKey = extractValue(decryptedData, "value", "key", "data");
-                                if (encryptionKey == null) {
-                                    log("No encryption key found in response: " + decryptedData);
-                                    throw new RuntimeException("Failed to decrypt vault key - incorrect password");
-                                }
-
-                                log("Password validation successful");
-                                return true;
-                            });
-                    });
-            })
-            .exceptionally(ex -> {
-                log("Failed to validate vault password: " + ex.getMessage());
-                return false;
-            });
-    }
-
-    /**
-     * Get vault by ID and unlock it with the provided password
-     */
-    public CompletableFuture<Boolean> getVaultById(String vaultId, String password) {
-        log("Getting vault by ID: " + vaultId + " with password");
-
-        return listVaults()
-            .thenCompose(vaults -> {
-                // Find the vault with the matching ID
-                Vault targetVault = null;
-                for (Vault vault : vaults) {
-                    if (vault.id.equals(vaultId)) {
-                        targetVault = vault;
-                        break;
-                    }
-                }
-
-                if (targetVault == null) {
-                    throw new RuntimeException("Vault not found with ID: " + vaultId);
-                }
-
-                final Vault vault = targetVault;
-
-                // If vault has no encryption, it's not protected
-                if (vault.encryption == null) {
-                    log("Vault " + vault.name + " is not protected, initializing directly");
-                    return activeVaultInit(vault.id, null)
-                        .thenApply(result -> true);
-                }
-
-                // Check if vault has its own salt (for password-protected vaults)
-                String saltToUse = vault.encryption.salt;
-
-                // If vault doesn't have salt, it's encrypted with master password
-                if (saltToUse == null || saltToUse.isEmpty()) {
-                    log("Vault " + vault.name + " doesn't have its own salt, using master password");
-                    // This vault is encrypted with master password, not its own password
-                    // We should use the master password flow instead
-                    return getMasterPasswordEncryption(null)
-                        .thenCompose(masterPasswordEncryption -> {
-                            if (masterPasswordEncryption == null || masterPasswordEncryption.hashedPassword == null) {
-                                throw new RuntimeException("No master password available");
-                            }
-
-                            // Use the already hashed master password to decrypt
-                            return decryptVaultKey(vault.encryption.ciphertext, vault.encryption.nonce, masterPasswordEncryption.hashedPassword);
-                        })
-                        .thenCompose(decryptedData -> {
-                            if (decryptedData == null) {
-                                throw new RuntimeException("Failed to decrypt vault key");
-                            }
-
-                            String encryptionKey = (String) decryptedData.get("value");
-                            if (encryptionKey == null) {
-                                encryptionKey = (String) decryptedData.get("key");
-                            }
-                            if (encryptionKey == null) {
-                                encryptionKey = (String) decryptedData.get("data");
-                            }
-                            if (encryptionKey == null) {
-                                throw new RuntimeException("Failed to decrypt vault key");
-                            }
-
-                            // Initialize the active vault with the decrypted key
-                            return activeVaultInit(vault.id, encryptionKey)
-                                .thenApply(result -> true);
-                        });
-                }
-
-                log("Vault " + vault.name + " has its own salt, using vault password");
-
-                // Get decryption key using the vault's salt and password
-                Map<String, Object> decryptionParams = new HashMap<>();
-                decryptionParams.put("password", password);
-                decryptionParams.put("salt", saltToUse);
-
-                return sendRequest(API.ENCRYPTION_GET_DECRYPTION_KEY.getValue(), decryptionParams)
-                    .thenCompose(decryptionResult -> {
-                        // Extract the key from the result
-                        String hashedPassword = extractValue(decryptionResult, "value", "key", "hashedPassword");
-
-                        if (hashedPassword == null) {
-                            throw new RuntimeException("Failed to get decryption key");
-                        }
-
-                        log("Got decryption key, attempting to decrypt vault key");
-
-                        // Decrypt the vault key using the hashed password
-                        return decryptVaultKey(vault.encryption.ciphertext, vault.encryption.nonce, hashedPassword)
-                            .thenCompose(decryptedData -> {
-                                if (decryptedData == null) {
-                                    log("Decryption returned null - incorrect password");
-                                    throw new RuntimeException("Failed to decrypt vault key - incorrect password");
-                                }
-
-                                String encryptionKey = extractValue(decryptedData, "value", "key", "data");
-                                if (encryptionKey == null) {
-                                    log("No encryption key found in response: " + decryptedData);
-                                    throw new RuntimeException("Failed to decrypt vault key - incorrect password");
-                                }
-
-                                log("Successfully decrypted vault key, initializing active vault");
-
-                                // Initialize the active vault with the decrypted key
-                                return activeVaultInit(vault.id, encryptionKey)
-                                    .thenApply(result -> {
-                                        log("Active vault initialized successfully");
-                                        return true;
-                                    });
-                            });
-                    });
-            })
-            .exceptionally(ex -> {
-                log("Failed to get vault by ID: " + ex.getMessage());
-                return false;
-            });
-    }
-
-    /**
-     * Validate vault password using secure byte buffer.
-     * The password is converted to Base64 for transmission (matching JS pattern).
-     *
-     * @param vaultId The vault ID to validate password for
-     * @param password The password as byte array
-     * @return CompletableFuture with true if password is valid, false otherwise
-     */
-    public CompletableFuture<Boolean> validateVaultPassword(String vaultId, byte[] password) {
-        log("Validating password for vault (buffer): " + vaultId);
-
-        // Convert password to Base64 for transmission
-        String passwordBase64 = com.pears.pass.autofill.utils.SecureBufferUtils.toBase64(password);
-
-        return listVaults()
-            .thenCompose(vaults -> {
-                // Find the vault with the matching ID
-                Vault targetVault = null;
-                for (Vault vault : vaults) {
-                    if (vault.id.equals(vaultId)) {
-                        targetVault = vault;
-                        break;
-                    }
-                }
-
-                if (targetVault == null) {
-                    throw new RuntimeException("Vault not found with ID: " + vaultId);
-                }
-
-                final Vault vault = targetVault;
-
-                // If vault has no encryption, it's not protected
-                if (vault.encryption == null) {
-                    log("Vault " + vault.name + " is not protected, validation successful");
-                    return CompletableFuture.completedFuture(true);
-                }
-
-                // Check if vault has its own salt (for password-protected vaults)
-                String saltToUse = vault.encryption.salt;
-
-                // If vault doesn't have salt, it's encrypted with master password
-                if (saltToUse == null || saltToUse.isEmpty()) {
-                    log("Vault " + vault.name + " doesn't have its own salt, using master password");
-                    return getMasterPasswordEncryption(null)
-                        .thenCompose(masterPasswordEncryption -> {
-                            if (masterPasswordEncryption == null || masterPasswordEncryption.hashedPassword == null) {
-                                throw new RuntimeException("No master password available");
-                            }
-                            return decryptVaultKey(vault.encryption.ciphertext, vault.encryption.nonce, masterPasswordEncryption.hashedPassword);
-                        })
-                        .thenApply(decryptedData -> {
-                            if (decryptedData == null) {
-                                throw new RuntimeException("Failed to decrypt vault key");
-                            }
-                            String encryptionKey = extractValue(decryptedData, "value", "key", "data");
-                            if (encryptionKey == null) {
-                                throw new RuntimeException("Failed to decrypt vault key");
-                            }
-                            log("Password validation successful");
-                            return true;
-                        });
-                }
-
-                log("Vault " + vault.name + " has its own salt, using vault password (buffer)");
-
-                // Get decryption key using the vault's salt and password (Base64 encoded)
-                Map<String, Object> decryptionParams = new HashMap<>();
-                decryptionParams.put("password", passwordBase64);
-                decryptionParams.put("salt", saltToUse);
-
-                return sendRequest(API.ENCRYPTION_GET_DECRYPTION_KEY.getValue(), decryptionParams)
-                    .thenCompose(decryptionResult -> {
-                        String hashedPassword = extractValue(decryptionResult, "value", "key", "hashedPassword");
-                        if (hashedPassword == null) {
-                            throw new RuntimeException("Failed to get decryption key");
-                        }
-                        log("Got decryption key, attempting to decrypt vault key");
-                        return decryptVaultKey(vault.encryption.ciphertext, vault.encryption.nonce, hashedPassword)
-                            .thenApply(decryptedData -> {
-                                if (decryptedData == null) {
-                                    throw new RuntimeException("Failed to decrypt vault key - incorrect password");
-                                }
-                                String encryptionKey = extractValue(decryptedData, "value", "key", "data");
-                                if (encryptionKey == null) {
-                                    throw new RuntimeException("Failed to decrypt vault key - incorrect password");
-                                }
-                                log("Password validation successful (buffer)");
-                                return true;
-                            });
-                    });
-            })
-            .exceptionally(ex -> {
-                log("Failed to validate vault password: " + ex.getMessage());
-                return false;
-            });
-    }
-
     /**
      * Get vault by ID and unlock it using secure byte buffer for password.
      * The password is converted to Base64 for transmission (matching JS pattern).
@@ -1549,8 +985,11 @@ public class PearPassVaultClient {
     public CompletableFuture<Boolean> getVaultById(String vaultId, byte[] password) {
         log("Getting vault by ID (buffer): " + vaultId);
 
-        // Convert password to Base64 for transmission
-        String passwordBase64 = com.pears.pass.autofill.utils.SecureBufferUtils.toBase64(password);
+        // Convert password to Base64 for transmission. A null password is sent
+        // as null (the key is dropped from the JSON), not as an empty string.
+        String passwordBase64 = password == null
+            ? null
+            : com.pears.pass.autofill.utils.SecureBufferUtils.toBase64(password);
 
         return listVaults()
             .thenCompose(vaults -> {
@@ -1707,14 +1146,6 @@ public class PearPassVaultClient {
 
     public CompletableFuture<Map<String, Object>> close() {
         return closeAllInstances();
-    }
-
-    public void destroy() {
-        try {
-            close().get();
-        } catch (Exception e) {
-            logError("Error during cleanup: " + e.getMessage());
-        }
     }
 
     // ========================

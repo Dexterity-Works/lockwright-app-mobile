@@ -94,12 +94,7 @@ class NativeClipboardModule(reactContext: ReactApplicationContext) : ReactContex
             val context = reactApplicationContext
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                clipboard.clearPrimaryClip()
-            } else {
-                val clip = ClipData.newPlainText("", "")
-                clipboard.setPrimaryClip(clip)
-            }
+            clipboard.clearPrimaryClip()
 
             lastCopiedText = null
             WorkManager.getInstance(context).cancelUniqueWork(CLEAR_CLIPBOARD_WORK_NAME)
@@ -122,12 +117,7 @@ class NativeClipboardModule(reactContext: ReactApplicationContext) : ReactContex
                     val currentText = clipData.getItemAt(0).text?.toString()
 
                     if (currentText == text) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            clipboard.clearPrimaryClip()
-                        } else {
-                            val clip = ClipData.newPlainText("", "")
-                            clipboard.setPrimaryClip(clip)
-                        }
+                        clipboard.clearPrimaryClip()
                         lastCopiedText = null
                         promise.resolve(true)
                         return
@@ -141,12 +131,7 @@ class NativeClipboardModule(reactContext: ReactApplicationContext) : ReactContex
             if (lastCopiedText == text) {
                 try {
                     val clipboard = reactApplicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        clipboard.clearPrimaryClip()
-                    } else {
-                        val clip = ClipData.newPlainText("", "")
-                        clipboard.setPrimaryClip(clip)
-                    }
+                    clipboard.clearPrimaryClip()
                     lastCopiedText = null
                     promise.resolve(true)
                 } catch (clearError: Exception) {

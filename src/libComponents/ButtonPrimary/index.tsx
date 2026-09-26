@@ -1,6 +1,5 @@
 import { ReactNode } from 'react'
 import { ButtonText, Button } from './styles'
-import { useHapticFeedback } from '../../hooks/useHapticFeedback'
 
 interface ButtonPrimaryProps {
   children: ReactNode
@@ -21,10 +20,7 @@ export const ButtonPrimary = ({
   testID,
   textTestID
 }: ButtonPrimaryProps) => {
-  const { hapticButtonPrimary } = useHapticFeedback()
-
   const handlePress = () => {
-    hapticButtonPrimary()
     onPress?.()
   }
 

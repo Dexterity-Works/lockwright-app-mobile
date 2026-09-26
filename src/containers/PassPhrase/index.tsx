@@ -22,7 +22,6 @@ import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
-import { useHapticFeedback } from '../../hooks/useHapticFeedback'
 import { usePasteFromClipboard } from '../../hooks/usePasteFromClipboard'
 
 type PassPhraseProps = {
@@ -86,7 +85,6 @@ export const PassPhrase = ({
 }: PassPhraseProps) => {
   const { t } = useLingui()
   const { theme } = useTheme()
-  const { hapticButtonSecondary } = useHapticFeedback()
   const { copyToClipboard } = useCopyToClipboard()
   const { pasteFromClipboard } = usePasteFromClipboard()
   const lastCommittedValueRef = useRef(value)
@@ -209,7 +207,6 @@ export const PassPhrase = ({
                   <ContentCopy color={theme.colors.colorTextPrimary} />
                 }
                 onClick={() => {
-                  hapticButtonSecondary()
                   copyToClipboard(value)
                 }}
               />
@@ -285,8 +282,6 @@ export const PassPhrase = ({
                     )
                   }
                   onClick={() => {
-                    hapticButtonSecondary()
-
                     if (isCreateOrEdit) {
                       handleTypeSelect(wordCount)
                       void handlePasteFromClipboard()

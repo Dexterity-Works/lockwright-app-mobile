@@ -260,10 +260,6 @@ export const MasterPasswordScreen = () => {
               >
                 {biometricSetupLabel}
               </Link>
-            ) : unsupportedFeaturesEnabled() ? (
-              <Link onClick={navigation.goBack} data-testid="auth-pin-retry">
-                {t`Try again with PIN`}
-              </Link>
             ) : null}
           </View>
 

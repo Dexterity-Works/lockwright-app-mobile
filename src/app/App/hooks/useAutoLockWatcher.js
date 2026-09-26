@@ -15,7 +15,6 @@ import {
   setLastActivityAt
 } from '../../../utils/autoLockStorage'
 import { clearAllFileCache } from '../../../utils/filesCache'
-import { unsupportedFeaturesEnabled } from '../../../utils/unsupportedFeatures'
 
 /**
  * Hook responsible for monitoring user inactivity and handling auto-lock logic.
@@ -80,12 +79,9 @@ export const useAutoLockWatcher = () => {
     await lockAutofillSession()
     clearAllFileCache()
 
-    const routeName = unsupportedFeaturesEnabled()
-      ? 'AuthPin'
-      : 'AuthMasterPassword'
     navigation.reset({
       index: 0,
-      routes: [{ name: routeName }]
+      routes: [{ name: 'AuthMasterPassword' }]
     })
 
     resetState()

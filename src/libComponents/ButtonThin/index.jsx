@@ -1,7 +1,6 @@
 import { colors } from 'src/utils/colors'
 
 import { Button, ButtonText } from './styles'
-import { useHapticFeedback } from '../../hooks/useHapticFeedback'
 
 /**
  * @param {{
@@ -20,10 +19,7 @@ export const ButtonThin = ({
   textTestID
 }) => {
   const Icon = startIcon
-  const { hapticButtonSecondary } = useHapticFeedback()
-
   const handlePress = () => {
-    hapticButtonSecondary()
     onPress?.()
   }
 

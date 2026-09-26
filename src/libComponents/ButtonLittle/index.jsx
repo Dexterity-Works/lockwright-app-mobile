@@ -1,7 +1,6 @@
 import { colors } from 'src/utils/colors'
 
 import { Button, ButtonText } from './styles'
-import { useHapticFeedback } from '../../hooks/useHapticFeedback'
 
 /**
  * @param {{
@@ -23,20 +22,10 @@ export const ButtonLittle = ({
   onPress,
   testID,
   textTestID,
-  accessibilityLabel,
-  disableHaptics = false
+  accessibilityLabel
 }) => {
   const Icon = startIcon
-  const { hapticButtonPrimary, hapticButtonSecondary } = useHapticFeedback()
-
   const handlePress = () => {
-    if (!disableHaptics) {
-      if (variant === 'primary') {
-        hapticButtonPrimary()
-      } else {
-        hapticButtonSecondary()
-      }
-    }
     onPress?.()
   }
 

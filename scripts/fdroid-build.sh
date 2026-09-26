@@ -36,7 +36,6 @@ run_prebuild() {
   npm cache clean --force 2>/dev/null || true
   npm ci --legacy-peer-deps --no-audit --no-fund
   write_swarmconf_stub
-  npm run fdroid:patches:prebuild
   npm run build
   ./node_modules/.bin/expo prebuild --platform android --clean --no-install
   perl -0777 -i -pe "s/def reactNativeAndroidDir = new File\\([\\s\\S]*?\\n\\)\\n\\n//g" android/build.gradle
@@ -90,7 +89,6 @@ run_build() {
   if [ ! -f android/gradlew ]; then
     ./node_modules/.bin/expo prebuild --platform android --clean --no-install
   fi
-  npm run fdroid:patches:build
   npm run bundle-bare
   test -f bundles/app-android.bundle.js
   npm run lingui:compile

@@ -16,7 +16,6 @@ import Toast from 'react-native-toast-message'
 
 import { useKeyboardVisibility } from '../../hooks/useKeyboardVisibility'
 import { OnboardingLayout } from '../../screens/Onboarding/components/OnboardingLayout'
-import { unsupportedFeaturesEnabled } from '../../utils/unsupportedFeatures'
 
 export const LockedScreen = () => {
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisibility()
@@ -41,9 +40,7 @@ export const LockedScreen = () => {
     const status = await refreshMasterPasswordStatus()
 
     if (!status?.isLocked) {
-      navigation.replace(
-        unsupportedFeaturesEnabled() ? 'AuthPin' : 'AuthMasterPassword'
-      )
+      navigation.replace('AuthMasterPassword')
 
       Toast.show({
         type: 'baseToast',

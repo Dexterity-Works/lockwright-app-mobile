@@ -22,8 +22,7 @@ jest.mock('../../../utils/logger', () => ({
   logger: { error: jest.fn() }
 }))
 jest.mock('../../../utils/SplashScreen', () => ({
-  hideAsync: jest.fn(),
-  preventAutoHideAsync: jest.fn()
+  hideAsync: jest.fn()
 }))
 jest.mock('../../../utils/unsupportedFeatures', () => ({
   unsupportedFeaturesEnabled: jest.fn(() => false)

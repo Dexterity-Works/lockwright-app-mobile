@@ -44,16 +44,12 @@ jest.mock('src/utils/colors', () => ({
 }))
 
 jest.mock('react-native', () => ({
-  NativeModules: {
-    NativeClipboard: null
-  },
   Platform: { OS: 'ios' }
 }))
 
 jest.mock('../native-modules/NativeClipboard', () => ({
   __esModule: true,
   default: {
-    isAvailable: jest.fn().mockResolvedValue(false),
     setString: jest.fn(),
     setStringWithExpiration: jest.fn(),
     clearClipboard: jest.fn(),
@@ -101,7 +97,7 @@ describe('useCopyToClipboard', () => {
     expect(result.current.isCopied).toBe(false)
   })
 
-  it('should copy text to clipboard when opt-in is enabled', async () => {
+  it('copies through the native module with the clear timeout', async () => {
     SecureStore.getItemAsync.mockImplementation((key) =>
       Promise.resolve(key === 'copyToClipboard' ? 'true' : null)
     )
@@ -114,7 +110,11 @@ describe('useCopyToClipboard', () => {
       await result.current.copyToClipboard('test text')
     })
 
-    expect(Clipboard.setStringAsync).toHaveBeenCalledWith('test text')
+    expect(NativeClipboard.setStringWithExpiration).toHaveBeenCalledWith(
+      'test text',
+      30
+    )
+    expect(Clipboard.setStringAsync).not.toHaveBeenCalled()
     expect(Toast.show).toHaveBeenCalled()
     expect(result.current.isCopied).toBe(true)
   })
@@ -179,7 +179,7 @@ describe('useCopyToClipboard', () => {
       await result.current.copyToClipboard('second')
     })
 
-    expect(Clipboard.setStringAsync).toHaveBeenCalledTimes(2)
+    expect(NativeClipboard.setStringWithExpiration).toHaveBeenCalledTimes(2)
     expect(result.current.isCopied).toBe(true)
   })
 
@@ -210,13 +210,11 @@ describe('useCopyToClipboard', () => {
 
     afterEach(() => {
       Platform.OS = 'ios'
-      NativeClipboard.isAvailable.mockResolvedValue(false)
     })
 
     it('marks the copy sensitive through the native module on Android', async () => {
       Platform.OS = 'android'
       SecureStore.getItemAsync.mockImplementation(neverExpires)
-      NativeClipboard.isAvailable.mockResolvedValue(true)
 
       const { result } = renderWithI18n()
       await act(async () => {})
@@ -231,7 +229,6 @@ describe('useCopyToClipboard', () => {
 
     it('stays on expo-clipboard on iOS', async () => {
       SecureStore.getItemAsync.mockImplementation(neverExpires)
-      NativeClipboard.isAvailable.mockResolvedValue(true)
 
       const { result } = renderWithI18n()
       await act(async () => {})
@@ -241,145 +238,6 @@ describe('useCopyToClipboard', () => {
 
       expect(Clipboard.setStringAsync).toHaveBeenCalledWith('secret')
       expect(NativeClipboard.setString).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('auto-clear clipboard', () => {
-    it('should clear clipboard after 30 seconds if it still contains the same value', async () => {
-      SecureStore.getItemAsync.mockImplementation((key) =>
-        Promise.resolve(key === 'copyToClipboard' ? 'true' : null)
-      )
-      Clipboard.getStringAsync.mockResolvedValue('sensitive password')
-
-      const { result } = renderWithI18n()
-      await act(async () => {})
-
-      await act(async () => {
-        await result.current.copyToClipboard('sensitive password')
-      })
-
-      expect(Clipboard.setStringAsync).toHaveBeenCalledWith(
-        'sensitive password'
-      )
-      expect(Clipboard.setStringAsync).toHaveBeenCalledTimes(1)
-
-      await act(async () => {
-        jest.advanceTimersByTime(30000)
-      })
-
-      expect(Clipboard.getStringAsync).toHaveBeenCalled()
-      expect(Clipboard.setStringAsync).toHaveBeenCalledWith('')
-      expect(Clipboard.setStringAsync).toHaveBeenCalledTimes(2)
-    })
-
-    it('should not clear clipboard if value has changed', async () => {
-      SecureStore.getItemAsync.mockImplementation((key) =>
-        Promise.resolve(key === 'copyToClipboard' ? 'true' : null)
-      )
-      Clipboard.getStringAsync.mockResolvedValue('different value')
-
-      const { result } = renderWithI18n()
-      await act(async () => {})
-
-      await act(async () => {
-        await result.current.copyToClipboard('sensitive password')
-      })
-
-      expect(Clipboard.setStringAsync).toHaveBeenCalledWith(
-        'sensitive password'
-      )
-      expect(Clipboard.setStringAsync).toHaveBeenCalledTimes(1)
-
-      await act(async () => {
-        jest.advanceTimersByTime(30000)
-      })
-
-      expect(Clipboard.getStringAsync).toHaveBeenCalled()
-      expect(Clipboard.setStringAsync).toHaveBeenCalledTimes(1)
-      expect(Clipboard.setStringAsync).not.toHaveBeenCalledWith('')
-    })
-
-    it('should cancel previous clear timeout when copying again', async () => {
-      SecureStore.getItemAsync.mockImplementation((key) =>
-        Promise.resolve(key === 'copyToClipboard' ? 'true' : null)
-      )
-      Clipboard.getStringAsync.mockResolvedValue('second password')
-
-      const { result } = renderWithI18n()
-      await act(async () => {})
-
-      await act(async () => {
-        await result.current.copyToClipboard('first password')
-      })
-
-      await act(async () => {
-        jest.advanceTimersByTime(15000)
-      })
-
-      await act(async () => {
-        await result.current.copyToClipboard('second password')
-      })
-
-      await act(async () => {
-        jest.advanceTimersByTime(20000)
-      })
-
-      expect(Clipboard.getStringAsync).not.toHaveBeenCalled()
-
-      await act(async () => {
-        jest.advanceTimersByTime(10000)
-      })
-
-      expect(Clipboard.getStringAsync).toHaveBeenCalled()
-      expect(Clipboard.setStringAsync).toHaveBeenCalledWith('')
-      expect(Clipboard.setStringAsync).toHaveBeenCalledTimes(3)
-    })
-
-    it('should handle errors during clipboard clearing gracefully', async () => {
-      SecureStore.getItemAsync.mockImplementation((key) =>
-        Promise.resolve(key === 'copyToClipboard' ? 'true' : null)
-      )
-      Clipboard.getStringAsync.mockRejectedValue(
-        new Error('Clipboard access failed')
-      )
-
-      const { result } = renderWithI18n()
-      await act(async () => {})
-
-      await act(async () => {
-        await result.current.copyToClipboard('sensitive password')
-      })
-
-      await act(async () => {
-        jest.advanceTimersByTime(30000)
-      })
-
-      expect(Clipboard.getStringAsync).toHaveBeenCalled()
-      expect(Clipboard.setStringAsync).toHaveBeenCalledTimes(1)
-    })
-
-    it('should cancel clipboard clear timer on unmount', async () => {
-      SecureStore.getItemAsync.mockImplementation((key) =>
-        Promise.resolve(key === 'copyToClipboard' ? 'true' : null)
-      )
-      Clipboard.getStringAsync.mockResolvedValue('sensitive password')
-
-      const { result, unmount } = renderWithI18n()
-      await act(async () => {})
-
-      await act(async () => {
-        await result.current.copyToClipboard('sensitive password')
-      })
-
-      unmount()
-
-      await act(async () => {
-        jest.advanceTimersByTime(30000)
-      })
-
-      // Timer is cancelled on unmount, so clipboard should NOT be cleared
-      expect(Clipboard.getStringAsync).not.toHaveBeenCalled()
-      expect(Clipboard.setStringAsync).toHaveBeenCalledTimes(1) // Only the initial copy
     })
   })
 })

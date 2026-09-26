@@ -11,19 +11,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: rawTokens.spacing8
   },
-  pinSlotsContainer: {
-    paddingTop: rawTokens.spacing8
-  },
-  numpadContainer: {
-    paddingTop: rawTokens.spacing16
-  },
-  footerText: {
-    flexDirection: 'row',
-    width: '100%',
-    textAlign: 'center',
-    justifyContent: 'center',
-    paddingBottom: rawTokens.spacing16
-  },
   passwordContainer: {
     gap: rawTokens.spacing24
   },

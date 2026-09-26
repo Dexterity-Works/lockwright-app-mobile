@@ -19,7 +19,6 @@ import { AutoLockTouchCapture } from './components/AutoLockHandler'
 import { AutoLockProvider } from './context/AutoLockContext'
 import { BottomSheetAutoSizeProvider } from './context/BottomSheetAutoSizeContext'
 import { BottomSheetProvider } from './context/BottomSheetContext'
-import { HapticsProvider } from './context/HapticsContext'
 import { LoadingProvider } from './context/LoadingContext'
 import { ModalProvider } from './context/ModalContext'
 import { SharedFilterProvider } from './context/SharedFilterContext'
@@ -31,8 +30,6 @@ import * as SplashScreen from './utils/SplashScreen'
 import { createPearpassVaultClient } from './worklet'
 
 global.Buffer = global.Buffer || Buffer
-
-SplashScreen.preventAutoHideAsync()
 
 i18n.load('en', messages)
 i18n.activate('en')
@@ -97,35 +94,33 @@ export const Main = () => {
 
       <I18nProvider i18n={i18n}>
         <ThemeProvider>
-          <HapticsProvider>
-            <LoadingProvider>
-              <GestureHandlerRootView style={styles.appRoot}>
-                <SafeAreaProvider>
-                  <VaultProvider>
-                    <SharedFilterProvider>
-                      <VaultSelectorProvider>
-                        <NavigationContainer>
-                          <AutoLockProvider>
-                            <AutoLockTouchCapture>
-                              <ModalProvider>
-                                <BottomSheetProvider>
-                                  <BottomSheetAutoSizeProvider>
-                                    <BottomSheetModalProvider>
-                                      <App />
-                                    </BottomSheetModalProvider>
-                                  </BottomSheetAutoSizeProvider>
-                                </BottomSheetProvider>
-                              </ModalProvider>
-                            </AutoLockTouchCapture>
-                          </AutoLockProvider>
-                        </NavigationContainer>
-                      </VaultSelectorProvider>
-                    </SharedFilterProvider>
-                  </VaultProvider>
-                </SafeAreaProvider>
-              </GestureHandlerRootView>
-            </LoadingProvider>
-          </HapticsProvider>
+          <LoadingProvider>
+            <GestureHandlerRootView style={styles.appRoot}>
+              <SafeAreaProvider>
+                <VaultProvider>
+                  <SharedFilterProvider>
+                    <VaultSelectorProvider>
+                      <NavigationContainer>
+                        <AutoLockProvider>
+                          <AutoLockTouchCapture>
+                            <ModalProvider>
+                              <BottomSheetProvider>
+                                <BottomSheetAutoSizeProvider>
+                                  <BottomSheetModalProvider>
+                                    <App />
+                                  </BottomSheetModalProvider>
+                                </BottomSheetAutoSizeProvider>
+                              </BottomSheetProvider>
+                            </ModalProvider>
+                          </AutoLockTouchCapture>
+                        </AutoLockProvider>
+                      </NavigationContainer>
+                    </VaultSelectorProvider>
+                  </SharedFilterProvider>
+                </VaultProvider>
+              </SafeAreaProvider>
+            </GestureHandlerRootView>
+          </LoadingProvider>
         </ThemeProvider>
       </I18nProvider>
     </UIKitProvider>

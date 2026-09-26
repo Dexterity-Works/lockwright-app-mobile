@@ -76,12 +76,6 @@ jest.mock('../../context/BottomSheetContext', () => ({
   })
 }))
 
-jest.mock('../../hooks/useHapticFeedback', () => ({
-  useHapticFeedback: () => ({
-    hapticButtonSecondary: jest.fn()
-  })
-}))
-
 jest.mock('../../hooks/useQRScanner', () => ({
   useQRScanner: () => ({
     hasPermission: true,

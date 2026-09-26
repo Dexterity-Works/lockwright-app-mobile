@@ -1,4 +1,3 @@
-import './strict.css'
 import '@expo/metro-runtime'
 
 import { registerRootComponent } from 'expo'

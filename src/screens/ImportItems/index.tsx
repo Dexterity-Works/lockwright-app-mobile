@@ -46,7 +46,6 @@ import Toast from 'react-native-toast-message'
 import { Layout } from 'src/containers/Layout'
 import { BackScreenHeader } from 'src/containers/ScreenHeader/BackScreenHeader'
 import { useAutoLockContext } from 'src/context/AutoLockContext'
-import { useHapticFeedback } from 'src/hooks/useHapticFeedback'
 import { readFileContent } from '../Settings/TabImport/utils/readFileContent'
 import { styles } from './styles'
 import { ImportOptionType } from './types'
@@ -160,7 +159,6 @@ export const ImportItems = () => {
     [key: string]: unknown
   }
   const { createRecord } = useCreateRecord()
-  const { hapticButtonSecondary } = useHapticFeedback()
 
   const [state, setState] = useState<ImportState>('default')
   const [selectedOption, setSelectedOption] = useState<ImportOption | null>(
@@ -197,7 +195,6 @@ export const ImportItems = () => {
 
   const handleFilePick = async () => {
     if (!selectedOption) return
-    hapticButtonSecondary()
     setShouldBypassAutoLock(true)
     try {
       const fileInfo = await readFileContent(selectedOption.accepts)

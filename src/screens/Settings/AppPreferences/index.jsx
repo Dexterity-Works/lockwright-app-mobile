@@ -9,10 +9,7 @@ import {
   UNSUPPORTED
 } from 'lockwright-lib-constants'
 import {
-  Button,
   Checkbox,
-  ContextMenu,
-  NavbarListItem,
   PageHeader,
   Text,
   ToggleSwitch,
@@ -21,13 +18,9 @@ import {
 } from 'lockwright-lib-ui-react-native-components'
 import {
   ExpandMore,
-  InfoOutlined,
-  Key,
-  MoreVert,
-  TrashOutlined
+  InfoOutlined
 } from 'lockwright-lib-ui-react-native-components/icons'
 import { AppState, Platform, Pressable, StyleSheet, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { IOS_APP_GROUP_ID } from '../../../constants/iosAppGroup'
 import { SECURE_STORAGE_KEYS } from '../../../constants/secureStorageKeys'
@@ -57,14 +50,12 @@ export const AppPreferences = () => {
   const { isPasswordChangeReminderEnabled } = usePasswordChangeReminder()
   const { isBiometricsSupported, isBiometricsEnabled, toggleBiometrics } =
     useBiometricsAuthentication()
-  const { bottom } = useSafeAreaInsets()
 
   const [isAutofillEnabled, setIsAutofillEnabled] = useState(false)
   const [clipboardClearTimeout, setClipboardClearTimeout] = useState(
     CLIPBOARD_CLEAR_TIMEOUT
   )
   const [isNonSecureAllowed, setIsNonSecureAllowed] = useState(false)
-  const [isPinEnabled, setIsPinEnabled] = useState(false)
   const [isRemindersEnabled, setIsRemindersEnabled] = useState(true)
   const [isCopyToClipboardEnabled, setIsCopyToClipboardEnabled] = useState(true)
   const appStateRef = useRef(AppState.currentState)
@@ -100,10 +91,9 @@ export const AppPreferences = () => {
 
   useEffect(() => {
     const loadSettings = async () => {
-      const [clipTimeout, nonSecure, pin, copyToClipboard] = await Promise.all([
+      const [clipTimeout, nonSecure, copyToClipboard] = await Promise.all([
         SecureStore.getItemAsync(SECURE_STORAGE_KEYS.CLIPBOARD_CLEAR_TIMEOUT),
         SecureStore.getItemAsync(SECURE_STORAGE_KEYS.ALLOW_NON_SECURE_WEBSITES),
-        SecureStore.getItemAsync(SECURE_STORAGE_KEYS.PIN_ENABLED),
         SecureStore.getItemAsync(SECURE_STORAGE_KEYS.COPY_TO_CLIPBOARD, {
           accessGroup: IOS_APP_GROUP_ID
         })
@@ -115,7 +105,6 @@ export const AppPreferences = () => {
         setClipboardClearTimeout(Number(clipTimeout))
       }
       setIsNonSecureAllowed(nonSecure === 'true')
-      setIsPinEnabled(pin === 'true')
       setIsRemindersEnabled(isPasswordChangeReminderEnabled)
       setIsCopyToClipboardEnabled(copyToClipboard !== 'false')
     }
@@ -214,12 +203,6 @@ export const AppPreferences = () => {
     },
     [setAutoLockTimeout, collapse]
   )
-
-  const handlePinToggle = useCallback(async () => {
-    const newValue = !isPinEnabled
-    setIsPinEnabled(newValue)
-    await storeOptionalFlag(SECURE_STORAGE_KEYS.PIN_ENABLED, newValue, false)
-  }, [isPinEnabled])
 
   const handleBiometricsToggle = useCallback(async () => {
     await toggleBiometrics(!isBiometricsEnabled)
@@ -372,51 +355,6 @@ export const AppPreferences = () => {
             />
           </View>
 
-          {UNSUPPORTED && (
-            <View style={cardRowStyle(false)}>
-              <View style={styles.checkboxRowInner}>
-                <Checkbox
-                  checked={isPinEnabled}
-                  onChange={handlePinToggle}
-                  label={t`Pin Code`}
-                  description={t`Use a short PIN to quickly unlock Lockwright on this device`}
-                />
-                {isPinEnabled && (
-                  <ContextMenu
-                    trigger={
-                      <Button
-                        variant="tertiary"
-                        size="small"
-                        iconBefore={
-                          <MoreVert color={theme.colors.colorTextPrimary} />
-                        }
-                      />
-                    }
-                  >
-                    <View style={{ paddingBottom: bottom }}>
-                      <NavbarListItem
-                        platform="mobile"
-                        icon={<Key color={theme.colors.colorTextPrimary} />}
-                        label={t`Change PIN Code`}
-                        showDivider
-                      />
-                      <NavbarListItem
-                        platform="mobile"
-                        variant="destructive"
-                        icon={
-                          <TrashOutlined
-                            color={theme.colors.colorSurfaceDestructiveElevated}
-                          />
-                        }
-                        label={t`Delete PIN Code`}
-                      />
-                    </View>
-                  </ContextMenu>
-                )}
-              </View>
-            </View>
-          )}
-
           <View style={cardRowStyle(true)}>
             <Checkbox
               checked={isBiometricsEnabled}
@@ -523,10 +461,5 @@ const getStyles = (theme) =>
       borderWidth: 1,
       borderColor: theme.colors.colorBorderPrimary,
       borderRadius: rawTokens.radius8
-    },
-    checkboxRowInner: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: rawTokens.spacing12
     }
   })

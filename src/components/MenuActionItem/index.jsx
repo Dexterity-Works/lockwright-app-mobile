@@ -12,17 +12,12 @@ import {
 } from './styles'
 import { RECORD_ACTION_ICON_BY_TYPE } from '../../constants/recordActions'
 import { useSharedFilter } from '../../context/SharedFilterContext'
-import { useHapticFeedback } from '../../hooks/useHapticFeedback'
 
-export const MenuActionItem = ({ item, onPress, disableHaptics = false }) => {
+export const MenuActionItem = ({ item, onPress }) => {
   const { state } = useSharedFilter()
-  const { hapticButtonSecondary } = useHapticFeedback()
   const ActionIcon = RECORD_ACTION_ICON_BY_TYPE[item.type]
 
   const handlePress = () => {
-    if (!disableHaptics) {
-      hapticButtonSecondary()
-    }
     onPress?.()
   }
 

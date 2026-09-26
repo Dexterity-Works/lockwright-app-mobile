@@ -2,8 +2,6 @@ package com.pears.pass
 
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
-import android.content.ClipData
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -28,12 +26,7 @@ class ClearClipboardWorker(
 
     override fun doWork(): Result {
         return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                clipboardManager.clearPrimaryClip()
-            } else {
-                val clip = ClipData.newPlainText("", "")
-                clipboardManager.setPrimaryClip(clip)
-            }
+            clipboardManager.clearPrimaryClip()
             Log.d(TAG, "Clipboard cleared successfully")
             Result.success()
         } catch (e: Exception) {

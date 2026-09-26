@@ -20,7 +20,6 @@ import { Camera } from 'react-native-vision-camera'
 import { colors } from 'src/utils/colors'
 
 import { useBottomSheet } from '../../context/BottomSheetContext'
-import { useHapticFeedback } from '../../hooks/useHapticFeedback'
 import { useQRScanner } from '../../hooks/useQRScanner'
 import { ButtonPrimary, ButtonSecondary } from '../../libComponents'
 
@@ -33,7 +32,6 @@ export const PairAnotherDeviceContent = ({
   const navigation = useNavigation()
   const { collapse } = useBottomSheet()
 
-  const { hapticButtonSecondary } = useHapticFeedback()
   const [inviteCode, setInviteCode] = useState('')
   const [error, setError] = useState('')
 
@@ -57,7 +55,6 @@ export const PairAnotherDeviceContent = ({
   })
 
   const handleQRPress = async () => {
-    hapticButtonSecondary()
     if (!hasPermission) {
       await requestPermission()
     }
@@ -65,7 +62,6 @@ export const PairAnotherDeviceContent = ({
   }
 
   const handlePaste = async () => {
-    hapticButtonSecondary()
     const text = await Clipboard.getStringAsync()
     if (text) {
       setInviteCode(text)

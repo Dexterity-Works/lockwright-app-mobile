@@ -23,25 +23,17 @@ import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
-import { BiometricType, Numpad } from '../../components/Numpad'
-import { PinSlots } from '../../components/PinSlots'
 import { IOS_APP_GROUP_ID } from '../../constants/iosAppGroup'
 import { SECURE_STORAGE_KEYS } from '../../constants/secureStorageKeys'
 import { useBiometricsAuthentication } from '../../hooks/useBiometricsAuthentication'
-import { useHapticFeedback } from '../../hooks/useHapticFeedback'
 import {
   isFingerprintSupported as getIsFingerprintSupported,
   isFacialRecognitionSupported
 } from '../../utils/biometricLogin'
 import { logger } from '../../utils/logger'
-import { unsupportedFeaturesEnabled } from '../../utils/unsupportedFeatures'
 import { SheetHeader } from '../BottomSheet/SheetHeader'
 import { Layout } from '../Layout'
 import { styles } from './styles'
-
-const PIN_LENGTH = 6
-
-type InputMode = 'pin' | 'password'
 
 interface BottomSheetReauthContentProps {
   onConfirm: (data?: { encryptionData?: object }) => Promise<void>
@@ -54,14 +46,9 @@ export const BottomSheetReauthContent = ({
   const { theme } = useTheme()
   const collapse = useBottomSheetClose()
   const { bottom } = useSafeAreaInsets()
-  const { hapticSuccess, hapticError, hapticButtonSecondary } =
-    useHapticFeedback()
-
   const { logIn } = useUserData()
   const { initVaults } = useVaults()
 
-  const [mode, setMode] = useState<InputMode>(unsupportedFeaturesEnabled() ? 'pin' : 'password')
-  const [pin, setPin] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const { isBiometricsEnabled, isBiometricsSupported, biometricTypes } =
@@ -76,13 +63,6 @@ export const BottomSheetReauthContent = ({
     isBiometricAvailable && isFacialRecognitionSupported(biometricTypes)
   const isFingerprint =
     isBiometricAvailable && getIsFingerprintSupported(biometricTypes)
-
-  const biometricType =
-    isFaceID && !isFingerprint
-      ? BiometricType.Face
-      : isFingerprint
-        ? BiometricType.Fingerprint
-        : null
 
   const handleBiometricAuth = useCallback(async () => {
     if (isLoading) return
@@ -115,12 +95,10 @@ export const BottomSheetReauthContent = ({
       const { ciphertext, nonce, hashedPassword } = parsedEncryptionData
       await initVaults({ ciphertext, nonce, hashedPassword })
 
-      hapticSuccess()
       await onConfirm({ encryptionData: parsedEncryptionData })
       collapse()
     } catch (error) {
       logger.error('Biometric login error:', error)
-      hapticError()
       Toast.show({
         type: 'baseToast',
         text1: t`ERROR: Authentication failed`,
@@ -130,21 +108,7 @@ export const BottomSheetReauthContent = ({
     } finally {
       setIsLoading(false)
     }
-  }, [isLoading, hapticSuccess, hapticError, initVaults, onConfirm, t])
-
-  const handlePadPress = useCallback(
-    (digit: string) => {
-      if (pin.length >= PIN_LENGTH) return
-      hapticButtonSecondary()
-      setPin((prev) => prev + digit)
-    },
-    [pin, hapticButtonSecondary]
-  )
-
-  const handleBackspace = useCallback(() => {
-    hapticButtonSecondary()
-    setPin((prev) => prev.slice(0, -1))
-  }, [hapticButtonSecondary])
+  }, [isLoading, initVaults, onConfirm, t])
 
   const schema = Validator.object({
     password: Validator.string().required(t`Password is required`)
@@ -176,9 +140,9 @@ export const BottomSheetReauthContent = ({
   }
 
   const biometricLabel =
-    biometricType === BiometricType.Face
+    isFaceID && !isFingerprint
       ? t`Try again with Face ID`
-      : biometricType === BiometricType.Fingerprint
+      : isFingerprint
         ? t`Try again with Fingerprint`
         : null
 
@@ -190,87 +154,50 @@ export const BottomSheetReauthContent = ({
         <SheetHeader title={t`Verification Required`} onClose={collapse} />
       }
     >
-      {mode === 'pin' ? (
-        <View style={styles.content}>
-          <View style={styles.titleContainer}>
-            <Text color={theme.colors.colorTextSecondary}>
-              {t`Use your PIN or biometric ID to authorize this action.`}
-            </Text>
-          </View>
+      <View style={styles.content}>
+        <View style={styles.titleContainer}>
+          <Text color={theme.colors.colorTextSecondary}>
+            {t`Use your Master Password or biometric ID to authorize this action.`}
+          </Text>
+        </View>
 
-          <View style={styles.pinSlotsContainer}>
-            <PinSlots pin={pin} pinLength={PIN_LENGTH} />
-          </View>
+        <View style={styles.passwordContainer}>
+          <PasswordField
+            label={t`Password`}
+            placeholder={t`Enter Master Password`}
+            value={passwordRegisterProps.value}
+            onChangeText={passwordRegisterProps.onChange}
+            error={passwordRegisterProps.error ?? undefined}
+            data-testid="reauth-master-password-input"
+            as={BottomSheetTextInput}
+          />
+        </View>
 
-          <View style={styles.numpadContainer}>
-            <Numpad
-              onDigitPress={handlePadPress}
-              onBackspacePress={handleBackspace}
-              onBiometricPress={
-                isBiometricAvailable ? handleBiometricAuth : undefined
-              }
-              biometricType={isBiometricAvailable ? biometricType : null}
-            />
-          </View>
-
-          <View style={styles.footerText}>
-            <Text>
-              {t`Forgot PIN?`}{' '}
+        <View style={styles.buttonContainer}>
+          {isBiometricAvailable && biometricLabel ? (
+            <View style={styles.linkContainer}>
               <Link
-                onClick={() => setMode('password')}
-                data-testid="reauth-master-password-link"
+                onClick={handleBiometricAuth}
+                data-testid="reauth-biometric-retry"
               >
-                {t`Proceed with Master Password`}
+                {biometricLabel}
               </Link>
-            </Text>
-          </View>
+            </View>
+          ) : null}
+
+          <Button
+            variant="primary"
+            fullWidth
+            onClick={handleSubmit(handlePasswordSubmit)}
+            disabled={!values.password}
+            isLoading={isLoading}
+            iconAfter={<KeyboardArrowRightFilled />}
+            data-testid="reauth-continue-button"
+          >
+            {t`Continue`}
+          </Button>
         </View>
-      ) : (
-        <View style={styles.content}>
-          <View style={styles.titleContainer}>
-            <Text color={theme.colors.colorTextSecondary}>
-              {t`Use your Master Password or biometric ID to authorize this action.`}
-            </Text>
-          </View>
-
-          <View style={styles.passwordContainer}>
-            <PasswordField
-              label={t`Password`}
-              placeholder={t`Enter Master Password`}
-              value={passwordRegisterProps.value}
-              onChangeText={passwordRegisterProps.onChange}
-              error={passwordRegisterProps.error ?? undefined}
-              data-testid="reauth-master-password-input"
-              as={BottomSheetTextInput}
-            />
-          </View>
-
-          <View style={styles.buttonContainer}>
-            {isBiometricAvailable && biometricLabel ? (
-              <View style={styles.linkContainer}>
-                <Link
-                  onClick={handleBiometricAuth}
-                  data-testid="reauth-biometric-retry"
-                >
-                  {biometricLabel}
-                </Link>
-              </View>
-            ) : null}
-
-            <Button
-              variant="primary"
-              fullWidth
-              onClick={handleSubmit(handlePasswordSubmit)}
-              disabled={!values.password}
-              isLoading={isLoading}
-              iconAfter={<KeyboardArrowRightFilled />}
-              data-testid="reauth-continue-button"
-            >
-              {t`Continue`}
-            </Button>
-          </View>
-        </View>
-      )}
+      </View>
     </Layout>
   )
 }

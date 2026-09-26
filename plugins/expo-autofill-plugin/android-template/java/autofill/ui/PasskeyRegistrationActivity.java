@@ -390,12 +390,7 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
                 }
 
                 // Activate the vault using byte[] password
-                boolean success;
-                if (passwordBuffer != null) {
-                    success = vaultClient.getVaultById(vaultId, passwordBuffer).get();
-                } else {
-                    success = vaultClient.getVaultById(vaultId, (String) null).get();
-                }
+                boolean success = vaultClient.getVaultById(vaultId, passwordBuffer).get();
                 if (!success) {
                     throw new RuntimeException("Failed to activate vault");
                 }
@@ -844,12 +839,7 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
                         // Re-open the active vault if we have the vault ID
                         if (selectedVaultId != null) {
                             SecureLog.d(TAG, "Re-opening active vault: " + selectedVaultId);
-                            boolean success;
-                            if (selectedVaultPasswordBuffer != null) {
-                                success = vaultClient.getVaultById(selectedVaultId, selectedVaultPasswordBuffer).get();
-                            } else {
-                                success = vaultClient.getVaultById(selectedVaultId, (String) null).get();
-                            }
+                            boolean success = vaultClient.getVaultById(selectedVaultId, selectedVaultPasswordBuffer).get();
                             if (success) {
                                 SecureLog.d(TAG, "Active vault re-opened successfully");
                                 readyFuture.complete(true);

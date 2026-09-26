@@ -38,13 +38,6 @@ jest.mock('../../BiometricWithIconAndText', () => {
   }
 })
 
-jest.mock('../../../hooks/useHapticFeedback', () => ({
-  useHapticFeedback: () => ({
-    hapticSuccess: jest.fn(),
-    hapticError: jest.fn()
-  })
-}))
-
 const renderWithProviders = (ui) => {
   i18n.activate('en')
   return render(

@@ -446,12 +446,7 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                 try { vaultClient.activeVaultClose().get(); }
                 catch (Exception ignored) {}
 
-                boolean ok;
-                if (passwordBuffer != null) {
-                    ok = vaultClient.getVaultById(vault.getId(), passwordBuffer).get();
-                } else {
-                    ok = vaultClient.getVaultById(vault.getId(), (String) null).get();
-                }
+                boolean ok = vaultClient.getVaultById(vault.getId(), passwordBuffer).get();
                 if (!ok) throw new RuntimeException("Failed to activate vault");
 
                 // Registration: inform activity so vaultReadyFuture + selectedVaultId get set.
