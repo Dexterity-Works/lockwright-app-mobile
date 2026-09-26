@@ -23,22 +23,28 @@ describe("Lockwright app id", () => {
     expect(Number.isInteger(app.expo.android.versionCode)).toBe(true);
   });
 
-  it("pins lockwright-lib-constants to Dexterity-Works git, not Tether or file:", () => {
+  it("pins every lockwright git dependency to the commit the lockfile resolved", () => {
     const pkg = JSON.parse(
       readFileSync(path.resolve(__dirname, "../package.json"), "utf8"),
     );
-    expect(pkg.dependencies["lockwright-lib-constants"]).toBe(
-      "git+https://github.com/Dexterity-Works/lockwright-lib-constants.git#0221dba94373926c7316c675d9bff774daf8464f",
-    );
-  });
-
-  it("pins lockwright-lib-ui-react-native-components to Dexterity-Works git, not Tether", () => {
-    const pkg = JSON.parse(
-      readFileSync(path.resolve(__dirname, "../package.json"), "utf8"),
-    );
-    expect(pkg.dependencies["lockwright-lib-ui-react-native-components"]).toBe(
-      "git+https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components.git#design-system-v2",
-    );
+    const lock = readFileSync(path.resolve(__dirname, "../pnpm-lock.yaml"), "utf8");
+    const gitDeps = Object.entries({
+      ...pkg.dependencies,
+      ...pkg.devDependencies,
+    }).filter(([, spec]) => String(spec).startsWith("git+"));
+    expect(gitDeps.length).toBeGreaterThan(10);
+    for (const [name, spec] of gitDeps) {
+      const match = String(spec).match(
+        /^git\+https:\/\/github\.com\/Dexterity-Works\/([^#]+)\.git#([0-9a-f]{40})$/,
+      );
+      expect(`${name}: ${spec}`).toMatch(/Dexterity-Works\/[^#]+\.git#[0-9a-f]{40}$/);
+      const [, repo, sha] = match ?? [];
+      expect(lock).toContain(
+        `https://codeload.github.com/Dexterity-Works/${repo}/tar.gz/${sha}`,
+      );
+    }
+    expect(pkg.dependencies["lockwright-lib-constants"]).toMatch(/Dexterity-Works/);
+    expect(pkg.dependencies["lockwright-lib-ui-react-native-components"]).toMatch(/Dexterity-Works/);
   });
 
   it("uses package name lockwright-app-mobile, not pearpass-app-mobile", () => {

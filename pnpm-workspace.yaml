@@ -6,7 +6,7 @@ blockExoticSubdeps: false
 
 overrides:
   "lockwright-lib-constants": "git+https://github.com/Dexterity-Works/lockwright-lib-constants.git#701bf1988d16458c634db85269b436eb9c07cacc"
-  "lockwright-lib-ui-react-native-components": "git+https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components.git#design-system-v2"
+  "lockwright-lib-ui-react-native-components": "git+https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components.git#82167746355a4d1b931dae2c3d4abe10a7e10b7e"
 
 publicHoistPattern:
   - '*react-native*'
@@ -26,14 +26,9 @@ allowBuilds:
   "lockwright-utils-password-check@https://codeload.github.com/Dexterity-Works/lockwright-utils-password-check/tar.gz/3fb28bee9328290a12119feaaf912d1018fcf6f8": true
   "lockwright-utils-password-generator@https://codeload.github.com/Dexterity-Works/lockwright-utils-password-generator/tar.gz/382806f37823902b41087200c6d96bd83f3d3358": true
   "@tetherto/tether-dev-docs@https://codeload.github.com/Dexterity-Works/tether-dev-docs/tar.gz/cb82786f04714a56577df1555db947969ec90aeb": true
-  "lockwright-lib-constants": true
   "lockwright-lib-constants@https://codeload.github.com/Dexterity-Works/lockwright-lib-constants/tar.gz/701bf1988d16458c634db85269b436eb9c07cacc": true
-  '@sentry/cli': set this to true or false
   "lockwright-lib-vault-core@file:../pearpass-lib-vault-core": true
   "lockwright-lib-vault@file:../pearpass-lib-vault": true
-  esbuild: set this to true or false
-  unrs-resolver: set this to true or false
   "@sentry/cli@3.4.0": true
   "esbuild@0.25.12": true
   "unrs-resolver@1.12.2": true
-  lockwright-lib-data-import@https://codeload.github.com/Dexterity-Works/lockwright-lib-data-import/tar.gz/82cbfdde64c2f16e71748b4a4c44a82a91a5b0d5: set this to true or false
