@@ -2,6 +2,9 @@ import { ConfigPlugin, withDangerousMod, withXcodeProject, IOSConfig } from '@ex
 import * as fs from 'fs';
 import * as path from 'path';
 
+// Only the animations the onboarding screens reference by resourceName.
+const RIVE_ASSETS = ['face_id.riv', 'fingerprint.riv', 'sync_without_the_cloud.riv'];
+
 const withRiveAssets: ConfigPlugin = (config) => {
   // iOS: Copy .riv files to project directory and add to Xcode project
   config = withXcodeProject(config, async (cfg) => {
@@ -12,10 +15,7 @@ const withRiveAssets: ConfigPlugin = (config) => {
     const projectDir = path.join(iosDir, projectName);
 
     // Copy .riv files to the project directory
-    const files = await fs.promises.readdir(templateDir);
-    const rivFiles = files.filter(f => f.endsWith('.riv'));
-
-    for (const file of rivFiles) {
+    for (const file of RIVE_ASSETS) {
       const srcPath = path.join(templateDir, file);
       const destPath = path.join(projectDir, file);
       await fs.promises.copyFile(srcPath, destPath);
@@ -42,14 +42,10 @@ const withRiveAssets: ConfigPlugin = (config) => {
     // Ensure raw directory exists
     await fs.promises.mkdir(rawDir, { recursive: true });
 
-    // Copy all .riv files
-    const files = await fs.promises.readdir(templateDir);
-    for (const file of files) {
-      if (file.endsWith('.riv')) {
-        const srcPath = path.join(templateDir, file);
-        const destPath = path.join(rawDir, file);
-        await fs.promises.copyFile(srcPath, destPath);
-      }
+    for (const file of RIVE_ASSETS) {
+      const srcPath = path.join(templateDir, file);
+      const destPath = path.join(rawDir, file);
+      await fs.promises.copyFile(srcPath, destPath);
     }
 
     return cfg;

@@ -1,9 +1,5 @@
-import { useEffect, useState } from 'react'
-
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { Asset } from 'expo-asset'
-import { useVideoPlayer as useExpoVideoPlayer, VideoView } from 'expo-video'
 import {
   Button,
   useTheme,
@@ -11,127 +7,13 @@ import {
   Title
 } from 'lockwright-lib-ui-react-native-components'
 import { KeyboardArrowRightFilled } from 'lockwright-lib-ui-react-native-components/icons'
-import { Dimensions, Platform, StyleSheet, View } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
 
+import { DataLocalVideo } from './DataLocalVideo'
 import { OnboardingLayout } from '../components/OnboardingLayout'
 import { RadialGradientBackground } from '../components/RadialGradientBackground'
 
-let TransparentVideoView, useTransparentVideoPlayer
-if (Platform.OS === 'android') {
-  const transparentVideo = require('expo-transparent-video')
-  TransparentVideoView = transparentVideo.TransparentVideoView
-  useTransparentVideoPlayer = transparentVideo.useVideoPlayer
-}
-
-const iosLoopSource = require('../../../../assets/videos/onboarding_lock_loop_ios.mov')
-const iosStartSource = require('../../../../assets/videos/onboarding_lock_start_ios.mov')
-
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
-
-const IOSVideo = () => {
-  const player = useExpoVideoPlayer(iosStartSource, (player) => {
-    player.loop = false
-    player.play()
-  })
-
-  useEffect(() => {
-    if (!player) return
-
-    let switchingToLoop = false
-
-    const endSub = player.addListener('playToEnd', async () => {
-      switchingToLoop = true
-      player.loop = true
-      await player.replaceAsync(iosLoopSource)
-    })
-
-    const statusSub = player.addListener('statusChange', ({ status }) => {
-      if (switchingToLoop && status === 'readyToPlay') {
-        switchingToLoop = false
-        player.play()
-      }
-    })
-
-    return () => {
-      endSub.remove()
-      statusSub.remove()
-    }
-  }, [player])
-
-  return (
-    <VideoView
-      style={styles.video}
-      player={player}
-      allowsFullscreen={false}
-      allowsPictureInPicture={false}
-      nativeControls={false}
-      testID="onboarding-data-local-media"
-    />
-  )
-}
-
-const AndroidVideoPlayer = ({ startUri, loopUri }) => {
-  const [source, setSource] = useState(startUri)
-  const player = useTransparentVideoPlayer(source)
-
-  useEffect(() => {
-    if (!player) return
-    player.loop = false
-    player.play()
-  }, [player])
-
-  const handleEnd = () => {
-    setSource(loopUri)
-    player.replace(loopUri)
-    player.loop = true
-    player.play()
-  }
-
-  return (
-    <TransparentVideoView
-      style={styles.video}
-      player={player}
-      videoAspectRatio={1}
-      onEnd={handleEnd}
-      testID="onboarding-data-local-media"
-    />
-  )
-}
-
-// expo-transparent-video only accepts URIs, not require()'d modules. In
-// release builds the bundled mp4 lives inside the APK at file:///android_asset/
-// which ExoPlayer's FileDataSource can't read, so we extract it via expo-asset
-// to a regular file path before handing it to the player.
-const AndroidVideo = () => {
-  const [uris, setUris] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      const [start, loop] = await Promise.all([
-        Asset.fromModule(
-          require('../../../../assets/videos/onboarding_lock_start_android.mp4')
-        ).downloadAsync(),
-        Asset.fromModule(
-          require('../../../../assets/videos/onboarding_lock_loop_android.mp4')
-        ).downloadAsync()
-      ])
-      if (cancelled) return
-      setUris({
-        start: start.localUri ?? start.uri,
-        loop: loop.localUri ?? loop.uri
-      })
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  if (!uris) return <View style={styles.video} />
-  return <AndroidVideoPlayer startUri={uris.start} loopUri={uris.loop} />
-}
-
-const OnboardingVideo = Platform.OS === 'ios' ? IOSVideo : AndroidVideo
 
 export const DataLocalScreen = () => {
   const { t } = useLingui()
@@ -150,7 +32,7 @@ export const DataLocalScreen = () => {
             colors={gradientColors}
             style={styles.mediaContainer}
           >
-            <OnboardingVideo />
+            <DataLocalVideo />
           </RadialGradientBackground>
 
           <View style={styles.copyContainer}>
@@ -206,11 +88,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: SCREEN_WIDTH / 1.4,
     height: SCREEN_WIDTH / 1.4
-  },
-  video: {
-    width: SCREEN_WIDTH / 1.4,
-    height: SCREEN_WIDTH / 1.4,
-    aspectRatio: 1
   },
   buttonContainer: {
     paddingHorizontal: 16,
