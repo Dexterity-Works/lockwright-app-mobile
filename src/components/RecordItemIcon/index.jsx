@@ -4,8 +4,8 @@ import {
   useTheme
 } from 'lockwright-lib-ui-react-native-components'
 import { useFavicon } from 'lockwright-lib-vault'
-import { generateAvatarInitials } from 'lockwright-utils-avatar-initials'
 import { Image, View } from 'react-native'
+import { generateAvatarInitials } from 'src/utils/generateAvatarInitials'
 
 import { RECORD_COLOR_BY_TYPE } from '../../constants/recordColorByType'
 

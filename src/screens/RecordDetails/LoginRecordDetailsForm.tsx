@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react'
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
 import { useForm } from 'lockwright-lib-ui-react-hooks'
-import { isBefore, subtractDateUnits } from 'lockwright-utils-date'
+import { isBefore, subtractMonths } from 'src/utils/date'
 import {
   AlertMessage,
   AttachmentField,
@@ -123,7 +123,7 @@ export const LoginRecordDetailsForm = ({
 
     return (
       !!passwordUpdatedAt &&
-      isBefore(passwordUpdatedAt, subtractDateUnits(6, 'month'))
+      isBefore(passwordUpdatedAt, subtractMonths(6))
     )
   }
 

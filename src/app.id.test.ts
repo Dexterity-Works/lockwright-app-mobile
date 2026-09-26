@@ -32,7 +32,7 @@ describe("Lockwright app id", () => {
       ...pkg.dependencies,
       ...pkg.devDependencies,
     }).filter(([, spec]) => String(spec).startsWith("git+"));
-    expect(gitDeps.length).toBeGreaterThan(10);
+    expect(gitDeps.length).toBeGreaterThan(5);
     for (const [name, spec] of gitDeps) {
       const match = String(spec).match(
         /^git\+https:\/\/github\.com\/Dexterity-Works\/([^#]+)\.git#([0-9a-f]{40})$/,

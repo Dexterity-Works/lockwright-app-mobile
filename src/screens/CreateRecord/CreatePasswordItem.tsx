@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
-import { formatDate } from 'lockwright-utils-date'
+import { formatDate } from 'src/utils/date'
 import {
   checkPassphraseStrength,
   checkPasswordStrength

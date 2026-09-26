@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react-native'
 
 import { ListItem } from './index'
 
-jest.mock('lockwright-utils-date', () => ({
+jest.mock('src/utils/date', () => ({
   formatDate: jest.fn().mockReturnValue('01/01/2023')
 }))
 

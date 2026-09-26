@@ -7,8 +7,8 @@ import {
   useTheme
 } from 'lockwright-lib-ui-react-native-components'
 import { useFavicon, useRecordById } from 'lockwright-lib-vault'
-import { generateAvatarInitials } from 'lockwright-utils-avatar-initials'
 import { Image, StyleSheet, View } from 'react-native'
+import { generateAvatarInitials } from 'src/utils/generateAvatarInitials'
 
 import { RecordDetailsContent } from './RecordDetailsContentWrapper'
 import { HeaderContent } from './styles'

@@ -1,4 +1,4 @@
-import { generateAvatarInitials } from 'lockwright-utils-avatar-initials'
+import { generateAvatarInitials } from 'src/utils/generateAvatarInitials'
 import { rawTokens, useTheme } from 'lockwright-lib-ui-react-native-components'
 import { StarFilled } from 'lockwright-lib-ui-react-native-components/icons'
 import { useFavicon } from 'lockwright-lib-vault'

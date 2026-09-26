@@ -328,12 +328,6 @@ importers:
       lockwright-lib-vault-core:
         specifier: file:../pearpass-lib-vault-core
         version: file:../pearpass-lib-vault-core(bare-events@2.9.1)(bare-pipe@4.2.3(bare-buffer@3.6.2))(bare-url@2.4.7)
-      lockwright-utils-avatar-initials:
-        specifier: git+https://github.com/Dexterity-Works/lockwright-utils-avatar-initials.git#4b143620f2047f51296f36f34289e39a83e4c6cb
-        version: https://codeload.github.com/Dexterity-Works/lockwright-utils-avatar-initials/tar.gz/4b143620f2047f51296f36f34289e39a83e4c6cb
-      lockwright-utils-date:
-        specifier: git+https://github.com/Dexterity-Works/lockwright-utils-date.git#f95507d089126b27561a584147ebcb38852cfe58
-        version: https://codeload.github.com/Dexterity-Works/lockwright-utils-date/tar.gz/f95507d089126b27561a584147ebcb38852cfe58
       lockwright-utils-generate-unique-id:
         specifier: git+https://github.com/Dexterity-Works/lockwright-utils-generate-unique-id.git#99a1450ca075c570fa08855280c8f73789cea07a
         version: https://codeload.github.com/Dexterity-Works/lockwright-utils-generate-unique-id/tar.gz/99a1450ca075c570fa08855280c8f73789cea07a(expo-crypto@13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0)))
@@ -5195,14 +5189,6 @@ packages:
     peerDependencies:
       react: '>=18.3.1'
       react-dom: '>=18.3.1'
-
-  lockwright-utils-avatar-initials@https://codeload.github.com/Dexterity-Works/lockwright-utils-avatar-initials/tar.gz/4b143620f2047f51296f36f34289e39a83e4c6cb:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/Dexterity-Works/lockwright-utils-avatar-initials/tar.gz/4b143620f2047f51296f36f34289e39a83e4c6cb}
-    version: 0.0.7
-
-  lockwright-utils-date@https://codeload.github.com/Dexterity-Works/lockwright-utils-date/tar.gz/f95507d089126b27561a584147ebcb38852cfe58:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/Dexterity-Works/lockwright-utils-date/tar.gz/f95507d089126b27561a584147ebcb38852cfe58}
-    version: 0.0.8
 
   lockwright-utils-generate-unique-id@https://codeload.github.com/Dexterity-Works/lockwright-utils-generate-unique-id/tar.gz/99a1450ca075c570fa08855280c8f73789cea07a:
     resolution: {gitHosted: true, tarball: https://codeload.github.com/Dexterity-Works/lockwright-utils-generate-unique-id/tar.gz/99a1450ca075c570fa08855280c8f73789cea07a}
@@ -13329,10 +13315,6 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
       - redux
-
-  lockwright-utils-avatar-initials@https://codeload.github.com/Dexterity-Works/lockwright-utils-avatar-initials/tar.gz/4b143620f2047f51296f36f34289e39a83e4c6cb: {}
-
-  lockwright-utils-date@https://codeload.github.com/Dexterity-Works/lockwright-utils-date/tar.gz/f95507d089126b27561a584147ebcb38852cfe58: {}
 
   lockwright-utils-generate-unique-id@https://codeload.github.com/Dexterity-Works/lockwright-utils-generate-unique-id/tar.gz/99a1450ca075c570fa08855280c8f73789cea07a(expo-crypto@13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0))):
     optionalDependencies:

@@ -5,9 +5,9 @@ import {
   LockFilled,
   Share
 } from 'lockwright-lib-ui-react-native-components/icons'
-import { formatDate } from 'lockwright-utils-date'
 import { ActivityIndicator } from 'react-native'
 import { colors } from 'src/utils/colors'
+import { formatDate } from 'src/utils/date'
 
 import {
   SelectedListItemIconContainer,
