@@ -9,6 +9,27 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.30] - 2026-09-26
+
+`BUMP_SHA`
+
+### Security
+
+- The autofill session locks with the app, on screen off, and after one hour at most. It follows the app's auto-lock timeout.
+- Android backup is off.
+- A native app only sees passkey entries for a site whose assetlinks.json vouches for it.
+- expo-av and the RECORD_AUDIO, USE_FINGERPRINT, SYSTEM_ALERT_WINDOW and external-storage permissions are gone.
+
+### Changed
+
+- Play versionCode 20.
+- 20 dependencies removed. The haptics layer, the PIN screens, ten unused components, dead autofill client code and about 7 MB of unreferenced assets are deleted. The onboarding video ships per platform.
+- Every git dependency is pinned, and the libraries sit on commits without install hooks.
+
+### Fixed
+
+- The test suite and the type check run green.
+
 ## [0.0.29] - 2026-09-26
 
 `dc42813535c4961e31f9693a7541de3f80b7abf7`
@@ -175,7 +196,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - A locked initialized vault counts as set up. Unlock-to-fill setup no longer loops.
 
-[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/dc42813535c4961e31f9693a7541de3f80b7abf7...HEAD
+[unreleased]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/BUMP_SHA...HEAD
+[0.0.30]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/dc42813535c4961e31f9693a7541de3f80b7abf7...BUMP_SHA
 [0.0.29]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/651ec59c022888ccbb14d5c44a979ee39bd736d5...dc42813535c4961e31f9693a7541de3f80b7abf7
 [0.0.28]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/d70e254eeab8cb114ca335938635a452047a8975...651ec59c022888ccbb14d5c44a979ee39bd736d5
 [0.0.27]: https://github.com/Dexterity-Works/lockwright-app-mobile/compare/ec25ef988a7947ac468e58726b18eb0e70073196...d70e254eeab8cb114ca335938635a452047a8975

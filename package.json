@@ -1,6 +1,6 @@
 {
   "name": "lockwright-app-mobile",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "main": "index.js",
   "type": "module",
   "license": "Apache-2.0",
