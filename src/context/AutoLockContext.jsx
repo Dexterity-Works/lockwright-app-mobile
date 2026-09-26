@@ -15,6 +15,7 @@ import {
 } from 'lockwright-lib-constants'
 
 import { SECURE_STORAGE_KEYS } from '../constants/secureStorageKeys'
+import { setAutofillAutoLockTimeout } from '../utils/AutofillModule'
 import { logger } from '../utils/logger'
 
 const AutoLockContext = createContext({
@@ -36,10 +37,10 @@ export const AutoLockProvider = ({ children }) => {
 
   useEffect(() => {
     const loadSavedTimeout = async () => {
+      let timeout = DEFAULT_AUTO_LOCK_TIMEOUT
       try {
         if (!AUTO_LOCK_ENABLED) {
           setAutoLockTimeoutState(DEFAULT_AUTO_LOCK_TIMEOUT)
-          setIsLoaded(true)
           return
         }
 
@@ -47,14 +48,14 @@ export const AutoLockProvider = ({ children }) => {
           SECURE_STORAGE_KEYS.AUTO_LOCK_TIMEOUT
         )
         if (savedTimeout !== null) {
-          const parsedTimeout =
-            savedTimeout === 'null' ? null : Number(savedTimeout)
-          setAutoLockTimeoutState(parsedTimeout)
+          timeout = savedTimeout === 'null' ? null : Number(savedTimeout)
+          setAutoLockTimeoutState(timeout)
         }
       } catch (error) {
         logger.error('Error loading auto-lock timeout:', error)
       } finally {
         setIsLoaded(true)
+        setAutofillAutoLockTimeout(timeout)
       }
     }
 
@@ -63,6 +64,7 @@ export const AutoLockProvider = ({ children }) => {
 
   const setAutoLockTimeout = useCallback(async (timeout) => {
     setAutoLockTimeoutState(timeout)
+    await setAutofillAutoLockTimeout(timeout)
     try {
       await SecureStore.setItemAsync(
         SECURE_STORAGE_KEYS.AUTO_LOCK_TIMEOUT,

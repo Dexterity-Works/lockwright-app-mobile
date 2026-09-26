@@ -62,3 +62,45 @@ export const requestToEnableAutofill = async () => {
     return false
   }
 }
+
+/**
+ * Drops the Android fill sheet's in-memory unlock session so autofill
+ * locks with the app. No-op where the native method is missing (iOS).
+ * @returns {Promise<boolean>} True when the native session was locked
+ */
+export const lockAutofillSession = async () => {
+  const method = NativeModules.AutofillModule?.lockAutofillSession
+  if (!method) {
+    return false
+  }
+
+  try {
+    await method()
+    return true
+  } catch (error) {
+    logger.error('Failed to lock autofill session:', error)
+    return false
+  }
+}
+
+/**
+ * Mirrors the app's auto-lock timeout to the Android fill sheet, which
+ * cannot read SecureStore. Null (auto-lock off) is sent as -1 so native
+ * falls back to its own default instead of never locking.
+ * @param {number|null} timeoutMs
+ * @returns {Promise<boolean>} True when native stored it
+ */
+export const setAutofillAutoLockTimeout = async (timeoutMs) => {
+  const method = NativeModules.AutofillModule?.setAutoLockTimeout
+  if (!method) {
+    return false
+  }
+
+  try {
+    await method(timeoutMs === null ? -1 : Number(timeoutMs))
+    return true
+  } catch (error) {
+    logger.error('Failed to set autofill auto-lock timeout:', error)
+    return false
+  }
+}

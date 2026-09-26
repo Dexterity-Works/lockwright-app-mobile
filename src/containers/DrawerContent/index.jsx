@@ -22,6 +22,7 @@ import { useBottomSheet } from '../../context/BottomSheetContext'
 import { useModal } from '../../context/ModalContext'
 import { useSharedFilter } from '../../context/SharedFilterContext'
 import { ButtonThin } from '../../libComponents'
+import { lockAutofillSession } from '../../utils/AutofillModule'
 import { clearAllFileCache } from '../../utils/filesCache'
 import { BottomSheetAddDeviceContent } from '../BottomSheetAddDeviceContent'
 import { BottomSheetFolderMenuContent } from '../BottomSheetFolderMenuContent'
@@ -97,6 +98,7 @@ export const DrawerContent = ({ navigation }) => {
   const closeVault = async () => {
     setIsClosing(true)
     await closeAllInstances()
+    await lockAutofillSession()
     clearAllFileCache()
     setIsClosing(false)
     navigation.replace('Welcome')

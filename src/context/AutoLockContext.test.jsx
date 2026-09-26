@@ -12,6 +12,12 @@ jest.mock('expo-secure-store', () => ({
   setItemAsync: jest.fn(() => Promise.resolve())
 }))
 
+jest.mock('../utils/AutofillModule', () => ({
+  setAutofillAutoLockTimeout: jest.fn(() => Promise.resolve())
+}))
+
+const { setAutofillAutoLockTimeout } = require('../utils/AutofillModule')
+
 describe('AutoLockContext', () => {
   it('provides default values when used without provider', () => {
     const { result } = renderHook(() => useAutoLockContext())
@@ -86,6 +92,21 @@ describe('AutoLockContext', () => {
     })
 
     expect(result.current.autoLockTimeout).toBe(60000)
+    expect(setAutofillAutoLockTimeout).toHaveBeenCalledWith(60000)
+  })
+
+  it('mirrors the loaded timeout to the Android fill sheet', async () => {
+    const wrapper = ({ children }) => (
+      <AutoLockProvider>{children}</AutoLockProvider>
+    )
+
+    renderHook(() => useAutoLockContext(), { wrapper })
+
+    await waitFor(() => {
+      expect(setAutofillAutoLockTimeout).toHaveBeenCalledWith(
+        DEFAULT_AUTO_LOCK_TIMEOUT
+      )
+    })
   })
 
   it('disables auto-lock when timeout is set to null', async () => {
@@ -105,5 +126,6 @@ describe('AutoLockContext', () => {
 
     expect(result.current.isAutoLockEnabled).toBe(false)
     expect(result.current.autoLockTimeout).toBe(null)
+    expect(setAutofillAutoLockTimeout).toHaveBeenCalledWith(null)
   })
 })

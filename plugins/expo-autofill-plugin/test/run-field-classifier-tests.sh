@@ -91,6 +91,12 @@ javac -d "$TMP" \
   "$ROOT/test/PasskeyCallerOriginTest.java"
 java -cp "$TMP" com.pears.pass.autofill.utils.PasskeyCallerOriginTest
 
+javac -d "$TMP" \
+  "$ROOT/android-template/java/autofill/utils/AutofillConstants.java" \
+  "$ROOT/android-template/java/autofill/utils/AutofillUnlockWindow.java" \
+  "$ROOT/test/AutofillUnlockWindowTest.java"
+java -cp "$TMP" com.pears.pass.autofill.utils.AutofillUnlockWindowTest
+
 INIT="$ROOT/android-template/java/autofill/utils/VaultInitializer.java"
 grep -q 'PasswordSetGate.decide' "$INIT"
 grep -q 'VaultStoreReady.keepWaiting' "$INIT"
@@ -296,6 +302,36 @@ done
 SESSION="$ROOT/android-template/java/autofill/data/AutofillUnlockSession.java"
 grep -q 'pageUrlsForAutofill' "$SESSION" || {
   echo "Unlock session chips must match androidapp package URIs via pageUrlsForAutofill" >&2
+  exit 1
+}
+
+# #27: the fill session locks with the app. Timing lives in AutofillUnlockWindow
+# (cap + sliding TTL), the app's timeout reaches unlock(), lock() has callers.
+grep -q 'AutofillUnlockWindow' "$SESSION" || {
+  echo "AutofillUnlockSession must keep time through AutofillUnlockWindow" >&2
+  exit 1
+}
+grep -q 'AutofillLockPrefs.autoLockTtlMs' "$COMBINED" || {
+  echo "CombinedItems must unlock the session with the app's auto-lock timeout" >&2
+  exit 1
+}
+MODULE="$ROOT/android-template/java/AutofillModule.kt"
+grep -A3 'fun lockAutofillSession' "$MODULE" | grep -q 'AutofillUnlockSession.get().lock()' || {
+  echo "AutofillModule.lockAutofillSession must lock the unlock session" >&2
+  exit 1
+}
+grep -q 'AutofillLockPrefs.setAutoLockTimeoutMs' "$MODULE" || {
+  echo "AutofillModule must mirror the app's auto-lock timeout for the fill sheet" >&2
+  exit 1
+}
+SCREEN_OFF="$ROOT/android-template/java/autofill/utils/AutofillScreenOffLock.java"
+grep -q 'ACTION_SCREEN_OFF' "$SCREEN_OFF" && grep -q 'AutofillUnlockSession.get().lock()' "$SCREEN_OFF" || {
+  echo "AutofillScreenOffLock must lock the session on ACTION_SCREEN_OFF" >&2
+  exit 1
+}
+MAIN_APP="$ROOT/../withAppConfig/src/android/withMainApplication.ts"
+grep -q 'AutofillScreenOffLock.register(this)' "$MAIN_APP" || {
+  echo "MainApplication must register AutofillScreenOffLock; the fill service is unbound between fills" >&2
   exit 1
 }
 

@@ -17,6 +17,7 @@ const { useModal } = require('../../../context/ModalContext')
 const {
   shouldReleaseVaultForFill
 } = require('../../../utils/androidFillWorklet')
+const { lockAutofillSession } = require('../../../utils/AutofillModule')
 const {
   getLastActivityAt,
   setLastActivityAt
@@ -52,6 +53,9 @@ jest.mock('../../../utils/androidFillWorklet', () => ({
 }))
 jest.mock('../../../utils/filesCache', () => ({
   clearAllFileCache: jest.fn()
+}))
+jest.mock('../../../utils/AutofillModule', () => ({
+  lockAutofillSession: jest.fn(() => Promise.resolve(true))
 }))
 jest.mock('../../../utils/unsupportedFeatures', () => ({
   unsupportedFeaturesEnabled: jest.fn(() => false)
@@ -170,6 +174,7 @@ describe('useAutoLockWatcher', () => {
     })
 
     expect(closeAllInstances).toHaveBeenCalled()
+    expect(lockAutofillSession).toHaveBeenCalled()
     expect(clearAllFileCache).toHaveBeenCalled()
     expect(resetMock).toHaveBeenCalledWith({
       index: 0,

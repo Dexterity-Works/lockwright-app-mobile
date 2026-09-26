@@ -26,6 +26,20 @@ export const withMainApplication: ConfigPlugin = (config) => {
       );
     }
 
+    // Screen off locks the autofill session. Registered here, not in the
+    // fill service: that service is unbound between fills.
+    const screenOffImport = `import ${packageName}.autofill.utils.AutofillScreenOffLock`;
+    if (!contents.includes(screenOffImport)) {
+      contents = contents.replace(/package .+\n/, (match) => `${match}${screenOffImport}\n`);
+    }
+    if (!contents.includes('AutofillScreenOffLock.register(this)')) {
+      contents = contents.replace(
+        /(override fun onCreate\(\) \{\n\s*super\.onCreate\(\))/,
+        `$1
+    AutofillScreenOffLock.register(this)`
+      );
+    }
+
     cfg.modResults.contents = contents;
     return cfg;
   });

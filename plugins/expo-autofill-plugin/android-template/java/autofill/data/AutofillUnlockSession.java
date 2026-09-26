@@ -1,6 +1,6 @@
 package com.pears.pass.autofill.data;
 
-import com.pears.pass.autofill.utils.AutofillConstants;
+import com.pears.pass.autofill.utils.AutofillUnlockWindow;
 import com.pears.pass.autofill.utils.UriMatchHelper;
 
 import java.util.ArrayList;
@@ -11,13 +11,15 @@ import java.util.List;
  * Process-memory unlock session for keyboard suggestions.
  * Survives AuthenticationActivity teardown (which must close the Bare
  * worklet so the main app can open the DB). Never written to disk.
+ * Closed by the sliding TTL, the absolute cap, the app locking, screen
+ * off, or closing the vault; see {@link AutofillUnlockWindow}.
  */
 public final class AutofillUnlockSession {
     private static final AutofillUnlockSession INSTANCE = new AutofillUnlockSession();
 
     private final Object lock = new Object();
     private List<CredentialItem> credentials = new ArrayList<>();
-    private long unlockedUntilMs;
+    private final AutofillUnlockWindow window = new AutofillUnlockWindow();
 
     private AutofillUnlockSession() {}
 
@@ -27,24 +29,22 @@ public final class AutofillUnlockSession {
 
     public boolean isUnlocked() {
         synchronized (lock) {
-            expireLocked();
-            return unlockedUntilMs > 0;
+            return expireLocked();
         }
     }
 
+    /** @param ttlMs the app's auto-lock timeout; 0 or less means the default */
     public void unlock(List<CredentialItem> items, long ttlMs) {
-        long ttl = ttlMs > 0 ? ttlMs : AutofillConstants.UNLOCK_SESSION_TTL_MS;
         synchronized (lock) {
             credentials = items != null ? new ArrayList<>(items) : new ArrayList<>();
-            unlockedUntilMs = System.currentTimeMillis() + ttl;
+            window.unlock(System.currentTimeMillis(), ttlMs);
         }
     }
 
     public void touch() {
         synchronized (lock) {
-            expireLocked();
-            if (unlockedUntilMs > 0) {
-                unlockedUntilMs = System.currentTimeMillis() + AutofillConstants.UNLOCK_SESSION_TTL_MS;
+            if (expireLocked()) {
+                window.touch(System.currentTimeMillis());
             }
         }
     }
@@ -52,7 +52,7 @@ public final class AutofillUnlockSession {
     public void lock() {
         synchronized (lock) {
             credentials = new ArrayList<>();
-            unlockedUntilMs = 0;
+            window.lock();
         }
     }
 
@@ -74,8 +74,7 @@ public final class AutofillUnlockSession {
     public List<CredentialItem> matchingLogins(String webDomain, String packageName, int limit) {
         if (limit <= 0) return Collections.emptyList();
         synchronized (lock) {
-            expireLocked();
-            if (unlockedUntilMs <= 0) return Collections.emptyList();
+            if (!expireLocked()) return Collections.emptyList();
 
             List<String> pageUrls = UriMatchHelper.pageUrlsForAutofill(webDomain, packageName);
 
@@ -103,10 +102,10 @@ public final class AutofillUnlockSession {
         }
     }
 
-    private void expireLocked() {
-        if (unlockedUntilMs > 0 && System.currentTimeMillis() >= unlockedUntilMs) {
-            credentials = new ArrayList<>();
-            unlockedUntilMs = 0;
-        }
+    /** @return whether the session is still open; drops the logins when it is not */
+    private boolean expireLocked() {
+        if (window.isUnlocked(System.currentTimeMillis())) return true;
+        credentials = new ArrayList<>();
+        return false;
     }
 }

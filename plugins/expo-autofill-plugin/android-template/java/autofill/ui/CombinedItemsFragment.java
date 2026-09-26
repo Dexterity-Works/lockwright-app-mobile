@@ -38,6 +38,7 @@ import com.pears.pass.autofill.jobs.JobEncryption;
 import com.pears.pass.autofill.jobs.JobFileManager;
 import com.pears.pass.autofill.jobs.UpdatePasskeyPayload;
 import com.pears.pass.autofill.utils.AutofillConstants;
+import com.pears.pass.autofill.utils.AutofillLockPrefs;
 import com.pears.pass.autofill.utils.AutofillHostTeardown;
 import com.pears.pass.autofill.utils.AutofillSheetLoad;
 import com.pears.pass.autofill.utils.ChipFillDecision;
@@ -517,7 +518,7 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                             && AutofillSheetLoad.cacheUnlockSession(finalParsed.size())) {
                         AutofillUnlockSession.get().unlock(
                                 finalParsed,
-                                AutofillConstants.UNLOCK_SESSION_TTL_MS
+                                AutofillLockPrefs.autoLockTtlMs(requireContext())
                         );
                     }
                     applyFilter(AutofillSheetLoad.searchQuery(

@@ -12,7 +12,9 @@ jest.mock('react-native', () => ({
     AutofillModule: {
       isAutofillEnabled: jest.fn(),
       openAutofillSettings: jest.fn(),
-      requestToEnableAutofill: jest.fn()
+      requestToEnableAutofill: jest.fn(),
+      lockAutofillSession: jest.fn(),
+      setAutoLockTimeout: jest.fn()
     }
   },
   Platform: {
@@ -26,7 +28,9 @@ const { NativeModules } = require('react-native')
 const {
   isAutofillEnabled,
   openAutofillSettings,
-  requestToEnableAutofill
+  requestToEnableAutofill,
+  lockAutofillSession,
+  setAutofillAutoLockTimeout
 } = require('./AutofillModule')
 const { logger } = require('./logger')
 
@@ -193,6 +197,56 @@ describe('AutofillModule', () => {
       expect(logger.error).toHaveBeenCalledWith('AutofillModule not available')
 
       NativeModules.AutofillModule = originalMock
+    })
+  })
+
+  describe('lockAutofillSession', () => {
+    test('locks the native session', async () => {
+      NativeModules.AutofillModule.lockAutofillSession.mockResolvedValueOnce()
+
+      expect(await lockAutofillSession()).toBe(true)
+      expect(
+        NativeModules.AutofillModule.lockAutofillSession
+      ).toHaveBeenCalledTimes(1)
+    })
+
+    test('is a no-op where the native method is missing (iOS)', async () => {
+      const { lockAutofillSession: method } = NativeModules.AutofillModule
+      delete NativeModules.AutofillModule.lockAutofillSession
+
+      expect(await lockAutofillSession()).toBe(false)
+      expect(logger.error).not.toHaveBeenCalled()
+
+      NativeModules.AutofillModule.lockAutofillSession = method
+    })
+
+    test('logs and returns false when the native call throws', async () => {
+      const mockError = new Error('boom')
+      NativeModules.AutofillModule.lockAutofillSession.mockRejectedValueOnce(
+        mockError
+      )
+
+      expect(await lockAutofillSession()).toBe(false)
+      expect(logger.error).toHaveBeenCalledWith(
+        'Failed to lock autofill session:',
+        mockError
+      )
+    })
+  })
+
+  describe('setAutofillAutoLockTimeout', () => {
+    test('passes the timeout in ms to native', async () => {
+      await setAutofillAutoLockTimeout(60000)
+      expect(
+        NativeModules.AutofillModule.setAutoLockTimeout
+      ).toHaveBeenCalledWith(60000)
+    })
+
+    test('sends -1 when auto-lock is off so native falls back to its default', async () => {
+      await setAutofillAutoLockTimeout(null)
+      expect(
+        NativeModules.AutofillModule.setAutoLockTimeout
+      ).toHaveBeenCalledWith(-1)
     })
   })
 })

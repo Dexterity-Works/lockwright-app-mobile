@@ -8,7 +8,9 @@ import android.os.Build
 import android.provider.Settings
 import android.view.autofill.AutofillManager
 import com.facebook.react.bridge.*
+import com.pears.pass.autofill.data.AutofillUnlockSession
 import com.pears.pass.autofill.utils.AutofillConstants
+import com.pears.pass.autofill.utils.AutofillLockPrefs
 
 class AutofillModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext), ActivityEventListener {
@@ -124,5 +126,26 @@ class AutofillModule(reactContext: ReactApplicationContext) :
     @ReactMethod
     fun requestToEnableAutofill(promise: Promise) {
         promise.resolve(false)
+    }
+
+    /**
+     * Drops the in-memory autofill unlock session. Called when the app
+     * locks or the vault is closed, so fill stops working with the app.
+     */
+    @ReactMethod
+    fun lockAutofillSession(promise: Promise) {
+        AutofillUnlockSession.get().lock()
+        promise.resolve(null)
+    }
+
+    /**
+     * Mirrors the app's auto-lock timeout (ms; negative when auto-lock is off)
+     * so the fill session follows it. SecureStore is Keystore-encrypted, so
+     * the fill sheet cannot read the app's own copy.
+     */
+    @ReactMethod
+    fun setAutoLockTimeout(timeoutMs: Double, promise: Promise) {
+        AutofillLockPrefs.setAutoLockTimeoutMs(reactApplicationContext, timeoutMs.toLong())
+        promise.resolve(null)
     }
 }

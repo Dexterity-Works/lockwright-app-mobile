@@ -9,6 +9,7 @@ import { useAutoLockContext } from '../../../context/AutoLockContext'
 import { useBottomSheet } from '../../../context/BottomSheetContext'
 import { useModal } from '../../../context/ModalContext'
 import { shouldReleaseVaultForFill } from '../../../utils/androidFillWorklet'
+import { lockAutofillSession } from '../../../utils/AutofillModule'
 import {
   getLastActivityAt,
   setLastActivityAt
@@ -76,6 +77,7 @@ export const useAutoLockWatcher = () => {
     collapse()
     closeModal()
     await closeAllInstances()
+    await lockAutofillSession()
     clearAllFileCache()
 
     const routeName = unsupportedFeaturesEnabled()
