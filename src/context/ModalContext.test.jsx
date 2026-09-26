@@ -88,4 +88,25 @@ describe('ModalContext', () => {
     expect(contextValue.isOpen).toBe(false)
     expect(queryByText('Modal Content')).toBeNull()
   })
+
+  it('keeps the same context value when the provider re-renders', () => {
+    const seen = []
+    const Consumer = () => {
+      seen.push(useModal())
+      return null
+    }
+    const { rerender } = render(
+      <ModalProvider>
+        <Consumer />
+      </ModalProvider>
+    )
+    rerender(
+      <ModalProvider>
+        <Consumer />
+      </ModalProvider>
+    )
+
+    expect(seen.length).toBeGreaterThan(1)
+    expect(seen[seen.length - 1]).toBe(seen[0])
+  })
 })

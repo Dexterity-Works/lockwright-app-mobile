@@ -261,4 +261,19 @@ describe('useQRScanner', () => {
 
     expect(onScanned).toHaveBeenCalledWith('ios-native-scan', 'qr')
   })
+
+  it('creates the worklet bridge once across re-renders', () => {
+    const { Worklets } = require('react-native-worklets-core')
+    Worklets.createRunOnJS.mockClear()
+    const onScanned = jest.fn()
+    const { rerender } = renderHook(() => useQRScanner({ onScanned }), {
+      wrapper: ({ children }) => (
+        <I18nProvider i18n={i18n}>{children}</I18nProvider>
+      )
+    })
+    rerender()
+    rerender()
+
+    expect(Worklets.createRunOnJS).toHaveBeenCalledTimes(1)
+  })
 })

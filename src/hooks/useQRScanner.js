@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import * as FileSystem from 'expo-file-system'
@@ -16,22 +16,40 @@ import { zxing, decodeBase64 } from 'vision-camera-zxing'
 
 import { logger } from '../utils/logger'
 
+const DEFAULT_SUPPORTED_TYPES = [
+  'qr',
+  'aztec',
+  'code128',
+  'code39',
+  'code93',
+  'datamatrix',
+  'ean13',
+  'ean8',
+  'pdf417',
+  'upc_e'
+]
+
+const mapFormat = (zxingFormat) => {
+  const formatMap = {
+    QR_CODE: 'qr',
+    AZTEC: 'aztec',
+    CODE_128: 'code128',
+    CODE_39: 'code39',
+    CODE_93: 'code93',
+    DATA_MATRIX: 'datamatrix',
+    EAN_13: 'ean13',
+    EAN_8: 'ean8',
+    PDF_417: 'pdf417',
+    UPC_E: 'upc_e'
+  }
+  return formatMap[zxingFormat] || zxingFormat.toLowerCase()
+}
+
 export const useQRScanner = ({
   onScanned,
   onError,
   scanDelay = 2000,
-  supportedTypes = [
-    'qr',
-    'aztec',
-    'code128',
-    'code39',
-    'code93',
-    'datamatrix',
-    'ean13',
-    'ean8',
-    'pdf417',
-    'upc_e'
-  ],
+  supportedTypes = DEFAULT_SUPPORTED_TYPES,
   enableGallery = true
 }) => {
   const [hasPermission, setHasPermission] = useState(null)
@@ -165,31 +183,24 @@ export const useQRScanner = ({
     [isScanning, supportedTypes, scanDelay, onScanned]
   )
 
-  const mapFormat = (zxingFormat) => {
-    const formatMap = {
-      QR_CODE: 'qr',
-      AZTEC: 'aztec',
-      CODE_128: 'code128',
-      CODE_39: 'code39',
-      CODE_93: 'code93',
-      DATA_MATRIX: 'datamatrix',
-      EAN_13: 'ean13',
-      EAN_8: 'ean8',
-      PDF_417: 'pdf417',
-      UPC_E: 'upc_e'
-    }
-    return formatMap[zxingFormat] || zxingFormat.toLowerCase()
-  }
+  // The bridge is created once; it reads the latest scan handler through a
+  // ref so the frame processor worklet is not rebuilt on every render.
+  const handleBarCodeScannedRef = useRef(handleBarCodeScanned)
+  handleBarCodeScannedRef.current = handleBarCodeScanned
 
-  const onCodeScannedJS = Worklets.createRunOnJS((results) => {
-    if (results.length > 0) {
-      const { barcodeText, barcodeFormat } = results[0]
-      handleBarCodeScanned({
-        type: mapFormat(barcodeFormat),
-        data: barcodeText
-      })
-    }
-  })
+  const onCodeScannedJS = useMemo(
+    () =>
+      Worklets.createRunOnJS((results) => {
+        if (results.length > 0) {
+          const { barcodeText, barcodeFormat } = results[0]
+          handleBarCodeScannedRef.current({
+            type: mapFormat(barcodeFormat),
+            data: barcodeText
+          })
+        }
+      }),
+    []
+  )
 
   const frameProcessor = useFrameProcessor(
     (frame) => {

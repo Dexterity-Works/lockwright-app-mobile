@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from 'react'
+import { createContext, useState, useContext, useEffect, useMemo } from 'react'
 
 import { View } from 'react-native'
 
@@ -13,9 +13,10 @@ const LoadingContext = createContext()
  */
 export const LoadingProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false)
+  const value = useMemo(() => ({ isLoading, setIsLoading }), [isLoading])
 
   return (
-    <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
+    <LoadingContext.Provider value={value}>
       <View style={{ flex: 1 }}>
         {children}
         {isLoading && <LoadingOverlay />}

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useMemo, useState } from 'react'
 
 import { SORT_KEYS } from '../constants/sortOptions'
 
@@ -17,9 +17,10 @@ export const INITIAL_STATE = {
  */
 export const SharedFilterProvider = ({ children }) => {
   const [state, setState] = useState(INITIAL_STATE)
+  const value = useMemo(() => ({ state, setState }), [state])
 
   return (
-    <SharedFilterContext.Provider value={{ state, setState }}>
+    <SharedFilterContext.Provider value={value}>
       {children}
     </SharedFilterContext.Provider>
   )

@@ -67,4 +67,25 @@ describe('SharedFilterContext', () => {
 
     consoleErrorSpy.mockRestore()
   })
+
+  test('keeps the same context value when the provider re-renders', () => {
+    const seen = []
+    const Consumer = () => {
+      seen.push(useSharedFilter())
+      return null
+    }
+    const { rerender } = render(
+      <SharedFilterProvider>
+        <Consumer />
+      </SharedFilterProvider>
+    )
+    rerender(
+      <SharedFilterProvider>
+        <Consumer />
+      </SharedFilterProvider>
+    )
+
+    expect(seen.length).toBeGreaterThan(1)
+    expect(seen[seen.length - 1]).toBe(seen[0])
+  })
 })

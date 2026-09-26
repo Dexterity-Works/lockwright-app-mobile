@@ -1,4 +1,10 @@
-import { createContext, useContext, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState
+} from 'react'
 
 import { BlurView } from 'expo-blur'
 import {
@@ -22,21 +28,26 @@ export const ModalProvider = ({ children }) => {
   const [content, setContent] = useState(null)
   const [preventClose, setPreventClose] = useState(false)
 
-  const openModal = (content, options = {}) => {
+  const openModal = useCallback((content, options = {}) => {
     setIsOpen(true)
     setContent(content)
     setPreventClose(options.preventClose || false)
-  }
+  }, [])
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     if (preventClose) return
     setIsOpen(false)
     setContent(null)
     setPreventClose(false)
-  }
+  }, [preventClose])
+
+  const value = useMemo(
+    () => ({ isOpen, openModal, closeModal }),
+    [isOpen, openModal, closeModal]
+  )
 
   return (
-    <ModalContext.Provider value={{ isOpen, openModal, closeModal }}>
+    <ModalContext.Provider value={value}>
       {children}
       <Modal
         animationType="fade"

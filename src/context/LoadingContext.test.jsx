@@ -369,4 +369,25 @@ describe('LoadingContext', () => {
 
     expect(queryByTestId('loading-overlay')).toBeNull()
   })
+
+  test('keeps the same context value when the provider re-renders', () => {
+    const seen = []
+    const Consumer = () => {
+      seen.push(useLoadingContext())
+      return null
+    }
+    const { rerender } = render(
+      <LoadingProvider>
+        <Consumer />
+      </LoadingProvider>
+    )
+    rerender(
+      <LoadingProvider>
+        <Consumer />
+      </LoadingProvider>
+    )
+
+    expect(seen.length).toBeGreaterThan(1)
+    expect(seen[seen.length - 1]).toBe(seen[0])
+  })
 })
