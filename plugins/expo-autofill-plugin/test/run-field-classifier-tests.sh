@@ -97,6 +97,11 @@ javac -d "$TMP" \
   "$ROOT/test/AutofillUnlockWindowTest.java"
 java -cp "$TMP" com.pears.pass.autofill.utils.AutofillUnlockWindowTest
 
+javac -d "$TMP" \
+  "$ROOT/android-template/java/autofill/utils/AssetLinksVerifier.java" \
+  "$ROOT/test/AssetLinksVerifierTest.java"
+java -cp "$TMP" com.pears.pass.autofill.utils.AssetLinksVerifierTest
+
 INIT="$ROOT/android-template/java/autofill/utils/VaultInitializer.java"
 grep -q 'PasswordSetGate.decide' "$INIT"
 grep -q 'VaultStoreReady.keepWaiting' "$INIT"
@@ -290,6 +295,22 @@ if grep -q '"https://" + rpId' "$PASSKEY_REG"; then
   echo "passkey creation must use the caller's origin, not https:// + rpId" >&2
   exit 1
 fi
+
+# #23 round 2: passkeys are listed only for a caller the site vouches for.
+# A plain app must be in the site's assetlinks.json; a browser must be privileged.
+CRED_SERVICE="$ROOT/android-template/java/autofill/service/PearPassCredentialProviderService.java"
+grep -q 'request.getCallingAppInfo()' "$CRED_SERVICE" || {
+  echo "credential provider must read the calling app before listing passkeys" >&2
+  exit 1
+}
+grep -q 'ASSET_LINKS.allows(rpId, packageName, fingerprint' "$CRED_SERVICE" || {
+  echo "credential provider must gate a plain app's listing on AssetLinksVerifier" >&2
+  exit 1
+}
+grep -q 'info.getOrigin(PrivilegedBrowsers.ALLOWLIST_JSON)' "$CRED_SERVICE" || {
+  echo "credential provider must only trust an origin from a privileged browser" >&2
+  exit 1
+}
 
 # #27: FLAG_SECURE before setContentView, or the fill sheet shows in screenshots.
 for f in "$AUTH" "$PASSKEY_REG"; do

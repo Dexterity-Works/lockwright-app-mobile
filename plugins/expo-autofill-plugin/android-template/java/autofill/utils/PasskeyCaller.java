@@ -38,15 +38,17 @@ public final class PasskeyCaller {
                 return null;
             }
         }
-        byte[] signerCert = null;
-        List<Signature> signers = info.getSigningInfoCompat().getApkContentsSigners();
-        if (!signers.isEmpty()) {
-            signerCert = signers.get(0).toByteArray();
-        }
-        PasskeyCallerOrigin.Plan plan = PasskeyCallerOrigin.plan(browserOrigin, callerHash, signerCert);
+        PasskeyCallerOrigin.Plan plan = PasskeyCallerOrigin.plan(browserOrigin, callerHash, signerCert(info));
         if (plan == null) {
             SecureLog.e(TAG, "Passkey caller has no signing cert: " + info.getPackageName());
         }
         return plan;
+    }
+
+    /** DER of the caller's first APK signing cert, or null when it has none. */
+    @Nullable
+    public static byte[] signerCert(CallingAppInfo info) {
+        List<Signature> signers = info.getSigningInfoCompat().getApkContentsSigners();
+        return signers.isEmpty() ? null : signers.get(0).toByteArray();
     }
 }

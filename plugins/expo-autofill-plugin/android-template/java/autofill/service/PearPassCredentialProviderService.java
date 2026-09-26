@@ -20,6 +20,7 @@ import androidx.credentials.provider.BeginCreatePublicKeyCredentialRequest;
 import androidx.credentials.provider.BeginGetCredentialRequest;
 import androidx.credentials.provider.BeginGetCredentialResponse;
 import androidx.credentials.provider.BeginGetPublicKeyCredentialOption;
+import androidx.credentials.provider.CallingAppInfo;
 import androidx.credentials.provider.CreateEntry;
 import androidx.credentials.provider.CredentialProviderService;
 import androidx.credentials.provider.ProviderClearCredentialStateRequest;
@@ -29,14 +30,21 @@ import com.pears.pass.R;
 import com.pears.pass.autofill.data.AutofillUnlockSession;
 import com.pears.pass.autofill.data.CredentialItem;
 import com.pears.pass.autofill.ui.AuthenticationActivity;
+import com.pears.pass.autofill.utils.AssetLinksHttpFetcher;
+import com.pears.pass.autofill.utils.AssetLinksVerifier;
 import com.pears.pass.autofill.utils.AutofillConstants;
+import com.pears.pass.autofill.utils.PasskeyCaller;
 import com.pears.pass.autofill.utils.PasskeyPickerPlan;
+import com.pears.pass.autofill.utils.PrivilegedBrowsers;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.ui.PasskeyRegistrationActivity;
 
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 
 /**
  * Android CredentialProviderService for passkey operations (Android 14+).
@@ -46,6 +54,10 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 public class PearPassCredentialProviderService extends CredentialProviderService {
     private static final String TAG = "PearPassCredProvService";
+
+    /** Process-wide: the service is unbound between requests, the cache should not be. */
+    private static final AssetLinksVerifier ASSET_LINKS = new AssetLinksVerifier(new AssetLinksHttpFetcher());
+    private static final ExecutorService ASSET_LINKS_EXECUTOR = Executors.newSingleThreadExecutor();
 
     @Override
     public void onBeginCreateCredentialRequest(
@@ -88,6 +100,12 @@ public class PearPassCredentialProviderService extends CredentialProviderService
         }
     }
 
+    /**
+     * Lists passkeys only for a caller the site vouches for. A privileged
+     * browser vouches for itself with its origin. Any other app must be named
+     * in https://rpId/.well-known/assetlinks.json (checked off the binder
+     * thread, cached a day); no vouch, no entries.
+     */
     @Override
     public void onBeginGetCredentialRequest(
             @NonNull BeginGetCredentialRequest request,
@@ -96,6 +114,55 @@ public class PearPassCredentialProviderService extends CredentialProviderService
 
         SecureLog.d(TAG, "onBeginGetCredentialRequest called");
 
+        CallingAppInfo info = request.getCallingAppInfo();
+        if (info == null) {
+            SecureLog.e(TAG, "Passkey list request without calling app info");
+            callback.onError(new NoCredentialException());
+            return;
+        }
+        if (info.isOriginPopulated()) {
+            String origin = null;
+            try {
+                origin = info.getOrigin(PrivilegedBrowsers.ALLOWLIST_JSON);
+            } catch (Exception e) {
+                // Not on the list; refused below.
+            }
+            if (origin == null) {
+                SecureLog.e(TAG, "Caller set an origin but is not a privileged browser: " + info.getPackageName());
+                callback.onError(new NoCredentialException());
+                return;
+            }
+            respond(callback, listEntries(request, rpId -> true));
+            return;
+        }
+
+        final String packageName = info.getPackageName();
+        final String fingerprint = AssetLinksVerifier.fingerprint(PasskeyCaller.signerCert(info));
+        if (fingerprint == null) {
+            SecureLog.e(TAG, "Passkey caller has no signing cert: " + packageName);
+            callback.onError(new NoCredentialException());
+            return;
+        }
+        ASSET_LINKS_EXECUTOR.execute(() -> {
+            if (cancellationSignal.isCanceled()) return;
+            respond(callback, listEntries(request, rpId ->
+                    ASSET_LINKS.allows(rpId, packageName, fingerprint, System.currentTimeMillis())));
+        });
+    }
+
+    private static void respond(
+            OutcomeReceiver<BeginGetCredentialResponse, GetCredentialException> callback,
+            BeginGetCredentialResponse response) {
+        if (response != null) {
+            callback.onResult(response);
+        } else {
+            SecureLog.d(TAG, "No passkey entries for this caller");
+            callback.onError(new NoCredentialException());
+        }
+    }
+
+    /** @return the entries, or null when nothing may be listed */
+    private BeginGetCredentialResponse listEntries(BeginGetCredentialRequest request, Predicate<String> rpAllowed) {
         BeginGetCredentialResponse.Builder responseBuilder =
                 new BeginGetCredentialResponse.Builder();
         boolean hasEntries = false;
@@ -114,6 +181,11 @@ public class PearPassCredentialProviderService extends CredentialProviderService
                         rpId = json.optString("rpId", "");
                     } catch (Exception parseError) {
                         SecureLog.e(TAG, "Passkey request JSON parse failed: " + parseError.getMessage());
+                    }
+
+                    if (!rpAllowed.test(rpId)) {
+                        SecureLog.d(TAG, "Site does not vouch for the caller, not listing: " + rpId);
+                        continue;
                     }
 
                     int added = 0;
@@ -173,12 +245,7 @@ public class PearPassCredentialProviderService extends CredentialProviderService
             }
         }
 
-        if (hasEntries) {
-            callback.onResult(responseBuilder.build());
-        } else {
-            SecureLog.d(TAG, "No passkey options found in request");
-            callback.onError(new NoCredentialException());
-        }
+        return hasEntries ? responseBuilder.build() : null;
     }
 
     @Override
