@@ -10,7 +10,6 @@ const config = isNightly
 
 config.transformer = {
   ...config.transformer,
-  babelTransformerPath: require.resolve('react-native-svg-transformer'),
   assetPlugins: ['expo-asset/tools/hashAssetFiles'],
   getTransformOptions: async () => ({
     transform: {
@@ -22,11 +21,8 @@ config.transformer = {
 
 config.resolver = {
   ...config.resolver,
-  assetExts: [
-    ...config.resolver.assetExts.filter((ext) => ext !== 'svg'),
-    'bundle'
-  ],
-  sourceExts: [...config.resolver.sourceExts, 'svg', 'd.ts'],
+  assetExts: [...config.resolver.assetExts, 'bundle'],
+  sourceExts: [...config.resolver.sourceExts, 'd.ts'],
   resolveRequest: (context, moduleName, platform) => {
     // kdbxweb's UMD bundle does require("crypto") at load time but
     // only uses it as a fallback when Web Crypto API is unavailable.
