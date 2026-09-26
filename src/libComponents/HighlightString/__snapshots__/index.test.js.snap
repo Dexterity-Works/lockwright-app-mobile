@@ -24,7 +24,7 @@ exports[`HighlightString Component matches snapshot 1`] = `
     style={
       [
         {
-          "color": "#BADE5B",
+          "color": "#d4af77",
           "fontWeight": "bold",
         },
         undefined,

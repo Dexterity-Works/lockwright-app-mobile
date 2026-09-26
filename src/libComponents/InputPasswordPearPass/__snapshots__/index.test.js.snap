@@ -269,8 +269,8 @@ exports[`InputPasswordPearPass Component matches snapshot 1`] = `
         {
           "alignItems": "center",
           "alignSelf": "flex-start",
-          "backgroundColor": "#050B06",
-          "borderColor": "#050B06",
+          "backgroundColor": "#08090b",
+          "borderColor": "#08090b",
           "borderRadius": 25,
           "borderWidth": 1,
           "flexDirection": "row",
@@ -285,7 +285,7 @@ exports[`InputPasswordPearPass Component matches snapshot 1`] = `
         align="xMidYMid"
         bbHeight="21"
         bbWidth="21"
-        color="#BADE5B"
+        color="#d4af77"
         fill="none"
         focusable={false}
         height="21"

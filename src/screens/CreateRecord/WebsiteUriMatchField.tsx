@@ -95,7 +95,6 @@ export const WebsiteUriMatchField = ({
             iconAfter={
               <KeyboardArrowBottom color={theme.colors.colorTextSecondary} />
             }
-            testID={`website-uri-match-${index}`}
           >
             {`${t`URI match`}: ${uriMatchOptionLabels[selectedMatchType]}`}
           </Button>

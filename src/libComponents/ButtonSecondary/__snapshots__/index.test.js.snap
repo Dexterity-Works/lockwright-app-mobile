@@ -34,7 +34,7 @@ exports[`ButtonSecondary Component matches snapshot 1`] = `
       "alignItems": "center",
       "alignSelf": "stretch",
       "backgroundColor": "#232323",
-      "borderColor": "#BADE5B",
+      "borderColor": "#d4af77",
       "borderRadius": 20,
       "borderWidth": 2,
       "flexGrow": 0,

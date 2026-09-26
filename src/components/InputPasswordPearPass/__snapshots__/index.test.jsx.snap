@@ -95,8 +95,8 @@ exports[`InputPasswordPearPass component renders correctly with default props (p
         {
           "alignItems": "center",
           "alignSelf": "flex-start",
-          "backgroundColor": "#050B06",
-          "borderColor": "#050B06",
+          "backgroundColor": "#08090b",
+          "borderColor": "#08090b",
           "borderRadius": 25,
           "borderWidth": 1,
           "flexDirection": "row",

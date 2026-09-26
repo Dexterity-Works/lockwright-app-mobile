@@ -73,7 +73,7 @@ exports[`NoticeText Component matches snapshot for success type 1`] = `
           "fontWeight": "500",
         },
         {
-          "color": "#BADE5B",
+          "color": "#d4af77",
         },
         undefined,
       ]

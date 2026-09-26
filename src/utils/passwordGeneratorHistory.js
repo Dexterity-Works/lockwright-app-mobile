@@ -106,6 +106,10 @@ const hostnameFromUrl = (url) => {
   }
 }
 
+/**
+ * @param {{ title?: string, websiteUrl?: string }} [context]
+ * @returns {Array<{ contextLabel: string, contextKind: 'site' | 'entry' }>}
+ */
 export const historyUses = ({ title, websiteUrl } = {}) => {
   const uses = []
   const hostname = hostnameFromUrl(websiteUrl)

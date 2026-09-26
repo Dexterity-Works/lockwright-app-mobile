@@ -33,8 +33,8 @@ exports[`ButtonLittle Component matches snapshot 1`] = `
     {
       "alignItems": "center",
       "alignSelf": "flex-start",
-      "backgroundColor": "#BADE5B",
-      "borderColor": "#A3BB62",
+      "backgroundColor": "#d4af77",
+      "borderColor": "#b08d57",
       "borderRadius": 15,
       "borderWidth": 1,
       "flexDirection": "row",
@@ -48,7 +48,7 @@ exports[`ButtonLittle Component matches snapshot 1`] = `
   <Text
     testID="dummy-icon"
   >
-    Icon 21 #050B06
+    Icon 21 #08090b
   </Text>
   <Text
     style={
@@ -59,7 +59,7 @@ exports[`ButtonLittle Component matches snapshot 1`] = `
           "fontWeight": "400",
         },
         {
-          "color": "#050B06",
+          "color": "#08090b",
         },
         undefined,
       ]
