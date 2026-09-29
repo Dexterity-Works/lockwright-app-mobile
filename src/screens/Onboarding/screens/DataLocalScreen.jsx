@@ -9,11 +9,12 @@ import {
 import { KeyboardArrowRightFilled } from 'lockwright-lib-ui-react-native-components/icons'
 import { Dimensions, StyleSheet, View } from 'react-native'
 
-import { DataLocalVideo } from './DataLocalVideo'
 import { OnboardingLayout } from '../components/OnboardingLayout'
 import { RadialGradientBackground } from '../components/RadialGradientBackground'
+import { VaultUnlockAnimation } from '../components/VaultUnlockAnimation'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
+const MEDIA_SIZE = SCREEN_WIDTH / 1.4
 
 export const DataLocalScreen = () => {
   const { t } = useLingui()
@@ -32,7 +33,7 @@ export const DataLocalScreen = () => {
             colors={gradientColors}
             style={styles.mediaContainer}
           >
-            <DataLocalVideo />
+            <VaultUnlockAnimation size={MEDIA_SIZE} />
           </RadialGradientBackground>
 
           <View style={styles.copyContainer}>
@@ -86,8 +87,8 @@ const styles = StyleSheet.create({
   mediaContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: SCREEN_WIDTH / 1.4,
-    height: SCREEN_WIDTH / 1.4
+    width: MEDIA_SIZE,
+    height: MEDIA_SIZE
   },
   buttonContainer: {
     paddingHorizontal: 16,

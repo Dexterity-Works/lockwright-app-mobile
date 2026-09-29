@@ -13,9 +13,14 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - The KeePass importer's kdbxweb uses @xmldom/xmldom 0.8.15 instead of the unsupported 0.7 line.
 
+### Changed
+
+- Onboarding shows the desktop's animated SVG vault instead of the PearPass lock videos. It holds the open vault under reduced motion.
+
 ### Removed
 
 - The Jest mapping for the retired theme-provider package.
+- expo-video, expo-transparent-video and 4.7 MB of onboarding lock videos.
 
 ## [0.0.30] - 2026-09-26
 
