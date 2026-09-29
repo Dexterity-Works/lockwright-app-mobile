@@ -2,11 +2,7 @@ export default {
   preset: 'react-native',
   transform: { '^.+\\.[jt]sx?$': 'babel-jest' },
   moduleNameMapper: {
-    '^src/(.*)$': '<rootDir>/src/$1',
-    '^lockwright-lib-ui-theme-provider/native$':
-      '<rootDir>/node_modules/lockwright-lib-ui-theme-provider/native/index.js',
-    '^lockwright-lib-ui-theme-provider$':
-      '<rootDir>/node_modules/lockwright-lib-ui-theme-provider/native/index.js'
+    '^src/(.*)$': '<rootDir>/src/$1'
   },
   testPathIgnorePatterns: ['/node_modules/', '/.yalc/', '/packages/'],
   transformIgnorePatterns: [

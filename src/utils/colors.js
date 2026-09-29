@@ -1,8 +1,8 @@
 /**
- * V1 color palette, inlined locally to drop the
- * `lockwright-lib-ui-theme-provider` dependency (which transitively
- * pulled in `styled-components`). Each entry has `mode1` plus optional
- * `option1`, `dark`, `white` slots — same shape consumers expect.
+ * V1 color palette, inlined locally so the app needs no theme
+ * provider package (which transitively pulled in `styled-components`).
+ * Each entry has `mode1` plus optional `option1`, `dark`, `white`
+ * slots — same shape consumers expect.
  */
 
 const c = (mode1, option1, dark, white) => ({
