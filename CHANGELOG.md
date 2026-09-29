@@ -21,6 +21,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - The Jest mapping for the retired theme-provider package.
 - expo-video, expo-transparent-video and 4.7 MB of onboarding lock videos.
+- The tether-dev-docs git dependency. The ESLint config lives in the repo, and its plugins are pinned dev dependencies.
 
 ## [0.0.30] - 2026-09-26
 
