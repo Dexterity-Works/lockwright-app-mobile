@@ -32,7 +32,9 @@ const AnimatedRect = Animated.createAnimatedComponent(Rect)
 const VIEW_BOX = '0 0 260 260'
 const LOOP_MS = 6000
 const PERSPECTIVE = 360 / 260
-const HINGE = `${(36 / 260) * 100}% 50%`
+// Door hinge, x in viewBox units. transformOrigin must be points: RN parses
+// only whole-number percentages, and a decimal one sends the door off stage.
+const HINGE_X = 36 / 260
 const BOLT_Y = 42
 const BOLTS = [0, 45, 90, 135, 180, 225, 270, 315]
 // Brass highlight and shadow have no theme token.
@@ -104,7 +106,7 @@ export const VaultUnlockAnimation = ({ size }) => {
   const { theme } = useTheme()
   const c = theme.colors
   const reduceMotion = useReducedMotion()
-  const progress = useSharedValue(OPEN)
+  const progress = useSharedValue(reduceMotion ? OPEN : 0)
 
   useEffect(() => {
     if (reduceMotion) {
@@ -185,7 +187,14 @@ export const VaultUnlockAnimation = ({ size }) => {
         </Layer>
       </Animated.View>
 
-      <Animated.View style={[StyleSheet.absoluteFill, styles.door, doorStyle]}>
+      <Animated.View
+        testID="vault-door"
+        style={[
+          StyleSheet.absoluteFill,
+          { transformOrigin: [HINGE_X * size, size / 2, 0] },
+          doorStyle
+        ]}
+      >
         <Layer>
           <Defs>
             <LinearGradient id="vault-brass" x1="0" y1="0" x2="0" y2="1">
@@ -268,8 +277,5 @@ export const VaultUnlockAnimation = ({ size }) => {
 const styles = StyleSheet.create({
   stage: {
     overflow: 'hidden'
-  },
-  door: {
-    transformOrigin: HINGE
   }
 })

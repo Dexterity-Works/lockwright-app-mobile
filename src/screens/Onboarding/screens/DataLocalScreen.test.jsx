@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
 import { render } from '@testing-library/react-native'
+import { Dimensions, StyleSheet } from 'react-native'
 
 import { DataLocalScreen } from './DataLocalScreen'
 import { messages } from '../../../locales/en/messages'
@@ -45,6 +46,23 @@ describe('DataLocalScreen', () => {
 
     expect(screen.getByTestId('vault-unlock-animation')).toBeTruthy()
     expect(screen.queryByTestId('onboarding-data-local-media')).toBeNull()
+    screen.unmount()
+  })
+
+  // RN parses only whole-number percentages; '13.8…%' became a huge origin
+  // and flung the door out of the stage on Android.
+  it('hinges the vault door on its left edge in points', () => {
+    const screen = render(
+      <I18nProvider i18n={i18n}>
+        <DataLocalScreen />
+      </I18nProvider>
+    )
+
+    const size = Dimensions.get('window').width / 1.4
+    const door = StyleSheet.flatten(
+      screen.getByTestId('vault-door').props.style
+    )
+    expect(door.transformOrigin).toEqual([(36 / 260) * size, size / 2, 0])
     screen.unmount()
   })
 })
