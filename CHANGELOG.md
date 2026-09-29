@@ -9,6 +9,10 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+### Security
+
+- The KeePass importer's kdbxweb uses @xmldom/xmldom 0.8.15 instead of the unsupported 0.7 line.
+
 ## [0.0.30] - 2026-09-26
 
 `78ccbccb70065c4000adbf9b5a9fffe462bd0fc5`

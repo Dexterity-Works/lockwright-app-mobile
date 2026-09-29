@@ -7,6 +7,7 @@ blockExoticSubdeps: false
 overrides:
   "lockwright-lib-constants": "git+https://github.com/Dexterity-Works/lockwright-lib-constants.git#f6142c9554e9f972519dd8115b2b73f02b73d5fb"
   "lockwright-lib-ui-react-native-components": "git+https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components.git#82167746355a4d1b931dae2c3d4abe10a7e10b7e"
+  "kdbxweb>@xmldom/xmldom": "0.8.15"
 
 publicHoistPattern:
   - '*react-native*'
