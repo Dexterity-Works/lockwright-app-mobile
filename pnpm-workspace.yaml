@@ -6,7 +6,7 @@ blockExoticSubdeps: false
 
 overrides:
   "lockwright-lib-constants": "git+https://github.com/Dexterity-Works/lockwright-lib-constants.git#f6142c9554e9f972519dd8115b2b73f02b73d5fb"
-  "lockwright-lib-ui-react-native-components": "git+https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components.git#82167746355a4d1b931dae2c3d4abe10a7e10b7e"
+  "lockwright-lib-ui-react-native-components": "git+https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components.git#5a4ed69feda9b76c0de6f40cb12df72569beb9b4"
   "kdbxweb>@xmldom/xmldom": "0.8.15"
 
 publicHoistPattern:
@@ -14,9 +14,6 @@ publicHoistPattern:
   - '*expo*'
 
 allowBuilds:
-  "lockwright-utils-generate-unique-id@https://codeload.github.com/Dexterity-Works/lockwright-utils-generate-unique-id/tar.gz/99a1450ca075c570fa08855280c8f73789cea07a": true
-  "lockwright-utils-qr@https://codeload.github.com/Dexterity-Works/lockwright-utils-qr/tar.gz/1d824382bc5ed15c966e4cea824ad44517944e1b": true
-  "lockwright-lib-ui-react-native-components@https://codeload.github.com/Dexterity-Works/lockwright-lib-ui-react-native-components/tar.gz/82167746355a4d1b931dae2c3d4abe10a7e10b7e": true
   "lockwright-lib-vault-core@file:../pearpass-lib-vault-core": true
   "lockwright-lib-vault@file:../pearpass-lib-vault": true
   "@sentry/cli@3.4.0": true

@@ -13,6 +13,10 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - Generate button in the Generator makes a new password with the current settings.
 
+### Changed
+
+- Build the UI kit from source; pnpm no longer runs install scripts for the UI kit, unique-id or QR packages.
+
 ### Fixed
 
 - Generator history names the vault entries that hold each password, including ones saved before labels were stamped.

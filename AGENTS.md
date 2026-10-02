@@ -52,7 +52,7 @@ Import pattern: `import { ComponentName } from 'lockwright-lib-ui-react-native-c
 
 Import types with `import type { ... } from 'lockwright-lib-ui-react-native-components'`.
 
-For components not listed, open `node_modules/lockwright-lib-ui-react-native-components/dist/components/<Name>/types.d.ts`.
+For components not listed, open `node_modules/lockwright-lib-ui-react-native-components/src/components/<Name>/types.ts`.
 
 ## Component props (15 most-used)
 
@@ -159,7 +159,7 @@ import { Add, Download, Folder, OpenInNew } from 'lockwright-lib-ui-react-native
 - **Settings:** `SettingsApplicationsFilled`, `PaletteOutlined`, `Translate`, `Sync`, `Devices`, `SystemSecurityUpdateFilled`
 - **Misc:** `Logout`, `Login`, `HubFilled`, `BugReportFilled`, `OpenInNew`
 
-**Discovering others:** `ls node_modules/lockwright-lib-ui-react-native-components/dist/icons/components/ | grep -i <keyword>` — names are PascalCase, grep is case-insensitive friendly.
+**Discovering others:** `ls node_modules/lockwright-lib-ui-react-native-components/src/icons/components/ | grep -i <keyword>` — names are PascalCase, grep is case-insensitive friendly.
 
 ## Anti-patterns to avoid
 
@@ -183,6 +183,6 @@ If you encounter a file still importing from `src/libComponents/`, migrate it to
 
 ## When the kit truly lacks something
 
-1. Confirm by grepping `node_modules/lockwright-lib-ui-react-native-components/dist/components/` for the concept.
+1. Confirm by grepping `node_modules/lockwright-lib-ui-react-native-components/src/components/` for the concept.
 2. Check if a composition of existing kit primitives covers it (e.g. `Pressable` + `Text` + tokens).
 3. If still missing, surface it to the user: "The kit doesn't export X — options are (a) compose from Y + Z, (b) request X be added upstream, (c) temporary local component. Which?" Do not silently create (c).
