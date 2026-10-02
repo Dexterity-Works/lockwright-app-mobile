@@ -80,7 +80,12 @@ export const EmptyCollectionView = ({ recordType = 'all' }) => {
   }
 
   const addItemButton = (
-    <Button variant="primary" fullWidth iconBefore={<Add />}>
+    <Button
+      variant="primary"
+      fullWidth
+      iconBefore={<Add />}
+      onClick={isAllItems ? undefined : () => handleCreateRecord(recordType)}
+    >
       {t`Add item`}
     </Button>
   )
@@ -107,12 +112,16 @@ export const EmptyCollectionView = ({ recordType = 'all' }) => {
       </View>
       {!isFavorites && (
         <View style={styles.buttonsContainer}>
-          <ContextMenu trigger={addItemButton}>
-            <BottomSheetCategorySelectorContent
-              variant="add-item"
-              onSelect={handleCreateRecord}
-            />
-          </ContextMenu>
+          {isAllItems ? (
+            <ContextMenu trigger={addItemButton}>
+              <BottomSheetCategorySelectorContent
+                variant="add-item"
+                onSelect={handleCreateRecord}
+              />
+            </ContextMenu>
+          ) : (
+            addItemButton
+          )}
           <Button
             variant="secondary"
             fullWidth
