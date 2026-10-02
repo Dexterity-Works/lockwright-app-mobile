@@ -105,8 +105,8 @@
             "compileSdkVersion": 36,
             "targetSdkVersion": 36,
             "buildToolsVersion": "36.0.0",
-            "enableMinifyInReleaseBuilds": true,
-            "extraProguardRules": "-keep class com.swmansion.reanimated.** { *; }\n-keep class com.facebook.react.turbomodule.** { *; }\n-keep class to.pear.bare.** { *; }"
+            "enableProguardInReleaseBuilds": true,
+            "extraProguardRules": "-keep class com.swmansion.reanimated.** { *; }\n-keep class com.facebook.react.turbomodule.** { *; }\n-keep class to.holepunch.bare.kit.** { *; }\n-keep class com.sun.jna.** { *; }\n-keep class * implements com.sun.jna.** { *; }\n-keep class com.goterl.lazysodium.** { *; }\n-dontwarn java.awt.**"
           },
           "ios": {
             "deploymentTarget": "15.1",

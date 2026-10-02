@@ -288,7 +288,25 @@ describe("Lockwright app id", () => {
     expect(android.compileSdkVersion).toBe(36);
     expect(android.targetSdkVersion).toBe(36);
     expect(android.buildToolsVersion).toBe("36.0.0");
-    expect(android.enableMinifyInReleaseBuilds).toBe(true);
+    expect(android.enableProguardInReleaseBuilds).toBe(true);
+    expect(android).not.toHaveProperty("enableMinifyInReleaseBuilds");
+    const buildProperties = readFileSync(
+      path.resolve(
+        __dirname,
+        "../node_modules/expo-build-properties/build/android.js",
+      ),
+      "utf8",
+    );
+    expect(buildProperties).toMatch(/android\.enableProguardInReleaseBuilds/);
+    // JNI and JNA reach these by name, so R8 must not rename or strip them.
+    for (const keep of [
+      "-keep class to.holepunch.bare.kit.** { *; }",
+      "-keep class com.sun.jna.** { *; }",
+      "-keep class com.goterl.lazysodium.** { *; }",
+      "-dontwarn java.awt.**",
+    ]) {
+      expect(android.extraProguardRules.split("\n")).toContain(keep);
+    }
     const plugin = readFileSync(
       path.resolve(
         __dirname,
