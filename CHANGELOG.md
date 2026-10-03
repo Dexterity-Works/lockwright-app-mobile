@@ -9,6 +9,8 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.32] - 2026-10-03
+
 ### Added
 
 - Generate button in the Generator makes a new password with the current settings.
