@@ -11,12 +11,15 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [0.0.32] - 2026-10-03
 
+`c76e7f5dd00bb7779c2bc378e1dc1175c5829f5f`
+
 ### Added
 
 - Generate button in the Generator makes a new password with the current settings.
 
 ### Changed
 
+- Play versionCode 22.
 - Build the UI kit from source; pnpm no longer runs install scripts for the UI kit, unique-id or QR packages.
 
 ### Fixed
