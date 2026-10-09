@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro'
 import { useForm } from 'lockwright-lib-ui-react-hooks'
 import { Close } from 'lockwright-lib-ui-react-native-components/icons'
-import { Validator } from 'lockwright-utils-validator'
+import { Validator } from 'lockwright-lib-utils/validator'
 
 import {
   Actions,

@@ -23,7 +23,7 @@ jest.mock('lockwright-lib-vault', () => ({
   useVault: () => mockUseVault()
 }))
 
-jest.mock('lockwright-utils-password-check', () => ({
+jest.mock('lockwright-lib-utils/password-check', () => ({
   validatePasswordChange: (...args) => mockValidatePasswordChange(...args)
 }))
 

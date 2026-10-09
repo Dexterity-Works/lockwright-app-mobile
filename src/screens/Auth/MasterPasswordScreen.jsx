@@ -15,12 +15,12 @@ import {
   useTheme
 } from 'lockwright-lib-ui-react-native-components'
 import { KeyboardArrowRightFilled } from 'lockwright-lib-ui-react-native-components/icons'
+import { Validator } from 'lockwright-lib-utils/validator'
 import { useUserData, useVaults } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
 } from 'lockwright-lib-vault/src/utils/buffer'
-import { Validator } from 'lockwright-utils-validator'
 import {
   KeyboardAvoidingView,
   Platform,

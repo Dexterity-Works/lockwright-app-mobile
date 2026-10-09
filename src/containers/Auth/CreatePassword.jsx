@@ -4,13 +4,13 @@ import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
 import { TERMS_OF_USE } from 'lockwright-lib-constants'
 import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { checkPasswordStrength } from 'lockwright-lib-utils/password-check'
+import { Validator } from 'lockwright-lib-utils/validator'
 import { closeAllInstances, useUserData, useVaults } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
 } from 'lockwright-lib-vault/src/utils/buffer'
-import { checkPasswordStrength } from 'lockwright-utils-password-check'
-import { Validator } from 'lockwright-utils-validator'
 import {
   ActivityIndicator,
   KeyboardAvoidingView,

@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react'
 import { useLingui } from '@lingui/react/macro'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import { useForm } from 'lockwright-lib-ui-react-hooks'
-import { Validator } from 'lockwright-utils-validator'
+import { Validator } from 'lockwright-lib-utils/validator'
 import {
   Button,
   Link,

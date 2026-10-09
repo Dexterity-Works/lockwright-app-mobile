@@ -11,16 +11,16 @@ import {
   rawTokens
 } from 'lockwright-lib-ui-react-native-components'
 import { ReportProblem } from 'lockwright-lib-ui-react-native-components/icons'
+import {
+  checkPasswordStrength,
+  validatePasswordChange
+} from 'lockwright-lib-utils/password-check'
+import { Validator } from 'lockwright-lib-utils/validator'
 import { useUserData } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
 } from 'lockwright-lib-vault/src/utils/buffer'
-import {
-  checkPasswordStrength,
-  validatePasswordChange
-} from 'lockwright-utils-password-check'
-import { Validator } from 'lockwright-utils-validator'
 import { Keyboard, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { Layout } from 'src/containers/Layout'

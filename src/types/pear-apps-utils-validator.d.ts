@@ -1,4 +1,4 @@
-declare module 'lockwright-utils-validator' {
+declare module 'lockwright-lib-utils/validator' {
   export class Validator {
     constructor(type: string, objectSchema?: Record<string, Validator>)
 

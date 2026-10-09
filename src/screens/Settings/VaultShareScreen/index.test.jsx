@@ -33,7 +33,7 @@ jest.mock('lockwright-lib-ui-react-hooks', () => ({
   useCountDown: jest.fn(() => '0:24')
 }))
 
-jest.mock('lockwright-utils-qr', () => ({
+jest.mock('lockwright-lib-utils/qr', () => ({
   generateQRCodeSVG: jest.fn(() => Promise.resolve('<svg />'))
 }))
 

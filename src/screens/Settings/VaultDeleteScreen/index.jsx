@@ -12,6 +12,7 @@ import {
   Text,
   ToggleSwitch
 } from 'lockwright-lib-ui-react-native-components'
+import { Validator } from 'lockwright-lib-utils/validator'
 import {
   broadcastDeleteVault,
   useCreateVault,
@@ -23,7 +24,6 @@ import {
   clearBuffer,
   stringToBuffer
 } from 'lockwright-lib-vault/src/utils/buffer'
-import { Validator } from 'lockwright-utils-validator'
 import { Keyboard, StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

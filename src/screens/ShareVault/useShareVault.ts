@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { generateQRCodeSVG } from 'lockwright-utils-qr'
+import { generateQRCodeSVG } from 'lockwright-lib-utils/qr'
 import { useInvite } from 'lockwright-lib-vault'
 import { AppState } from 'react-native'
 

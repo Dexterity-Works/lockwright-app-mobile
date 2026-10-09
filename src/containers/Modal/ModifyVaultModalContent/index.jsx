@@ -12,9 +12,9 @@ import {
   useTheme
 } from 'lockwright-lib-ui-react-native-components'
 import { ReportProblem } from 'lockwright-lib-ui-react-native-components/icons'
+import { validatePasswordChange } from 'lockwright-lib-utils/password-check'
+import { Validator } from 'lockwright-lib-utils/validator'
 import { useVault } from 'lockwright-lib-vault'
-import { validatePasswordChange } from 'lockwright-utils-password-check'
-import { Validator } from 'lockwright-utils-validator'
 import { StyleSheet, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 

@@ -8,8 +8,8 @@ import {
   ArrowBackOutined,
   ContentCopy
 } from 'lockwright-lib-ui-react-native-components/icons'
+import { generateQRCodeSVG } from 'lockwright-lib-utils/qr'
 import { useInvite } from 'lockwright-lib-vault'
-import { generateQRCodeSVG } from 'lockwright-utils-qr'
 import {
   KeyboardAvoidingView,
   Platform,

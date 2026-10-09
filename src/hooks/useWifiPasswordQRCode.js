@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { generateQRCodeSVG } from 'lockwright-utils-qr'
+import { generateQRCodeSVG } from 'lockwright-lib-utils/qr'
 
 import { logger } from '../utils/logger'
 

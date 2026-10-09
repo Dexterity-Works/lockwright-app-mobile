@@ -3,12 +3,12 @@ import { useState } from 'react'
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
 import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-lib-utils/validator'
 import { useUserData, useVaults } from 'lockwright-lib-vault'
 import {
   clearBuffer,
   stringToBuffer
 } from 'lockwright-lib-vault/src/utils/buffer'
-import { Validator } from 'lockwright-utils-validator'
 import {
   ActivityIndicator,
   ScrollView,

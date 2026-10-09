@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro'
 import type { NavigationProp } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
 import { useForm } from 'lockwright-lib-ui-react-hooks'
-import { Validator } from 'lockwright-utils-validator'
+import { Validator } from 'lockwright-lib-utils/validator'
 import { useCreateFolder, useFolders } from 'lockwright-lib-vault'
 import Toast from 'react-native-toast-message'
 

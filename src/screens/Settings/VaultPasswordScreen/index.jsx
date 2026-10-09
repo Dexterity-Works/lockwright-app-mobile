@@ -6,8 +6,8 @@ import {
   ArrowBackOutined,
   EyeOutlined
 } from 'lockwright-lib-ui-react-native-components/icons'
+import { validatePasswordChange } from 'lockwright-lib-utils/password-check'
 import { useVault } from 'lockwright-lib-vault'
-import { validatePasswordChange } from 'lockwright-utils-password-check'
 import {
   Keyboard,
   KeyboardAvoidingView,

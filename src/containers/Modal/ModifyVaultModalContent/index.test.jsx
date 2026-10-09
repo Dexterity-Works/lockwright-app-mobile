@@ -56,7 +56,7 @@ jest.mock('lockwright-lib-ui-react-hooks', () => {
   }
 })
 
-jest.mock('lockwright-utils-validator', () => ({
+jest.mock('lockwright-lib-utils/validator', () => ({
   Validator: {
     string: () => {
       const validator = {
@@ -157,7 +157,7 @@ jest.mock('lockwright-lib-vault', () => ({
   useVault: () => mockUseVault()
 }))
 
-jest.mock('lockwright-utils-password-check', () => ({
+jest.mock('lockwright-lib-utils/password-check', () => ({
   checkPasswordStrength: () => ({
     type: 'safe'
   }),

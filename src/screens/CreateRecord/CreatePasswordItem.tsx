@@ -7,11 +7,11 @@ import { formatDate } from 'src/utils/date'
 import {
   checkPassphraseStrength,
   checkPasswordStrength
-} from 'lockwright-utils-password-check'
+} from 'lockwright-lib-utils/password-check'
 import {
   generatePassphrase,
   generatePassword
-} from 'lockwright-utils-password-generator'
+} from 'lockwright-lib-utils/password-generator'
 import {
   Button,
   PasswordIndicator,

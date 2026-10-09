@@ -27,7 +27,7 @@ jest.mock('lockwright-lib-ui-react-hooks', () => ({
   })
 }))
 
-jest.mock('lockwright-utils-validator', () => ({
+jest.mock('lockwright-lib-utils/validator', () => ({
   Validator: {
     object: () => ({
       validate: () => ({})

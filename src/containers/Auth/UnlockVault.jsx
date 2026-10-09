@@ -3,8 +3,8 @@ import { useMemo, useState } from 'react'
 import { useLingui } from '@lingui/react/macro'
 import { useNavigation } from '@react-navigation/native'
 import { useForm } from 'lockwright-lib-ui-react-hooks'
+import { Validator } from 'lockwright-lib-utils/validator'
 import { useVault, useVaults } from 'lockwright-lib-vault'
-import { Validator } from 'lockwright-utils-validator'
 import {
   ActivityIndicator,
   KeyboardAvoidingView,

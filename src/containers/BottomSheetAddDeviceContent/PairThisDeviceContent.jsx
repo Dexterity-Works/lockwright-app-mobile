@@ -6,8 +6,8 @@ import {
   ContentCopy,
   WatchLater
 } from 'lockwright-lib-ui-react-native-components/icons'
+import { generateQRCodeSVG } from 'lockwright-lib-utils/qr'
 import { useInvite } from 'lockwright-lib-vault'
-import { generateQRCodeSVG } from 'lockwright-utils-qr'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 import { colors } from 'src/utils/colors'

@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro'
-import { checkPasswordStrength } from 'lockwright-utils-password-check'
+import { checkPasswordStrength } from 'lockwright-lib-utils/password-check'
 
 const PASSWORD_STRENGTH_META = {
   vulnerable: {
