@@ -42,49 +42,87 @@ export const BottomSheetRevokeAccessContent = ({
         'kickDevice failed:',
         error
       )
-      Toast.show({
-        type: 'baseToast',
-        text1: t`Couldn't revoke access. Please try again.`,
-        position: 'bottom',
-        bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
-      })
-      setIsLoading(false)
+      showRevokeFailed()
+      return
+    }
+
+    // A null epoch with no rotation failure means the device was not removed.
+    const rotationFailure = failures?.find((f) => f?.kind === 'epoch')
+    if (!epoch && !rotationFailure) {
+      logger.error(
+        'BottomSheetRevokeAccessContent',
+        'kickDevice did not remove the device:',
+        failures?.at(-1)?.error
+      )
+      showRevokeFailed()
       return
     }
 
     close()
+    const { text1, warning } = revokedMessage({
+      failures,
+      epoch,
+      rotationFailure
+    })
     Toast.show({
       type: 'baseToast',
-      text1: revokedMessage({ failures, epoch }),
+      text1,
       position: 'bottom',
-      bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
+      bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET,
+      ...(warning && { visibilityTime: 8000 })
     })
   }
 
+  const showRevokeFailed = () => {
+    Toast.show({
+      type: 'baseToast',
+      text1: t`Couldn't revoke access. Please try again.`,
+      position: 'bottom',
+      bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
+    })
+    setIsLoading(false)
+  }
+
   // 'current' means the latest key already leaves this device out.
-  const revokedMessage = ({ failures, epoch }) => {
-    if (!epoch || (!epoch.rotated && epoch.reason !== 'current')) {
-      // kickDevice also lists the rotation as a failure, so the
-      // unreachable-device message would be wrong here.
+  // 'pending' means another member rotates it when it syncs.
+  const revokedMessage = ({ failures, epoch, rotationFailure }) => {
+    const pending = epoch?.rotated === false && epoch.reason === 'pending'
+    if (!epoch || (!epoch.rotated && epoch.reason !== 'current' && !pending)) {
       const reason =
         epoch?.reason ??
-        failures
-          ?.at(-1)
-          ?.error?.message?.replace(/^epoch rotation failed: /, '')
-      return reason
-        ? t`Couldn't rotate the vault key: ${reason}. "${deviceName}" can still read new items.`
-        : t`Couldn't rotate the vault key. "${deviceName}" can still read new items.`
+        rotationFailure?.error?.message?.replace(/^epoch rotation failed: /, '')
+      return {
+        warning: true,
+        text1: reason
+          ? t`Couldn't rotate the vault key: ${reason}. "${deviceName}" can still read new items.`
+          : t`Couldn't rotate the vault key. "${deviceName}" can still read new items.`
+      }
     }
 
-    const revoked = failures?.length
+    const revoked = failures?.some((f) => !f?.kind)
       ? t`Couldn't reach the device. It will lose edit access next time it comes online.`
       : t`"${deviceName}" can no longer edit this vault.`
-    if (!epoch.uncovered?.length) return revoked
+    const parts = [revoked]
+    if (pending) {
+      parts.push(
+        t`Another device will rotate the vault key when it next syncs.`
+      )
+    }
+    if (!epoch.uncovered?.length) {
+      return { warning: pending, text1: parts.join(' ') }
+    }
 
-    const names = epoch.uncovered
-      .map((id) => devices.find((d) => d?.id === id)?.name ?? id)
-      .join(', ')
-    return `${revoked} ${t`${names} must open the vault on a current Lockwright version before they can read new items.`}`
+    const names = [
+      ...new Set(
+        epoch.uncovered.map(
+          (id) => devices.find((d) => d?.id === id)?.name ?? t`Unknown Device`
+        )
+      )
+    ].join(', ')
+    parts.push(
+      t`${names} must open the vault on a current Lockwright version before they can read new items.`
+    )
+    return { warning: true, text1: parts.join(' ') }
   }
 
   return (
