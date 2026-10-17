@@ -6,6 +6,7 @@ import Toast from 'react-native-toast-message'
 
 import { BottomSheetRevokeAccessContent } from './index'
 import messages from '../../locales/en/messages'
+import { logger } from '../../utils/logger'
 
 i18n.load('en', messages)
 i18n.activate('en')
@@ -166,20 +167,45 @@ describe('BottomSheetRevokeAccessContent', () => {
       `Couldn't rotate the vault key. This device can't write to the vault. "Phone" can still read new items.`
     )
     expect(visibilityTime).toBe(8000)
+    expect(logger.warn).toHaveBeenCalledWith(
+      'BottomSheetRevokeAccessContent',
+      'vault key not rotated:',
+      'not-writable'
+    )
+    expect(logger.error).not.toHaveBeenCalled()
+  })
+
+  it('says why when this device is not on the member list', async () => {
+    const { text1 } = await revoke({
+      results: [],
+      failures: [],
+      epoch: { rotated: false, reason: 'self-not-in-roster', uncovered: [] }
+    })
+
+    expect(text1).toBe(
+      `Couldn't rotate the vault key. This device isn't on the vault's member list. "Phone" can still read new items.`
+    )
+  })
+
+  it('says why when the vault has no rotating keys', async () => {
+    const { text1 } = await revoke({
+      results: [],
+      failures: [],
+      epoch: { rotated: false, reason: 'legacy', uncovered: [] }
+    })
+
+    expect(text1).toBe(
+      `Couldn't rotate the vault key. The vault doesn't use rotating keys yet. "Phone" can still read new items.`
+    )
   })
 
   it('keeps a thrown rotation error out of the toast', async () => {
+    const error = new Error(
+      'epoch rotation failed: activeVaultEnsureEpoch is not a function'
+    )
     const { text1, visibilityTime } = await revoke({
       results: [],
-      failures: [
-        {
-          targetDeviceId: 'd-gone',
-          kind: 'epoch',
-          error: new Error(
-            'epoch rotation failed: activeVaultEnsureEpoch is not a function'
-          )
-        }
-      ],
+      failures: [{ targetDeviceId: 'd-gone', kind: 'epoch', error }],
       epoch: null
     })
 
@@ -188,6 +214,11 @@ describe('BottomSheetRevokeAccessContent', () => {
       `Couldn't rotate the vault key. "Phone" can still read new items.`
     )
     expect(visibilityTime).toBe(8000)
+    expect(logger.error).toHaveBeenCalledWith(
+      'BottomSheetRevokeAccessContent',
+      'vault key not rotated:',
+      error
+    )
   })
 
   it('warns when the rotation result is missing', async () => {

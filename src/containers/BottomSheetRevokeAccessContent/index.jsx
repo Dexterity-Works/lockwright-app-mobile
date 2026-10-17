@@ -92,17 +92,25 @@ export const BottomSheetRevokeAccessContent = ({
         epoch?.reason ??
         rotationFailure?.error?.message?.replace(/^epoch rotation failed: /, '')
       // Only known skip reasons get copy. A thrown error's text stays in the log.
-      logger.warn(
-        'BottomSheetRevokeAccessContent',
-        'vault key not rotated:',
-        reason
-      )
       const reasons = {
         'not-writable': t`This device can't write to the vault.`,
         'self-not-in-roster': t`This device isn't on the vault's member list.`,
         legacy: t`The vault doesn't use rotating keys yet.`
       }
       const known = Object.hasOwn(reasons, reason) ? reasons[reason] : null
+      if (!known && rotationFailure?.error) {
+        logger.error(
+          'BottomSheetRevokeAccessContent',
+          'vault key not rotated:',
+          rotationFailure.error
+        )
+      } else {
+        logger.warn(
+          'BottomSheetRevokeAccessContent',
+          'vault key not rotated:',
+          reason
+        )
+      }
       return {
         warning: true,
         text1: known
