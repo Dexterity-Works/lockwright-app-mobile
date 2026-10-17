@@ -9,8 +9,17 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.33] - 2026-10-17
+
+`TBD`
+
+### Added
+
+- After a revoke, a toast warns when the vault key could not be rotated, with the reason, or names the devices that must open the vault on a current Lockwright version before they can read new items.
+
 ### Changed
 
+- The revoke-access sheet says revoking rotates the vault key, so the device can no longer read items added or changed afterwards. Items it already synced stay on it. It no longer suggests moving items to a new vault.
 - The unique-id, password check, password generator, QR and validator utils come from one package, lockwright-lib-utils.
 
 ## [0.0.32] - 2026-10-03
