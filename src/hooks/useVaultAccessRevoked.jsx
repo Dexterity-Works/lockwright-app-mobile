@@ -41,7 +41,7 @@ export const useVaultAccessRevoked = () => {
     }
   })
 
-  const handleAccessRevoked = useCallback(async ({ vaultId, actor } = {}) => {
+  const wipeRevokedVault = useCallback(async ({ vaultId, actor } = {}) => {
     if (!vaultId) return
     const {
       vaults,
@@ -111,6 +111,22 @@ export const useVaultAccessRevoked = () => {
       />
     )
   }, [])
+
+  // The kick envelope and the epoch status can both announce one vault.
+  const handling = useRef(new Set())
+  const handleAccessRevoked = useCallback(
+    async (payload = {}) => {
+      const { vaultId } = payload
+      if (!vaultId || handling.current.has(vaultId)) return
+      handling.current.add(vaultId)
+      try {
+        await wipeRevokedVault(payload)
+      } finally {
+        handling.current.delete(vaultId)
+      }
+    },
+    [wipeRevokedVault]
+  )
 
   useEffect(() => {
     if (!pearpassVaultClient?.on) return
