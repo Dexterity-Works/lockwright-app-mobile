@@ -20,7 +20,8 @@ import { SheetHeader } from '../BottomSheet/SheetHeader'
 export const BottomSheetRevokeAccessContent = ({
   vaultId,
   targetDeviceId,
-  deviceName
+  deviceName,
+  devices = []
 }) => {
   const { t } = useLingui()
   const { theme } = useTheme()
@@ -32,8 +33,9 @@ export const BottomSheetRevokeAccessContent = ({
     if (isLoading) return
     setIsLoading(true)
     let failures = []
+    let epoch = null
     try {
-      ;({ failures } = await kickDevice({ vaultId, targetDeviceId }))
+      ;({ failures, epoch } = await kickDevice({ vaultId, targetDeviceId }))
     } catch (error) {
       logger.error(
         'BottomSheetRevokeAccessContent',
@@ -53,12 +55,36 @@ export const BottomSheetRevokeAccessContent = ({
     close()
     Toast.show({
       type: 'baseToast',
-      text1: failures?.length
-        ? t`Couldn't reach the device. It will lose edit access next time it comes online.`
-        : t`"${deviceName}" can no longer edit this vault`,
+      text1: revokedMessage({ failures, epoch }),
       position: 'bottom',
       bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
     })
+  }
+
+  // 'current' means the latest key already leaves this device out.
+  const revokedMessage = ({ failures, epoch }) => {
+    if (!epoch || (!epoch.rotated && epoch.reason !== 'current')) {
+      // kickDevice also lists the rotation as a failure, so the
+      // unreachable-device message would be wrong here.
+      const reason =
+        epoch?.reason ??
+        failures
+          ?.at(-1)
+          ?.error?.message?.replace(/^epoch rotation failed: /, '')
+      return reason
+        ? t`Couldn't rotate the vault key: ${reason}. "${deviceName}" can still read new items.`
+        : t`Couldn't rotate the vault key. "${deviceName}" can still read new items.`
+    }
+
+    const revoked = failures?.length
+      ? t`Couldn't reach the device. It will lose edit access next time it comes online.`
+      : t`"${deviceName}" can no longer edit this vault.`
+    if (!epoch.uncovered?.length) return revoked
+
+    const names = epoch.uncovered
+      .map((id) => devices.find((d) => d?.id === id)?.name ?? id)
+      .join(', ')
+    return `${revoked} ${t`${names} must open the vault on a current Lockwright version before they can read new items.`}`
   }
 
   return (
@@ -72,7 +98,7 @@ export const BottomSheetRevokeAccessContent = ({
         <View style={styles.body}>
           <View>
             <Text variant="label" color={theme.colors.colorTextSecondary}>
-              {t`Revoking stops this device from making changes. It can still read what has already synced, and anything synced later, until you move your items to a new vault.`}
+              {t`Revoking removes this device from the vault and rotates the vault key. It can no longer read items added or changed from now on.`}
             </Text>
             <Text variant="label" color={theme.colors.colorTextSecondary}>
               {t`Before you proceed, please note:`}
@@ -85,7 +111,7 @@ export const BottomSheetRevokeAccessContent = ({
                 {'•'}
               </Text>
               <Text variant="label" style={styles.bulletText}>
-                {t`For Your Security: We recommend moving your items to a new vault and updating your passwords. This is especially important if the device was lost or stolen, as it ensures your data remains protected even if a local copy exists on the revoked device.`}
+                {t`Anything it synced before now stays on that device. Revoking cannot delete it. Change passwords the device could see, especially if it was lost or stolen.`}
               </Text>
             </View>
             <View style={styles.bulletRow}>
@@ -93,7 +119,7 @@ export const BottomSheetRevokeAccessContent = ({
                 {'•'}
               </Text>
               <Text variant="label" style={styles.bulletText}>
-                {t`Offline Data: Revoking cannot remotely delete data already on the device.`}
+                {t`Devices still on an older Lockwright version must update before they can read new items.`}
               </Text>
             </View>
           </View>
