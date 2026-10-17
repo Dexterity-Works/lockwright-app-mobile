@@ -21,6 +21,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - The revoke-access sheet says revoking rotates the vault key, so the device can no longer read items added or changed afterwards. Items it already synced stay on it. It no longer suggests moving items to a new vault.
 - The unique-id, password check, password generator, QR and validator utils come from one package, lockwright-lib-utils.
+- The key-rotation warning after a revoke gives a plain reason only for known causes. Any other failure shows a generic line, and the detail goes to the log.
 
 ## [0.0.32] - 2026-10-03
 

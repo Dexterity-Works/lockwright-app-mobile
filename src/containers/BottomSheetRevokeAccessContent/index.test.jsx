@@ -23,7 +23,9 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ bottom: 0 })
 }))
 
-jest.mock('../../utils/logger', () => ({ logger: { error: jest.fn() } }))
+jest.mock('../../utils/logger', () => ({
+  logger: { error: jest.fn(), warn: jest.fn() }
+}))
 
 jest.mock('lockwright-lib-ui-react-native-components/icons', () => ({
   Close: () => null
@@ -161,7 +163,29 @@ describe('BottomSheetRevokeAccessContent', () => {
     })
 
     expect(text1).toBe(
-      `Couldn't rotate the vault key: not-writable. "Phone" can still read new items.`
+      `Couldn't rotate the vault key. This device can't write to the vault. "Phone" can still read new items.`
+    )
+    expect(visibilityTime).toBe(8000)
+  })
+
+  it('keeps a thrown rotation error out of the toast', async () => {
+    const { text1, visibilityTime } = await revoke({
+      results: [],
+      failures: [
+        {
+          targetDeviceId: 'd-gone',
+          kind: 'epoch',
+          error: new Error(
+            'epoch rotation failed: activeVaultEnsureEpoch is not a function'
+          )
+        }
+      ],
+      epoch: null
+    })
+
+    expect(text1).not.toContain('activeVaultEnsureEpoch is not a function')
+    expect(text1).toBe(
+      `Couldn't rotate the vault key. "Phone" can still read new items.`
     )
     expect(visibilityTime).toBe(8000)
   })
@@ -180,7 +204,7 @@ describe('BottomSheetRevokeAccessContent', () => {
     })
 
     expect(text1).toBe(
-      `Couldn't rotate the vault key: timeout. "Phone" can still read new items.`
+      `Couldn't rotate the vault key. "Phone" can still read new items.`
     )
   })
 
