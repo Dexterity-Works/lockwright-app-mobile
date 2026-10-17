@@ -112,13 +112,15 @@ export const BottomSheetRevokeAccessContent = ({
       return { warning: pending, text1: parts.join(' ') }
     }
 
-    const names = [
-      ...new Set(
-        epoch.uncovered.map(
-          (id) => devices.find((d) => d?.id === id)?.name ?? t`Unknown Device`
-        )
-      )
-    ].join(', ')
+    // Distinct devices can share a label ("iPhone"), so count them.
+    const counts = new Map()
+    for (const id of new Set(epoch.uncovered)) {
+      const label = devices.find((d) => d?.id === id)?.name ?? t`Unknown Device`
+      counts.set(label, (counts.get(label) ?? 0) + 1)
+    }
+    const names = [...counts]
+      .map(([label, count]) => (count > 1 ? `${label} (${count})` : label))
+      .join(', ')
     parts.push(
       t`${names} must open the vault on a current Lockwright version before they can read new items.`
     )

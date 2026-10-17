@@ -46,8 +46,9 @@ jest.mock('lockwright-lib-ui-react-native-components', () => {
 
 const devices = [
   { id: 'd-old', name: 'Old laptop' },
-  { id: 'd-old-2', name: 'Old laptop' },
-  { id: 'd-tab', name: 'Tablet' }
+  { id: 'd-tab', name: 'Tablet' },
+  { id: 'd-ios-1', name: 'iPhone' },
+  { id: 'd-ios-2', name: 'iPhone' }
 ]
 
 const revoke = async (result) => {
@@ -106,7 +107,7 @@ describe('BottomSheetRevokeAccessContent', () => {
   })
 
   it('says another device will rotate when the rotation is pending', async () => {
-    const { text1 } = await revoke({
+    const { text1, visibilityTime } = await revoke({
       results: [],
       failures: [],
       epoch: { rotated: false, reason: 'pending', uncovered: [] }
@@ -115,6 +116,7 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(text1).toBe(
       '"Phone" can no longer edit this vault. Another device will rotate the vault key when it next syncs.'
     )
+    expect(visibilityTime).toBe(8000)
   })
 
   it('says the device was unreachable when only the envelope failed', async () => {
@@ -168,13 +170,35 @@ describe('BottomSheetRevokeAccessContent', () => {
     const { text1 } = await revoke({
       results: [],
       failures: [
-        { targetDeviceId: 'd-gone', kind: 'epoch', error: new Error('timeout') }
+        {
+          targetDeviceId: 'd-gone',
+          kind: 'epoch',
+          error: new Error('epoch rotation failed: timeout')
+        }
       ],
       epoch: null
     })
 
     expect(text1).toBe(
       `Couldn't rotate the vault key: timeout. "Phone" can still read new items.`
+    )
+  })
+
+  it('warns without a reason when the rotation failure gives none', async () => {
+    const { text1 } = await revoke({
+      results: [],
+      failures: [
+        {
+          targetDeviceId: 'd-gone',
+          kind: 'epoch',
+          error: new Error('epoch rotation failed: ')
+        }
+      ],
+      epoch: null
+    })
+
+    expect(text1).toBe(
+      `Couldn't rotate the vault key. "Phone" can still read new items.`
     )
   })
 
@@ -195,11 +219,23 @@ describe('BottomSheetRevokeAccessContent', () => {
     const { text1 } = await revoke({
       results: [],
       failures: [],
-      epoch: { ...rotated, uncovered: ['d-old', 'd-old-2', 'd-x', 'd-y'] }
+      epoch: { ...rotated, uncovered: ['d-old', 'd-old', 'd-x'] }
     })
 
     expect(text1).toBe(
       '"Phone" can no longer edit this vault. Old laptop, Unknown Device must open the vault on a current Lockwright version before they can read new items.'
+    )
+  })
+
+  it('counts distinct devices that share a name', async () => {
+    const { text1 } = await revoke({
+      results: [],
+      failures: [],
+      epoch: { ...rotated, uncovered: ['d-ios-1', 'd-ios-2', 'd-tab'] }
+    })
+
+    expect(text1).toBe(
+      '"Phone" can no longer edit this vault. iPhone (2), Tablet must open the vault on a current Lockwright version before they can read new items.'
     )
   })
 })
