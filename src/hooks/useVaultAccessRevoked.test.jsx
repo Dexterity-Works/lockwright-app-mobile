@@ -169,6 +169,14 @@ describe('useVaultAccessRevoked', () => {
     expect(openModal).toHaveBeenCalledTimes(1)
   })
 
+  it('wipes again when the vault is announced after the first wipe', async () => {
+    renderRevokedHook()
+    await act(async () => revokedHandler({ vaultId: 'v-active' }))
+    await act(async () => revokedHandler({ vaultId: 'v-active' }))
+
+    expect(deleteVaultLocal).toHaveBeenCalledTimes(2)
+  })
+
   it('still opens the access-removed modal when delete fails locally', async () => {
     deleteVaultLocal.mockRejectedValue(new Error('disk-full'))
 

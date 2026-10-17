@@ -112,7 +112,8 @@ export const useVaultAccessRevoked = () => {
     )
   }, [])
 
-  // The kick envelope and the epoch status can both announce one vault.
+  // The lib emits once per vault, but a revoked:false status during the wipe
+  // re-arms it, and a repeat can land while the wipe still runs.
   const handling = useRef(new Set())
   const handleAccessRevoked = useCallback(
     async (payload = {}) => {
