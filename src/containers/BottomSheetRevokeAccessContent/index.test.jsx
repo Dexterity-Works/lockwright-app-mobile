@@ -85,7 +85,7 @@ describe('BottomSheetRevokeAccessContent', () => {
     })
 
     screen.getByText(
-      'Revoking removes this device from the vault and rotates the vault key. It can no longer read items added or changed from now on.'
+      "Revoking removes this device from the vault and rotates the vault key. Once the key rotates, the device can't read items added or changed after that."
     )
     screen.getByText(
       'Anything it synced before now stays on that device. Revoking cannot delete it. Change passwords the device could see, especially if it was lost or stolen.'

@@ -158,7 +158,7 @@ export const BottomSheetRevokeAccessContent = ({
         <View style={styles.body}>
           <View>
             <Text variant="label" color={theme.colors.colorTextSecondary}>
-              {t`Revoking removes this device from the vault and rotates the vault key. It can no longer read items added or changed from now on.`}
+              {t`Revoking removes this device from the vault and rotates the vault key. Once the key rotates, the device can't read items added or changed after that.`}
             </Text>
             <Text variant="label" color={theme.colors.colorTextSecondary}>
               {t`Before you proceed, please note:`}
