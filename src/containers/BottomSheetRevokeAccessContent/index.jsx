@@ -120,7 +120,7 @@ export const BottomSheetRevokeAccessContent = ({
     }
 
     const revoked = failures?.some((f) => !f?.kind)
-      ? t`Couldn't reach the device. It will lose edit access next time it comes online.`
+      ? t`Couldn't reach the device. It will stop editing next time it comes online.`
       : t`"${deviceName}" can no longer edit this vault.`
     const parts = [revoked]
     if (pending) {
@@ -142,7 +142,7 @@ export const BottomSheetRevokeAccessContent = ({
       .map(([label, count]) => (count > 1 ? `${label} (${count})` : label))
       .join(', ')
     parts.push(
-      t`${names} must open the vault on a current Lockwright version before they can read new items.`
+      t`${names} can't read new items until they open this vault once on a current Lockwright version.`
     )
     return { warning: true, text1: parts.join(' ') }
   }

@@ -15,7 +15,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ### Added
 
-- After a revoke, a toast warns when the vault key could not be rotated, with a plain reason for known causes and a generic line otherwise, or names the devices that must open the vault on a current Lockwright version before they can read new items.
+- After a revoke, a toast warns when the vault key could not be rotated, with a plain reason for known causes and a generic line otherwise, or names the devices that can't read new items until they open this vault once on a current Lockwright version.
 
 ### Changed
 

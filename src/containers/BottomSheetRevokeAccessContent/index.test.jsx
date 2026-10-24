@@ -130,7 +130,7 @@ describe('BottomSheetRevokeAccessContent', () => {
     })
 
     expect(text1).toBe(
-      "Couldn't reach the device. It will lose edit access next time it comes online."
+      "Couldn't reach the device. It will stop editing next time it comes online."
     )
   })
 
@@ -309,7 +309,7 @@ describe('BottomSheetRevokeAccessContent', () => {
     })
 
     expect(text1).toBe(
-      '"Phone" can no longer edit this vault. Old laptop, Tablet must open the vault on a current Lockwright version before they can read new items.'
+      `"Phone" can no longer edit this vault. Old laptop, Tablet can't read new items until they open this vault once on a current Lockwright version.`
     )
     expect(visibilityTime).toBe(8000)
   })
@@ -322,7 +322,7 @@ describe('BottomSheetRevokeAccessContent', () => {
     })
 
     expect(text1).toBe(
-      '"Phone" can no longer edit this vault. Old laptop, Unknown Device must open the vault on a current Lockwright version before they can read new items.'
+      `"Phone" can no longer edit this vault. Old laptop, Unknown Device can't read new items until they open this vault once on a current Lockwright version.`
     )
   })
 
@@ -334,7 +334,7 @@ describe('BottomSheetRevokeAccessContent', () => {
     })
 
     expect(text1).toBe(
-      '"Phone" can no longer edit this vault. iPhone (2), Tablet must open the vault on a current Lockwright version before they can read new items.'
+      `"Phone" can no longer edit this vault. iPhone (2), Tablet can't read new items until they open this vault once on a current Lockwright version.`
     )
   })
 })
