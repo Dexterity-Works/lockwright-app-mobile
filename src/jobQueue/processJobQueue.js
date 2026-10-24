@@ -4,6 +4,14 @@ import { processJob } from './JobWorker'
 import { acquireDbWriteGuard, releaseDbWriteGuard } from '../utils/dbGuard'
 import { logger } from '../utils/logger'
 
+// The vault core's words for a write without the current epoch key.
+const KEY_ERRORS = [
+  'Vault key not available yet',
+  'Vault key must rotate first'
+]
+const isKeyError = (message) =>
+  typeof message === 'string' && KEY_ERRORS.some((m) => message.startsWith(m))
+
 /**
  * Orchestrates job queue processing.
  *
@@ -13,7 +21,7 @@ import { logger } from '../utils/logger'
  * @param {Function} params.updateRecord - Updates a record in the active vault.
  * @param {string} params.activeVaultId - The currently active vault ID.
  * @param {Object} params.vaultClient - The PearpassVaultClient instance.
- * @returns {Promise<{ processed: number, succeeded: number, failed: number, errors: Array }>}
+ * @returns {Promise<{ processed: number, succeeded: number, failed: number, errors: Array, notSaved: Array }>}
  */
 export const processJobQueue = async ({
   createRecord,
@@ -22,7 +30,13 @@ export const processJobQueue = async ({
   activeVaultId,
   vaultClient
 }) => {
-  const result = { processed: 0, succeeded: 0, failed: 0, errors: [] }
+  const result = {
+    processed: 0,
+    succeeded: 0,
+    failed: 0,
+    errors: [],
+    notSaved: []
+  }
 
   const guardAcquired = acquireDbWriteGuard()
   if (!guardAcquired) {
@@ -87,7 +101,21 @@ export const processJobQueue = async ({
       }
     }
 
-    const remainingJobs = jobs.filter((j) => j.status !== JobStatus.COMPLETED)
+    // A FAILED job is never retried or offered again, and it holds the
+    // passkey's private key. The site already has the passkey, so the user
+    // must hear it wasn't saved.
+    result.notSaved = jobs
+      .filter((j) => j.status === JobStatus.FAILED)
+      .map((job) => ({
+        jobId: job.id,
+        type: job.type,
+        site: job.payload?.rpId || job.payload?.rpName || '',
+        keyMissing: isKeyError(job.error)
+      }))
+
+    const remainingJobs = jobs.filter(
+      (j) => j.status !== JobStatus.COMPLETED && j.status !== JobStatus.FAILED
+    )
 
     if (remainingJobs.length === 0) {
       await deleteJobFile()

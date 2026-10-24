@@ -58,7 +58,8 @@ describe('processJobQueue', () => {
       processed: 0,
       succeeded: 0,
       failed: 0,
-      errors: []
+      errors: [],
+      notSaved: []
     })
     expect(mockVaultClient.readJobQueue).not.toHaveBeenCalled()
   })
@@ -72,7 +73,8 @@ describe('processJobQueue', () => {
       processed: 0,
       succeeded: 0,
       failed: 0,
-      errors: []
+      errors: [],
+      notSaved: []
     })
     expect(releaseDbWriteGuard).toHaveBeenCalled()
   })
@@ -86,7 +88,8 @@ describe('processJobQueue', () => {
       processed: 0,
       succeeded: 0,
       failed: 0,
-      errors: []
+      errors: [],
+      notSaved: []
     })
   })
 
@@ -99,7 +102,8 @@ describe('processJobQueue', () => {
       processed: 0,
       succeeded: 0,
       failed: 0,
-      errors: []
+      errors: [],
+      notSaved: []
     })
   })
 
@@ -292,5 +296,93 @@ describe('processJobQueue', () => {
     expect(result.processed).toBe(2)
     expect(result.succeeded).toBe(2)
     expect(processJob).toHaveBeenCalledTimes(2)
+  })
+
+  it('reports a passkey that runs out of retries and drops it from the file', async () => {
+    const jobs = [
+      {
+        id: 'job-1',
+        type: 'ADD_PASSKEY',
+        status: 'PENDING',
+        vaultId: 'vault-123',
+        payload: { rpId: 'github.com', rpName: 'GitHub', privateKey: 'pk' },
+        retryCount: 2,
+        maxRetries: 3
+      },
+      {
+        id: 'job-2',
+        type: 'ADD_PASSKEY',
+        status: 'PENDING',
+        vaultId: 'other-vault',
+        payload: { rpId: 'example.com' }
+      }
+    ]
+    mockVaultClient.readJobQueue.mockResolvedValue(jobs)
+    processJob.mockRejectedValue(
+      new Error('Vault key not available yet: another device must rotate it')
+    )
+
+    const result = await processJobQueue(makeParams())
+
+    expect(result.notSaved).toEqual([
+      {
+        jobId: 'job-1',
+        type: 'ADD_PASSKEY',
+        site: 'github.com',
+        keyMissing: true
+      }
+    ])
+    expect(mockVaultClient.writeJobQueue).toHaveBeenCalledWith([
+      expect.objectContaining({ id: 'job-2' })
+    ])
+  })
+
+  it('reports an update job already FAILED in the file, with any other reason', async () => {
+    const jobs = [
+      {
+        id: 'job-1',
+        type: 'UPDATE_PASSKEY',
+        status: 'FAILED',
+        vaultId: 'vault-123',
+        payload: { rpId: 'example.com' },
+        error: 'Record r1 not found for update'
+      }
+    ]
+    mockVaultClient.readJobQueue.mockResolvedValue(jobs)
+
+    const result = await processJobQueue(makeParams())
+
+    expect(processJob).not.toHaveBeenCalled()
+    expect(result.notSaved).toEqual([
+      {
+        jobId: 'job-1',
+        type: 'UPDATE_PASSKEY',
+        site: 'example.com',
+        keyMissing: false
+      }
+    ])
+    expect(mockVaultClient.writeJobQueue).not.toHaveBeenCalled()
+    expect(deleteJobFile).toHaveBeenCalled()
+  })
+
+  it('counts a rotation still owed as a missing key', async () => {
+    const jobs = [
+      {
+        id: 'job-1',
+        type: 'ADD_PASSKEY',
+        status: 'FAILED',
+        vaultId: 'vault-123',
+        payload: { rpName: 'Example' },
+        error:
+          'Vault key must rotate first: wait for a device that can rotate it'
+      }
+    ]
+    mockVaultClient.readJobQueue.mockResolvedValue(jobs)
+
+    const result = await processJobQueue(makeParams())
+
+    expect(result.notSaved).toEqual([
+      { jobId: 'job-1', type: 'ADD_PASSKEY', site: 'Example', keyMissing: true }
+    ])
   })
 })
