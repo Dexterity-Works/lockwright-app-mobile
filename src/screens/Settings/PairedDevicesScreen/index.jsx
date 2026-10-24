@@ -17,6 +17,7 @@ import {
   MoreVert
 } from 'lockwright-lib-ui-react-native-components/icons'
 import { getMyDeviceId, useVault } from 'lockwright-lib-vault'
+import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 import { Platform, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -28,6 +29,7 @@ import {
   getDeviceIcon
 } from '../../../utils/devicePresentation'
 import { logger } from '../../../utils/logger'
+import { removedDevices } from '../../../utils/revokedDevices'
 
 const RevokeActionMenu = ({ onRevoke }) => {
   const { t } = useLingui()
@@ -92,6 +94,26 @@ export const PairedDevicesScreen = () => {
 
   const [revokeTarget, setRevokeTarget] = useState(null)
 
+  // Read again after a revoke, and on every pushed status.
+  const [epochStatus, setEpochStatus] = useState(null)
+  useEffect(() => {
+    let cancelled = false
+    const onStatus = (status) => {
+      if (!cancelled) setEpochStatus(status)
+    }
+    pearpassVaultClient
+      .activeVaultGetEpochStatus()
+      .then(onStatus)
+      .catch((error) => {
+        logger.warn('PairedDevicesScreen', 'epoch status failed:', error)
+      })
+    pearpassVaultClient.on?.('epoch-status', onStatus)
+    return () => {
+      cancelled = true
+      pearpassVaultClient.off?.('epoch-status', onStatus)
+    }
+  }, [data?.id, revokeTarget])
+
   const getDeviceDisplayName = (deviceName) => {
     if (!deviceName) return t`Unknown Device`
     const lowerName = deviceName.toLowerCase()
@@ -102,6 +124,9 @@ export const PairedDevicesScreen = () => {
 
   const devices = data?.devices ?? []
   const vaultId = data?.id
+  const removed = removedDevices(epochStatus, vaultId, devices)
+  const rotatedAt = (at) =>
+    `${formatDeviceDate(at)} ${new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
 
   return (
     <Layout
@@ -197,6 +222,29 @@ export const PairedDevicesScreen = () => {
               </View>
             )
           })}
+          {removed.map((device) => (
+            <View
+              key={device.id}
+              style={[
+                styles.deviceItem,
+                {
+                  borderTopWidth: 1,
+                  borderTopColor: theme.colors.colorBorderPrimary
+                }
+              ]}
+            >
+              <View style={styles.deviceInfo}>
+                <Text variant="bodyEmphasized" numberOfLines={1}>
+                  {device.name ?? t`Removed device`}
+                </Text>
+                <Text variant="caption" color={theme.colors.colorTextSecondary}>
+                  {device.rotatedAt
+                    ? t`Revoked · key rotated ${rotatedAt(device.rotatedAt)}`
+                    : t`Removed · key rotating`}
+                </Text>
+              </View>
+            </View>
+          ))}
         </View>
       )}
 

@@ -8,6 +8,7 @@ import Toast from 'react-native-toast-message'
 import { BottomSheetRevokeAccessContent } from './index'
 import messages from '../../locales/en/messages'
 import { logger } from '../../utils/logger'
+import { markKeyRotated, rememberRevoked } from '../../utils/revokedDevices'
 
 i18n.load('en', messages)
 i18n.activate('en')
@@ -27,6 +28,11 @@ jest.mock('react-native-toast-message', () => ({
 
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ bottom: 0 })
+}))
+
+jest.mock('../../utils/revokedDevices', () => ({
+  markKeyRotated: jest.fn(),
+  rememberRevoked: jest.fn()
 }))
 
 jest.mock('../../utils/logger', () => ({
@@ -155,6 +161,8 @@ describe('BottomSheetRevokeAccessContent', () => {
       'Phone revoked. Vault key rotated.'
     )
     expect(mockClose).toHaveBeenCalled()
+    expect(rememberRevoked).toHaveBeenCalledWith('v1', 'd-gone', 'Phone')
+    expect(markKeyRotated).toHaveBeenCalledWith('v1', 'd-gone')
   })
 
   it('treats a key that already leaves the device out as rotated', async () => {
@@ -184,6 +192,8 @@ describe('BottomSheetRevokeAccessContent', () => {
     screen.getByText('Removed · key rotating')
     expect(screen.queryByText(/Revoked/)).toBeNull()
     expect(Toast.show).not.toHaveBeenCalled()
+    expect(rememberRevoked).toHaveBeenCalledWith('v1', 'd-gone', 'Phone')
+    expect(markKeyRotated).not.toHaveBeenCalled()
     expect(mockClose).not.toHaveBeenCalled()
     expect(
       pearpassVaultClient.activeVaultGetEpochStatus.mock.calls.length
@@ -267,6 +277,7 @@ describe('BottomSheetRevokeAccessContent', () => {
     screen.getByText('Removed · key not rotated')
     screen.getByText(failedText)
     expect(Toast.show).not.toHaveBeenCalled()
+    expect(rememberRevoked).toHaveBeenCalledWith('v1', 'd-gone', 'Phone')
     expect(logger.warn).toHaveBeenCalledWith(
       'BottomSheetRevokeAccessContent',
       'vault key not rotated:',

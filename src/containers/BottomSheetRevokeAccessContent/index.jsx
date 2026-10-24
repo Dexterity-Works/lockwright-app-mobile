@@ -16,6 +16,7 @@ import Toast from 'react-native-toast-message'
 
 import { TOAST_CONFIG } from '../../constants/toast'
 import { logger } from '../../utils/logger'
+import { markKeyRotated, rememberRevoked } from '../../utils/revokedDevices'
 import { SheetHeader } from '../BottomSheet/SheetHeader'
 
 const POLL_MS = 1000
@@ -91,6 +92,7 @@ export const BottomSheetRevokeAccessContent = ({
       return
     }
 
+    rememberRevoked(vaultId, targetDeviceId, deviceName)
     const pending = epoch?.rotated === false && epoch.reason === 'pending'
     if (!epoch || (!epoch.rotated && epoch.reason !== 'current' && !pending)) {
       logNotRotated(epoch, rotationFailure)
@@ -106,6 +108,7 @@ export const BottomSheetRevokeAccessContent = ({
     setWaiting(false)
     if (!confirmed) return
 
+    markKeyRotated(vaultId, targetDeviceId)
     close()
     const text2 = uncoveredText(epoch.uncovered)
     Toast.show({
