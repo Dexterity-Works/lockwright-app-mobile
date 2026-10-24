@@ -9,6 +9,7 @@ import { useVaultAccessRevoked } from './useVaultAccessRevoked'
 import { useVaultSwitch } from './useVaultSwitch'
 import { useModal } from '../context/ModalContext'
 import messages from '../locales/en/messages'
+import { lockAutofillSession } from '../utils/AutofillModule'
 
 i18n.load('en', messages)
 i18n.activate('en')
@@ -52,6 +53,10 @@ jest.mock('../containers/Modal/AccessRemovedModalContent', () => ({
 
 jest.mock('@lingui/react/macro', () => ({
   useLingui: () => ({ t: (text) => text })
+}))
+
+jest.mock('../utils/AutofillModule', () => ({
+  lockAutofillSession: jest.fn()
 }))
 
 jest.mock('../utils/logger', () => ({
@@ -113,6 +118,28 @@ describe('useVaultAccessRevoked', () => {
     await act(async () => revokedHandler({ vaultId: 'v-unknown' }))
     expect(deleteVaultLocal).not.toHaveBeenCalled()
     expect(openModal).not.toHaveBeenCalled()
+    expect(lockAutofillSession).not.toHaveBeenCalled()
+  })
+
+  // The Android fill sheet caches logins for its unlock window and fills
+  // from that cache without asking the vault.
+  it('locks the autofill session before wiping a revoked vault', async () => {
+    renderRevokedHook()
+    await act(async () => revokedHandler({ vaultId: 'v-other' }))
+
+    expect(lockAutofillSession).toHaveBeenCalledTimes(1)
+    expect(lockAutofillSession.mock.invocationCallOrder[0]).toBeLessThan(
+      deleteVaultLocal.mock.invocationCallOrder[0]
+    )
+  })
+
+  it('locks the autofill session even when the local wipe fails', async () => {
+    deleteVaultLocal.mockRejectedValue(new Error('disk'))
+    renderRevokedHook()
+    await act(async () => revokedHandler({ vaultId: 'v-active' }))
+
+    expect(lockAutofillSession).toHaveBeenCalledTimes(1)
+    expect(openModal).toHaveBeenCalledTimes(1)
   })
 
   it('wipes the active vault and switches to the next when one exists', async () => {

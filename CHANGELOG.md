@@ -26,6 +26,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 ### Fixed
 
 - Autofill on Android and iOS lists nothing while this device can't read the vault's latest key (a revoked device, a new device whose key hasn't arrived, or a deferred migration), instead of offering items sealed under older keys. On Android it also drops logins an earlier unlock cached, and no longer asks for the vault password in that case.
+- A vault revoked from another device locks Android autofill's cached logins before the wipe.
 
 ## [0.0.32] - 2026-10-03
 

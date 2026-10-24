@@ -9,6 +9,7 @@ import { useVaultSwitch } from './useVaultSwitch'
 import { TOAST_CONFIG } from '../constants/toast'
 import { AccessRemovedModalContent } from '../containers/Modal/AccessRemovedModalContent'
 import { useModal } from '../context/ModalContext'
+import { lockAutofillSession } from '../utils/AutofillModule'
 import { logger } from '../utils/logger'
 
 export const useVaultAccessRevoked = () => {
@@ -59,6 +60,9 @@ export const useVaultAccessRevoked = () => {
     const vaultName = vault.name ?? vaultId
     const deviceName = vault.devices?.find((d) => d?.id === actor)?.name
     const wasActive = activeVault?.id === vaultId
+
+    // The Android fill sheet fills from logins it cached at unlock.
+    await lockAutofillSession()
 
     try {
       await deleteVaultLocal(vaultId)
