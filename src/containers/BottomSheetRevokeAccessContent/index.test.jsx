@@ -221,6 +221,50 @@ describe('BottomSheetRevokeAccessContent', () => {
     )
   })
 
+  it('keeps a kickDevice throw out of the toast and logs it with its stack', async () => {
+    const error = new Error('IPC request 83 failed: worklet closed')
+    kickDevice.mockRejectedValue(error)
+    const screen = render(
+      <I18nProvider i18n={i18n}>
+        <BottomSheetRevokeAccessContent
+          vaultId="v1"
+          targetDeviceId="d-gone"
+          deviceName="Phone"
+          devices={devices}
+        />
+      </I18nProvider>
+    )
+    fireEvent.press(screen.getByTestId('revoke-access-submit'))
+    await waitFor(() => expect(Toast.show).toHaveBeenCalled())
+
+    expect(Toast.show.mock.calls[0][0].text1).toBe(
+      "Couldn't revoke access. Please try again."
+    )
+    expect(logger.error).toHaveBeenCalledWith(
+      'BottomSheetRevokeAccessContent',
+      'kickDevice failed:',
+      error
+    )
+    expect(mockClose).not.toHaveBeenCalled()
+  })
+
+  it('keeps an unknown skip reason out of the toast', async () => {
+    const { text1 } = await revoke({
+      results: [],
+      failures: [],
+      epoch: { rotated: false, reason: 'ring-box-open-failed', uncovered: [] }
+    })
+
+    expect(text1).toBe(
+      `Couldn't rotate the vault key. "Phone" can still read new items.`
+    )
+    expect(logger.warn).toHaveBeenCalledWith(
+      'BottomSheetRevokeAccessContent',
+      'vault key not rotated:',
+      'ring-box-open-failed'
+    )
+  })
+
   it('warns when the rotation result is missing', async () => {
     const { text1 } = await revoke({
       results: [],
