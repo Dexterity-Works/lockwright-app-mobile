@@ -340,6 +340,35 @@ for f in "$AUTH" "$PASSKEY_REG"; do
   }
 done
 
+# Without the vault's current epoch key the main app can't write the passkey.
+# The site must hear that it wasn't created, not get a credential that is
+# never stored.
+save_body="$(awk '/private void handleFormSave\(/,/private void completeRegistration\(/' "$PASSKEY_REG")"
+printf '%s\n' "$save_body" | awk '/requireEpochKey/{seen=1} /createAddPasskeyJob|createUpdatePasskeyJob/{if(!seen) exit 1} END{exit !seen}' || {
+  echo "handleFormSave must check the epoch key before queueing a passkey job" >&2
+  exit 1
+}
+printf '%s\n' "$save_body" | grep -q 'failRegistration' || {
+  echo "handleFormSave must fail the request back to the site when the key check fails" >&2
+  exit 1
+}
+grep -A12 'private void failRegistration(' "$PASSKEY_REG" | grep -q 'setCreateCredentialException' || {
+  echo "failRegistration must answer with setCreateCredentialException" >&2
+  exit 1
+}
+grep -A12 'private void failRegistration(' "$PASSKEY_REG" | grep -q 'new NotAllowedError()' || {
+  echo "failRegistration must tell the site NotAllowedError" >&2
+  exit 1
+}
+grep -B8 'onV2VaultReady(vault.getId()' "$COMBINED" | grep -q 'requireEpochKey' || {
+  echo "registration must check the epoch key before it marks the vault ready" >&2
+  exit 1
+}
+grep -q 'public CompletableFuture<Void> requireEpochKey()' "$CLIENT" || {
+  echo "requireEpochKey must be reachable from the registration UI" >&2
+  exit 1
+}
+
 SESSION="$ROOT/android-template/java/autofill/data/AutofillUnlockSession.java"
 grep -q 'pageUrlsForAutofill' "$SESSION" || {
   echo "Unlock session chips must match androidapp package URIs via pageUrlsForAutofill" >&2

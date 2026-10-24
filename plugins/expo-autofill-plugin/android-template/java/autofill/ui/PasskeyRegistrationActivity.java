@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.credentials.exceptions.domerrors.NotAllowedError;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -598,6 +599,16 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
                     SecureLog.d(TAG, "Vault is ready for saving");
                 }
 
+                // The main app writes the job under the vault's current epoch
+                // key. Without it the write fails, so tell the site now.
+                try {
+                    vaultClient.requireEpochKey().get(30, java.util.concurrent.TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    SecureLog.e(TAG, "Refusing passkey save: no current vault key");
+                    runOnUiThread(this::failRegistration);
+                    return;
+                }
+
                 // 1. Generate passkey
                 KeyPair keyPair = PasskeyCrypto.generateKeyPair();
                 byte[] credentialIdBytes = PasskeyCrypto.generateCredentialId();
@@ -768,6 +779,21 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
             SecureLog.e(TAG, "Error completing registration: " + e.getMessage());
             onCancel();
         }
+    }
+
+    // NotAllowedError is what WebAuthn create() rejects with when no
+    // credential was made. A cancel reads as the user backing out.
+    private void failRegistration() {
+        Intent resultData = new Intent();
+        androidx.credentials.provider.PendingIntentHandler.setCreateCredentialException(
+                resultData,
+                new androidx.credentials.exceptions.publickeycredential.CreatePublicKeyCredentialDomException(
+                        new NotAllowedError(), "Lockwright could not save the passkey"));
+        android.widget.Toast.makeText(this,
+                "Passkey not saved",
+                android.widget.Toast.LENGTH_LONG).show();
+        setResult(Activity.RESULT_OK, resultData);
+        finish();
     }
 
     private void navigateToErrorBoundary(ErrorBoundaryFragment.ErrorType errorType) {

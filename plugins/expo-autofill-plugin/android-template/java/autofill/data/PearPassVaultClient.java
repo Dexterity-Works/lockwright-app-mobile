@@ -752,7 +752,7 @@ public class PearPassVaultClient {
      * Fails closed unless this device reads the active vault's latest epoch
      * key. A failed status read fails too: the worklet ships in this APK.
      */
-    CompletableFuture<Void> requireEpochKey() {
+    public CompletableFuture<Void> requireEpochKey() {
         return sendRequest(API.ACTIVE_VAULT_GET_EPOCH_STATUS.getValue(), null)
                 .thenApply(status -> {
                     if (!VaultEpochGate.canFill(status)) {

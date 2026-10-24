@@ -452,6 +452,8 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
 
                 // Registration: inform activity so vaultReadyFuture + selectedVaultId get set.
                 if (MODE_REGISTRATION.equals(mode) && getActivity() instanceof PasskeyRegistrationActivity) {
+                    // A vault without its current key can't take the passkey.
+                    vaultClient.requireEpochKey().get();
                     byte[] copy = null;
                     if (passwordBuffer != null) {
                         copy = new byte[passwordBuffer.length];
