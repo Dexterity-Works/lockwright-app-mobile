@@ -211,6 +211,10 @@ export const PairedDevicesScreen = () => {
             vaultId={vaultId}
             targetDeviceId={revokeTarget.deviceId}
             deviceName={revokeTarget.deviceName}
+            devices={devices.map((device) => ({
+              id: device.id,
+              name: getDeviceDisplayName(device.name)
+            }))}
           />
         )}
       </NativeBottomSheet>

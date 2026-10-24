@@ -16,6 +16,7 @@ public final class VaultMigrationGateTest {
         notReadyWhenSchema1();
         retryWhileInProgress();
         failOnTerminalError();
+        deferredEpochKeyFailsClosed();
         inProgressErrorIsRetry();
         jsonNumberReady();
         nullIsRetry();
@@ -57,6 +58,20 @@ public final class VaultMigrationGateTest {
         status.put("inProgress", false);
         status.put("error", "migrate exploded");
         expect("terminal error fails", VaultMigrationGate.decide(status), VaultMigrationGate.Decision.FAILED);
+    }
+
+    /**
+     * Residual: the worklet defers migrate until the latest epoch key is
+     * readable. The gate does not read "deferred", so this fails closed.
+     */
+    private static void deferredEpochKeyFailsClosed() {
+        Map<String, Object> status = new HashMap<>();
+        status.put("ready", false);
+        status.put("inProgress", false);
+        status.put("deferred", true);
+        status.put("error", "epoch-key-pending");
+        expect("deferred epoch-key-pending fails closed",
+                VaultMigrationGate.decide(status), VaultMigrationGate.Decision.FAILED);
     }
 
     private static void inProgressErrorIsRetry() {

@@ -7,6 +7,7 @@ import com.pears.pass.autofill.utils.RecordStoreKeys;
 import com.pears.pass.autofill.utils.FillLog;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.utils.UriMatchHelper;
+import com.pears.pass.autofill.utils.VaultEpochGate;
 import com.pears.pass.autofill.utils.VaultMigrationGate;
 
 import org.json.JSONArray;
@@ -68,7 +69,8 @@ public class PearPassVaultClient {
         MASTER_PASSWORD_INIT_WITH_CREDENTIALS(46),
         SET_CORE_STORE_OPTIONS(49),
         GENERATE_OTP_CODES_BY_IDS(56),
-        GET_VAULT_MIGRATION_STATUS(82);
+        GET_VAULT_MIGRATION_STATUS(82),
+        ACTIVE_VAULT_GET_EPOCH_STATUS(84);
 
         private final int value;
 
@@ -690,6 +692,7 @@ public class PearPassVaultClient {
      */
     public CompletableFuture<List<Map<String, Object>>> listCanonicalRecords() {
         return waitForVaultMigration()
+                .thenCompose(v -> requireEpochKey())
                 .thenCompose(v -> activeVaultList("record-v2/"))
                 .thenCompose(v2 -> {
                     if (v2 != null && !v2.isEmpty()) {
@@ -742,6 +745,20 @@ public class PearPassVaultClient {
                             Thread.currentThread().interrupt();
                         }
                     }).thenCompose(v -> pollVaultMigration(startedAt));
+                });
+    }
+
+    /**
+     * Fails closed unless this device reads the active vault's latest epoch
+     * key. A failed status read fails too: the worklet ships in this APK.
+     */
+    CompletableFuture<Void> requireEpochKey() {
+        return sendRequest(API.ACTIVE_VAULT_GET_EPOCH_STATUS.getValue(), null)
+                .thenApply(status -> {
+                    if (!VaultEpochGate.canFill(status)) {
+                        throw new PearPassVaultException(VaultEpochGate.KEY_PENDING);
+                    }
+                    return (Void) null;
                 });
     }
 
