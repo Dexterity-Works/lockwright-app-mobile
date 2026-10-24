@@ -88,7 +88,7 @@ describe('BottomSheetRevokeAccessContent', () => {
       "Revoking removes this device from the vault and rotates the vault key. Once the key rotates, the device can't read items added or changed after that."
     )
     screen.getByText(
-      'Anything it synced before now stays on that device. Revoking cannot delete it. Change passwords the device could see, especially if it was lost or stolen.'
+      "Items from before the key rotates aren't re-encrypted, so the device can still read them. Revoking cannot delete what it already synced. Change passwords the device could see, especially if it was lost or stolen."
     )
     screen.getByText(
       'Devices still on an older Lockwright version must update before they can read new items.'

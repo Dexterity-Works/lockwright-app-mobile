@@ -171,7 +171,7 @@ export const BottomSheetRevokeAccessContent = ({
                 {'•'}
               </Text>
               <Text variant="label" style={styles.bulletText}>
-                {t`Anything it synced before now stays on that device. Revoking cannot delete it. Change passwords the device could see, especially if it was lost or stolen.`}
+                {t`Items from before the key rotates aren't re-encrypted, so the device can still read them. Revoking cannot delete what it already synced. Change passwords the device could see, especially if it was lost or stolen.`}
               </Text>
             </View>
             <View style={styles.bulletRow}>

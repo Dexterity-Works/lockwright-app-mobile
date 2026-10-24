@@ -20,7 +20,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 ### Changed
 
 - Play versionCode 23.
-- The revoke-access sheet says revoking rotates the vault key, and once the key rotates the device can't read items added or changed after that. Items it already synced stay on it. It no longer suggests moving items to a new vault.
+- The revoke-access sheet says revoking rotates the vault key, and once the key rotates the device can't read items added or changed after that. Items from before the rotation aren't re-encrypted, so the device can still read them. It no longer suggests moving items to a new vault.
 - The unique-id, password check, password generator, QR and validator utils come from one package, lockwright-lib-utils.
 
 ### Fixed
