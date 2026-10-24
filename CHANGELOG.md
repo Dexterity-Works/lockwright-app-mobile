@@ -23,6 +23,10 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 - The revoke-access sheet says revoking rotates the vault key, and once the key rotates the device can't read items added or changed after that. Items it already synced stay on it. It no longer suggests moving items to a new vault.
 - The unique-id, password check, password generator, QR and validator utils come from one package, lockwright-lib-utils.
 
+### Fixed
+
+- Autofill on Android and iOS lists nothing while this device can't read the vault's latest key (a revoked device, a new device whose key hasn't arrived, or a deferred migration), instead of offering items sealed under older keys. On Android it also drops logins an earlier unlock cached, and no longer asks for the vault password in that case.
+
 ## [0.0.32] - 2026-10-03
 
 `c76e7f5dd00bb7779c2bc378e1dc1175c5829f5f`

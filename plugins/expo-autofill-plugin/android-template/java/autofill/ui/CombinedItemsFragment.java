@@ -45,6 +45,7 @@ import com.pears.pass.autofill.utils.ChipFillDecision;
 import com.pears.pass.autofill.utils.SecureBufferUtils;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.utils.UriMatchHelper;
+import com.pears.pass.autofill.utils.VaultEpochGate;
 import com.pears.pass.autofill.utils.VaultErrorUtils;
 
 import java.util.ArrayList;
@@ -521,6 +522,15 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                 });
             } catch (Exception e) {
                 handleAsyncError(TAG, "unlockAndLoad failed: " + e.getMessage(), () -> {
+                    // No current epoch key: drop what an earlier unlock cached
+                    // and show nothing. The password was not the problem.
+                    if (VaultEpochGate.isKeyPending(e)) {
+                        AutofillUnlockSession.get().lock();
+                        allCredentials.clear();
+                        hidePasswordPrompt();
+                        showEmpty();
+                        return;
+                    }
                     if (!AutofillSheetLoad.showEmptyAfterLoadFailure(
                             VaultErrorUtils.isDatabaseLockError(e)
                                     || AutofillSheetLoad.isTransientLoadFailure(e))) {

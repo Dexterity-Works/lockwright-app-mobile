@@ -24,6 +24,11 @@ javac -d "$TMP" \
 java -cp "$TMP" com.pears.pass.autofill.utils.VaultMigrationGateTest
 
 javac -d "$TMP" \
+  "$ROOT/android-template/java/autofill/utils/VaultEpochGate.java" \
+  "$ROOT/test/VaultEpochGateTest.java"
+java -cp "$TMP" com.pears.pass.autofill.utils.VaultEpochGateTest
+
+javac -d "$TMP" \
   "$ROOT/android-template/java/autofill/utils/PasswordSetGate.java" \
   "$ROOT/test/PasswordSetGateTest.java"
 java -cp "$TMP" com.pears.pass.autofill.utils.PasswordSetGateTest
@@ -121,6 +126,17 @@ grep -q 'RecordStoreKeys.fileKeyV2' "$CLIENT"
 grep -q 'GET_VAULT_MIGRATION_STATUS(82)' "$CLIENT"
 grep -q 'waitForVaultMigration' "$CLIENT"
 grep -A20 'listCanonicalRecords()' "$CLIENT" | grep -q 'waitForVaultMigration'
+# No current epoch key (a joiner, a revoked device, a deferred migrate):
+# list nothing, so nothing fills or gets cached.
+grep -q 'ACTIVE_VAULT_GET_EPOCH_STATUS(84)' "$CLIENT"
+grep -A20 'listCanonicalRecords()' "$CLIENT" | grep -q 'requireEpochKey' || {
+  echo "listCanonicalRecords must check the epoch key before listing" >&2
+  exit 1
+}
+grep -A20 'CompletableFuture<Void> requireEpochKey()' "$CLIENT" | grep -q 'VaultEpochGate.canFill' || {
+  echo "requireEpochKey must decide through VaultEpochGate.canFill" >&2
+  exit 1
+}
 grep -q 'GENERATE_OTP_CODES_BY_IDS(56)' "$CLIENT"
 grep -q 'generateOtpCode' "$CLIENT"
 grep -q 'OtpCodeResponse.codeFor' "$CLIENT"
@@ -187,6 +203,10 @@ if grep -q 'FLAG_CANCEL_CURRENT' "$SERVICE"; then
 fi
 
 COMBINED="$ROOT/android-template/java/autofill/ui/CombinedItemsFragment.java"
+grep -A12 'unlockAndLoad failed' "$COMBINED" | grep -q 'VaultEpochGate.isKeyPending(e)' || {
+  echo "a missing epoch key must lock the cached session, not prompt for a password" >&2
+  exit 1
+}
 grep -q 'TYPE_IDENTITY' "$COMBINED"
 grep -q 'fullName' "$COMBINED"
 grep -q 'AutofillSheetLoad.searchQuery' "$COMBINED" || {
@@ -357,6 +377,11 @@ grep -q 'AutofillScreenOffLock.register(this)' "$MAIN_APP" || {
 }
 
 IOS_CLIENT="$ROOT/ios-template/PearPassAutofillExtension/PearPassVaultClient.swift"
+grep -q 'case ACTIVE_VAULT_GET_EPOCH_STATUS = 84' "$IOS_CLIENT"
+grep -A8 'func listCanonicalRecords()' "$IOS_CLIENT" | grep -q 'try await requireEpochKey()' || {
+  echo "iOS listCanonicalRecords must check the epoch key before listing" >&2
+  exit 1
+}
 grep -q 'includeOtpCodes' "$IOS_CLIENT" || {
   echo "iOS autofill list must skip TOTP generation on ACTIVE_VAULT_LIST" >&2
   exit 1
