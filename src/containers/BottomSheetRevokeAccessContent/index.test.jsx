@@ -77,25 +77,36 @@ const rotated = { rotated: true, id: 'e2', seq: 2, members: [], uncovered: [] }
 describe('BottomSheetRevokeAccessContent', () => {
   beforeEach(() => jest.clearAllMocks())
 
-  it('says the key rotates and what the device keeps', async () => {
-    const { screen, text1 } = await revoke({
-      results: [],
-      failures: [],
-      epoch: rotated
-    })
+  it('shows the revoke text desktop and the extension use', () => {
+    const screen = render(
+      <I18nProvider i18n={i18n}>
+        <BottomSheetRevokeAccessContent
+          vaultId="v1"
+          targetDeviceId="d-gone"
+          deviceName="Phone"
+          devices={devices}
+        />
+      </I18nProvider>
+    )
 
+    screen.getByText('Revoke Phone?')
+    screen.getByText('Revoking this device:')
     screen.getByText(
-      "Revoking removes this device from the vault and rotates the vault key. Once the key rotates, the device can't read items added or changed after that."
+      "removes it from the vault, so it can't add or change items"
     )
     screen.getByText(
-      "Items from before the key rotates aren't re-encrypted, so the device can still read them. Revoking cannot delete what it already synced. Change passwords the device could see, especially if it was lost or stolen."
+      "rotates the vault key, so it can't read anything saved or changed after that"
+    )
+    screen.getByText("It doesn't:")
+    screen.getByText(
+      "erase what's already on the device. It can still read every item it synced before the key rotated."
     )
     screen.getByText(
-      'Devices still on an older Lockwright version must update before they can read new items.'
+      'If the device was lost or stolen, change the passwords it could see.'
     )
-    expect(screen.queryByText(/anything synced later/)).toBeNull()
-    expect(screen.queryByText(/new vault/)).toBeNull()
-    expect(text1).toBe('"Phone" can no longer edit this vault.')
+    expect(screen.queryByText(/re-encrypted/)).toBeNull()
+    expect(screen.queryByText(/older Lockwright version/)).toBeNull()
+    expect(screen.queryByText(/exposed/i)).toBeNull()
   })
 
   it('treats a key that already leaves the device out as rotated', async () => {

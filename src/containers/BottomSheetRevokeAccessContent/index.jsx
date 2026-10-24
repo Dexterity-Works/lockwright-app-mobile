@@ -17,6 +17,17 @@ import { TOAST_CONFIG } from '../../constants/toast'
 import { logger } from '../../utils/logger'
 import { SheetHeader } from '../BottomSheet/SheetHeader'
 
+const Bullet = ({ children }) => (
+  <View style={styles.bulletRow}>
+    <Text variant="label" style={styles.bulletGlyph}>
+      {'•'}
+    </Text>
+    <Text variant="label" style={styles.bulletText}>
+      {children}
+    </Text>
+  </View>
+)
+
 export const BottomSheetRevokeAccessContent = ({
   vaultId,
   targetDeviceId,
@@ -149,40 +160,32 @@ export const BottomSheetRevokeAccessContent = ({
 
   return (
     <View style={[styles.container, { paddingBottom: bottom }]}>
-      <SheetHeader
-        title={t`Revoke access for ${deviceName}?`}
-        onClose={close}
-      />
+      <SheetHeader title={t`Revoke ${deviceName}?`} onClose={close} />
 
       <View style={styles.content}>
         <View style={styles.body}>
-          <View>
-            <Text variant="label" color={theme.colors.colorTextSecondary}>
-              {t`Revoking removes this device from the vault and rotates the vault key. Once the key rotates, the device can't read items added or changed after that.`}
-            </Text>
-            <Text variant="label" color={theme.colors.colorTextSecondary}>
-              {t`Before you proceed, please note:`}
-            </Text>
-          </View>
-
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {t`Revoking this device:`}
+          </Text>
           <View style={styles.bulletList}>
-            <View style={styles.bulletRow}>
-              <Text variant="label" style={styles.bulletGlyph}>
-                {'•'}
-              </Text>
-              <Text variant="label" style={styles.bulletText}>
-                {t`Items from before the key rotates aren't re-encrypted, so the device can still read them. Revoking cannot delete what it already synced. Change passwords the device could see, especially if it was lost or stolen.`}
-              </Text>
-            </View>
-            <View style={styles.bulletRow}>
-              <Text variant="label" style={styles.bulletGlyph}>
-                {'•'}
-              </Text>
-              <Text variant="label" style={styles.bulletText}>
-                {t`Devices still on an older Lockwright version must update before they can read new items.`}
-              </Text>
-            </View>
+            <Bullet>
+              {t`removes it from the vault, so it can't add or change items`}
+            </Bullet>
+            <Bullet>
+              {t`rotates the vault key, so it can't read anything saved or changed after that`}
+            </Bullet>
           </View>
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {t`It doesn't:`}
+          </Text>
+          <View style={styles.bulletList}>
+            <Bullet>
+              {t`erase what's already on the device. It can still read every item it synced before the key rotated.`}
+            </Bullet>
+          </View>
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {t`If the device was lost or stolen, change the passwords it could see.`}
+          </Text>
         </View>
 
         <View style={styles.actions}>
