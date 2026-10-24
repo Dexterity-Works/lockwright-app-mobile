@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import {
@@ -9,6 +9,7 @@ import {
   useTheme
 } from 'lockwright-lib-ui-react-native-components'
 import { kickDevice } from 'lockwright-lib-vault'
+import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
@@ -16,6 +17,17 @@ import Toast from 'react-native-toast-message'
 import { TOAST_CONFIG } from '../../constants/toast'
 import { logger } from '../../utils/logger'
 import { SheetHeader } from '../BottomSheet/SheetHeader'
+
+const POLL_MS = 1000
+const DEADLINE_MS = 15000
+
+// The kick counts once this vault's latest key leaves the device out.
+const rotatedPast = (status, vaultId, deviceId) =>
+  status?.vaultId === vaultId &&
+  !status.legacy &&
+  !!status.epoch &&
+  Array.isArray(status.members) &&
+  !status.members.includes(deviceId)
 
 const Bullet = ({ children }) => (
   <View style={styles.bulletRow}>
@@ -39,6 +51,16 @@ export const BottomSheetRevokeAccessContent = ({
   const close = useBottomSheetClose()
   const { bottom } = useSafeAreaInsets()
   const [isLoading, setIsLoading] = useState(false)
+  // 'confirm', then 'rotating' or 'failed' once the device is removed.
+  const [phase, setPhase] = useState('confirm')
+  const [waiting, setWaiting] = useState(false)
+  const unmounted = useRef(false)
+  useEffect(
+    () => () => {
+      unmounted.current = true
+    },
+    []
+  )
 
   const onRevoke = async () => {
     if (isLoading) return
@@ -69,19 +91,48 @@ export const BottomSheetRevokeAccessContent = ({
       return
     }
 
+    const pending = epoch?.rotated === false && epoch.reason === 'pending'
+    if (!epoch || (!epoch.rotated && epoch.reason !== 'current' && !pending)) {
+      logNotRotated(epoch, rotationFailure)
+      setPhase('failed')
+      return
+    }
+
+    setPhase('rotating')
+    setWaiting(true)
+    // 'pending': another member rotates when it syncs, so look once.
+    const confirmed = await waitForRotation(pending ? 0 : DEADLINE_MS)
+    if (unmounted.current) return
+    setWaiting(false)
+    if (!confirmed) return
+
     close()
-    const { text1, warning } = revokedMessage({
-      failures,
-      epoch,
-      rotationFailure
-    })
+    const text2 = uncoveredText(epoch.uncovered)
     Toast.show({
       type: 'baseToast',
-      text1,
+      text1: t`${deviceName} revoked. Vault key rotated.`,
+      ...(text2 && { text2, visibilityTime: 8000 }),
       position: 'bottom',
-      bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET,
-      ...(warning && { visibilityTime: 8000 })
+      bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
     })
+  }
+
+  const waitForRotation = async (deadlineMs) => {
+    const until = Date.now() + deadlineMs
+    for (;;) {
+      try {
+        const status = await pearpassVaultClient.activeVaultGetEpochStatus()
+        if (rotatedPast(status, vaultId, targetDeviceId)) return true
+      } catch (error) {
+        logger.warn(
+          'BottomSheetRevokeAccessContent',
+          'epoch status read failed:',
+          error?.message
+        )
+      }
+      if (unmounted.current || Date.now() >= until) return false
+      await new Promise((resolve) => setTimeout(resolve, POLL_MS))
+    }
   }
 
   const showRevokeFailed = () => {
@@ -94,68 +145,70 @@ export const BottomSheetRevokeAccessContent = ({
     setIsLoading(false)
   }
 
-  // 'current' means the latest key already leaves this device out.
-  // 'pending' means another member rotates it when it syncs.
-  const revokedMessage = ({ failures, epoch, rotationFailure }) => {
-    const pending = epoch?.rotated === false && epoch.reason === 'pending'
-    if (!epoch || (!epoch.rotated && epoch.reason !== 'current' && !pending)) {
-      const reason =
-        epoch?.reason ??
-        rotationFailure?.error?.message?.replace(/^epoch rotation failed: /, '')
-      // Only known skip reasons get copy. A thrown error's text stays in the log.
-      const reasons = {
-        'not-writable': t`This device can't write to the vault.`,
-        'self-not-in-roster': t`This device isn't on the vault's member list.`,
-        legacy: t`The vault doesn't use rotating keys yet.`
-      }
-      const known = Object.hasOwn(reasons, reason) ? reasons[reason] : null
-      if (!known && rotationFailure?.error) {
-        logger.error(
-          'BottomSheetRevokeAccessContent',
-          'vault key not rotated:',
-          rotationFailure.error
-        )
-      } else {
-        logger.warn(
-          'BottomSheetRevokeAccessContent',
-          'vault key not rotated:',
-          reason
-        )
-      }
-      return {
-        warning: true,
-        text1: known
-          ? t`Couldn't rotate the vault key. ${known} "${deviceName}" can still read new items.`
-          : t`Couldn't rotate the vault key. "${deviceName}" can still read new items.`
-      }
-    }
-
-    const revoked = failures?.some((f) => !f?.kind)
-      ? t`Couldn't reach the device. It will stop editing next time it comes online.`
-      : t`"${deviceName}" can no longer edit this vault.`
-    const parts = [revoked]
-    if (pending) {
-      parts.push(
-        t`Another device will rotate the vault key when it next syncs.`
+  // A thrown error's text stays in the log, with its stack.
+  const logNotRotated = (epoch, rotationFailure) => {
+    const reason =
+      epoch?.reason ??
+      rotationFailure?.error?.message?.replace(/^epoch rotation failed: /, '')
+    const known = ['not-writable', 'self-not-in-roster', 'legacy']
+    if (!known.includes(reason) && rotationFailure?.error) {
+      logger.error(
+        'BottomSheetRevokeAccessContent',
+        'vault key not rotated:',
+        rotationFailure.error
+      )
+    } else {
+      logger.warn(
+        'BottomSheetRevokeAccessContent',
+        'vault key not rotated:',
+        reason
       )
     }
-    if (!epoch.uncovered?.length) {
-      return { warning: pending, text1: parts.join(' ') }
-    }
+  }
 
+  const uncoveredText = (uncovered) => {
+    if (!uncovered?.length) return null
     // Distinct devices can share a label ("iPhone"), so count them.
     const counts = new Map()
-    for (const id of new Set(epoch.uncovered)) {
+    for (const id of new Set(uncovered)) {
       const label = devices.find((d) => d?.id === id)?.name ?? t`Unknown Device`
       counts.set(label, (counts.get(label) ?? 0) + 1)
     }
     const names = [...counts]
       .map(([label, count]) => (count > 1 ? `${label} (${count})` : label))
       .join(', ')
-    parts.push(
-      t`${names} can't read new items until they open this vault once on a current Lockwright version.`
+    return t`${names} can't read new items until they open this vault once on a current Lockwright version.`
+  }
+
+  if (phase !== 'confirm') {
+    const failed = phase === 'failed'
+    return (
+      <View style={[styles.container, { paddingBottom: bottom }]}>
+        <SheetHeader
+          title={
+            failed ? t`Removed · key not rotated` : t`Removed · key rotating`
+          }
+          onClose={close}
+        />
+        <View style={styles.content}>
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {failed
+              ? t`${deviceName} can't change this vault, but it can still read new items until the key rotates.`
+              : t`${deviceName} can't change this vault. The vault key will rotate when the vault next syncs. Until then it can still read new items.`}
+          </Text>
+          <Button
+            variant="secondary"
+            size="medium"
+            fullWidth
+            isLoading={waiting}
+            onClick={close}
+            testID="revoke-access-done"
+          >
+            {t`Done`}
+          </Button>
+        </View>
+      </View>
     )
-    return { warning: true, text1: parts.join(' ') }
   }
 
   return (

@@ -1,7 +1,8 @@
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
-import { fireEvent, render, waitFor } from '@testing-library/react-native'
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native'
 import { kickDevice } from 'lockwright-lib-vault'
+import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 import Toast from 'react-native-toast-message'
 
 import { BottomSheetRevokeAccessContent } from './index'
@@ -14,6 +15,10 @@ i18n.activate('en')
 const mockClose = jest.fn()
 
 jest.mock('lockwright-lib-vault', () => ({ kickDevice: jest.fn() }))
+
+jest.mock('lockwright-lib-vault/src/instances', () => ({
+  pearpassVaultClient: { activeVaultGetEpochStatus: jest.fn() }
+}))
 
 jest.mock('react-native-toast-message', () => ({
   __esModule: true,
@@ -54,9 +59,8 @@ const devices = [
   { id: 'd-ios-2', name: 'iPhone' }
 ]
 
-const revoke = async (result) => {
-  kickDevice.mockResolvedValue(result)
-  const screen = render(
+const renderSheet = () =>
+  render(
     <I18nProvider i18n={i18n}>
       <BottomSheetRevokeAccessContent
         vaultId="v1"
@@ -66,16 +70,50 @@ const revoke = async (result) => {
       />
     </I18nProvider>
   )
-  fireEvent.press(screen.getByTestId('revoke-access-submit'))
-  await waitFor(() => expect(Toast.show).toHaveBeenCalled())
-  const { text1, visibilityTime } = Toast.show.mock.calls[0][0]
-  return { screen, text1, visibilityTime }
+
+const revoke = async (result) => {
+  kickDevice.mockResolvedValue(result)
+  const screen = renderSheet()
+  await act(async () => {
+    fireEvent.press(screen.getByTestId('revoke-access-submit'))
+  })
+  return screen
 }
+
+// Runs the status polls out to the deadline.
+const pastDeadline = () =>
+  act(async () => {
+    await jest.advanceTimersByTimeAsync(20000)
+  })
 
 const rotated = { rotated: true, id: 'e2', seq: 2, members: [], uncovered: [] }
 
+const status = (overrides = {}) => ({
+  vaultId: 'v1',
+  epoch: 'e2',
+  seq: 2,
+  legacy: false,
+  canRead: true,
+  revoked: false,
+  members: ['d-old', 'd-tab'],
+  uncovered: [],
+  ...overrides
+})
+
+const pendingText =
+  "Phone can't change this vault. The vault key will rotate when the vault next syncs. Until then it can still read new items."
+const failedText =
+  "Phone can't change this vault, but it can still read new items until the key rotates."
+
 describe('BottomSheetRevokeAccessContent', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => {
+    jest.clearAllMocks()
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(status())
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
 
   it('shows the revoke text desktop and the extension use', () => {
     const screen = render(
@@ -109,44 +147,94 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(screen.queryByText(/exposed/i)).toBeNull()
   })
 
+  it('confirms only once the latest key leaves the device out', async () => {
+    await revoke({ results: [], failures: [], epoch: rotated })
+
+    await waitFor(() => expect(Toast.show).toHaveBeenCalled())
+    expect(Toast.show.mock.calls[0][0].text1).toBe(
+      'Phone revoked. Vault key rotated.'
+    )
+    expect(mockClose).toHaveBeenCalled()
+  })
+
   it('treats a key that already leaves the device out as rotated', async () => {
-    const { text1, visibilityTime } = await revoke({
+    await revoke({
       results: [],
       failures: [],
       epoch: { rotated: false, reason: 'current', uncovered: [] }
     })
 
-    expect(text1).toBe('"Phone" can no longer edit this vault.')
-    expect(visibilityTime).toBeUndefined()
+    await waitFor(() => expect(Toast.show).toHaveBeenCalled())
+    expect(Toast.show.mock.calls[0][0].text1).toBe(
+      'Phone revoked. Vault key rotated.'
+    )
   })
 
-  it('says another device will rotate when the rotation is pending', async () => {
-    const { text1, visibilityTime } = await revoke({
+  it('shows the rotating state, not success, while the key still seals to the device', async () => {
+    jest.useFakeTimers()
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ members: ['d-old', 'd-gone'] })
+    )
+    const screen = await revoke({ results: [], failures: [], epoch: rotated })
+
+    screen.getByText('Removed · key rotating')
+    screen.getByText(pendingText)
+    await pastDeadline()
+
+    screen.getByText('Removed · key rotating')
+    expect(screen.queryByText(/Revoked/)).toBeNull()
+    expect(Toast.show).not.toHaveBeenCalled()
+    expect(mockClose).not.toHaveBeenCalled()
+    expect(
+      pearpassVaultClient.activeVaultGetEpochStatus.mock.calls.length
+    ).toBeGreaterThan(1)
+  })
+
+  it('confirms a rotation that lands while it waits', async () => {
+    jest.useFakeTimers()
+    pearpassVaultClient.activeVaultGetEpochStatus
+      .mockResolvedValueOnce(status({ members: ['d-gone'] }))
+      .mockResolvedValue(status({ epoch: 'e3', members: ['d-old'] }))
+    await revoke({ results: [], failures: [], epoch: rotated })
+    await pastDeadline()
+
+    expect(Toast.show).toHaveBeenCalledTimes(1)
+    expect(Toast.show.mock.calls[0][0].text1).toBe(
+      'Phone revoked. Vault key rotated.'
+    )
+  })
+
+  it('does not count a legacy vault or another vault as rotated', async () => {
+    jest.useFakeTimers()
+    pearpassVaultClient.activeVaultGetEpochStatus
+      .mockResolvedValueOnce(status({ legacy: true, epoch: null, members: [] }))
+      .mockResolvedValue(status({ vaultId: 'v2' }))
+    const screen = await revoke({ results: [], failures: [], epoch: rotated })
+    await pastDeadline()
+
+    screen.getByText('Removed · key rotating')
+    expect(Toast.show).not.toHaveBeenCalled()
+  })
+
+  it('shows the pending state when another device rotates the key', async () => {
+    jest.useFakeTimers()
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ members: ['d-gone'] })
+    )
+    const screen = await revoke({
       results: [],
       failures: [],
       epoch: { rotated: false, reason: 'pending', uncovered: [] }
     })
+    await pastDeadline()
 
-    expect(text1).toBe(
-      '"Phone" can no longer edit this vault. Another device will rotate the vault key when it next syncs.'
-    )
-    expect(visibilityTime).toBe(8000)
-  })
-
-  it('says the device was unreachable when only the envelope failed', async () => {
-    const { text1 } = await revoke({
-      results: [],
-      failures: [{ targetDeviceId: 'd-gone', error: new Error('offline') }],
-      epoch: rotated
-    })
-
-    expect(text1).toBe(
-      "Couldn't reach the device. It will stop editing next time it comes online."
-    )
+    screen.getByText('Removed · key rotating')
+    screen.getByText(pendingText)
+    expect(Toast.show).not.toHaveBeenCalled()
   })
 
   it('keeps the sheet open when the device could not be removed', async () => {
-    const { text1 } = await revoke({
+    await revoke({
       results: [],
       failures: [
         {
@@ -157,12 +245,14 @@ describe('BottomSheetRevokeAccessContent', () => {
       epoch: null
     })
 
-    expect(text1).toBe("Couldn't revoke access. Please try again.")
+    expect(Toast.show.mock.calls[0][0].text1).toBe(
+      "Couldn't revoke access. Please try again."
+    )
     expect(mockClose).not.toHaveBeenCalled()
   })
 
-  it('warns with the reason when the key did not rotate', async () => {
-    const { text1, visibilityTime } = await revoke({
+  it('shows the failure state when the key did not rotate', async () => {
+    const screen = await revoke({
       results: [],
       failures: [
         {
@@ -174,10 +264,9 @@ describe('BottomSheetRevokeAccessContent', () => {
       epoch: { rotated: false, reason: 'not-writable', uncovered: [] }
     })
 
-    expect(text1).toBe(
-      `Couldn't rotate the vault key. This device can't write to the vault. "Phone" can still read new items.`
-    )
-    expect(visibilityTime).toBe(8000)
+    screen.getByText('Removed · key not rotated')
+    screen.getByText(failedText)
+    expect(Toast.show).not.toHaveBeenCalled()
     expect(logger.warn).toHaveBeenCalledWith(
       'BottomSheetRevokeAccessContent',
       'vault key not rotated:',
@@ -186,45 +275,18 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(logger.error).not.toHaveBeenCalled()
   })
 
-  it('says why when this device is not on the member list', async () => {
-    const { text1 } = await revoke({
-      results: [],
-      failures: [],
-      epoch: { rotated: false, reason: 'self-not-in-roster', uncovered: [] }
-    })
-
-    expect(text1).toBe(
-      `Couldn't rotate the vault key. This device isn't on the vault's member list. "Phone" can still read new items.`
-    )
-  })
-
-  it('says why when the vault has no rotating keys', async () => {
-    const { text1 } = await revoke({
-      results: [],
-      failures: [],
-      epoch: { rotated: false, reason: 'legacy', uncovered: [] }
-    })
-
-    expect(text1).toBe(
-      `Couldn't rotate the vault key. The vault doesn't use rotating keys yet. "Phone" can still read new items.`
-    )
-  })
-
-  it('keeps a thrown rotation error out of the toast', async () => {
+  it('keeps a thrown rotation error out of the sheet and logs it', async () => {
     const error = new Error(
       'epoch rotation failed: activeVaultEnsureEpoch is not a function'
     )
-    const { text1, visibilityTime } = await revoke({
+    const screen = await revoke({
       results: [],
       failures: [{ targetDeviceId: 'd-gone', kind: 'epoch', error }],
       epoch: null
     })
 
-    expect(text1).not.toContain('activeVaultEnsureEpoch is not a function')
-    expect(text1).toBe(
-      `Couldn't rotate the vault key. "Phone" can still read new items.`
-    )
-    expect(visibilityTime).toBe(8000)
+    screen.getByText('Removed · key not rotated')
+    expect(screen.queryByText(/is not a function/)).toBeNull()
     expect(logger.error).toHaveBeenCalledWith(
       'BottomSheetRevokeAccessContent',
       'vault key not rotated:',
@@ -232,19 +294,25 @@ describe('BottomSheetRevokeAccessContent', () => {
     )
   })
 
+  it('logs an unknown skip reason and shows the failure state', async () => {
+    const screen = await revoke({
+      results: [],
+      failures: [],
+      epoch: { rotated: false, reason: 'ring-box-open-failed', uncovered: [] }
+    })
+
+    screen.getByText('Removed · key not rotated')
+    expect(logger.warn).toHaveBeenCalledWith(
+      'BottomSheetRevokeAccessContent',
+      'vault key not rotated:',
+      'ring-box-open-failed'
+    )
+  })
+
   it('keeps a kickDevice throw out of the toast and logs it with its stack', async () => {
     const error = new Error('IPC request 83 failed: worklet closed')
     kickDevice.mockRejectedValue(error)
-    const screen = render(
-      <I18nProvider i18n={i18n}>
-        <BottomSheetRevokeAccessContent
-          vaultId="v1"
-          targetDeviceId="d-gone"
-          deviceName="Phone"
-          devices={devices}
-        />
-      </I18nProvider>
-    )
+    const screen = renderSheet()
     fireEvent.press(screen.getByTestId('revoke-access-submit'))
     await waitFor(() => expect(Toast.show).toHaveBeenCalled())
 
@@ -259,93 +327,32 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(mockClose).not.toHaveBeenCalled()
   })
 
-  it('keeps an unknown skip reason out of the toast', async () => {
-    const { text1 } = await revoke({
-      results: [],
-      failures: [],
-      epoch: { rotated: false, reason: 'ring-box-open-failed', uncovered: [] }
-    })
-
-    expect(text1).toBe(
-      `Couldn't rotate the vault key. "Phone" can still read new items.`
-    )
-    expect(logger.warn).toHaveBeenCalledWith(
-      'BottomSheetRevokeAccessContent',
-      'vault key not rotated:',
-      'ring-box-open-failed'
-    )
-  })
-
-  it('warns when the rotation result is missing', async () => {
-    const { text1 } = await revoke({
-      results: [],
-      failures: [
-        {
-          targetDeviceId: 'd-gone',
-          kind: 'epoch',
-          error: new Error('epoch rotation failed: timeout')
-        }
-      ],
-      epoch: null
-    })
-
-    expect(text1).toBe(
-      `Couldn't rotate the vault key. "Phone" can still read new items.`
-    )
-  })
-
-  it('warns without a reason when the rotation failure gives none', async () => {
-    const { text1 } = await revoke({
-      results: [],
-      failures: [
-        {
-          targetDeviceId: 'd-gone',
-          kind: 'epoch',
-          error: new Error('epoch rotation failed: ')
-        }
-      ],
-      epoch: null
-    })
-
-    expect(text1).toBe(
-      `Couldn't rotate the vault key. "Phone" can still read new items.`
-    )
-  })
-
   it('names the devices the new key could not reach', async () => {
-    const { text1, visibilityTime } = await revoke({
+    await revoke({
       results: [],
       failures: [],
       epoch: { ...rotated, uncovered: ['d-old', 'd-tab'] }
     })
 
-    expect(text1).toBe(
-      `"Phone" can no longer edit this vault. Old laptop, Tablet can't read new items until they open this vault once on a current Lockwright version.`
+    await waitFor(() => expect(Toast.show).toHaveBeenCalled())
+    const { text1, text2, visibilityTime } = Toast.show.mock.calls[0][0]
+    expect(text1).toBe('Phone revoked. Vault key rotated.')
+    expect(text2).toBe(
+      "Old laptop, Tablet can't read new items until they open this vault once on a current Lockwright version."
     )
     expect(visibilityTime).toBe(8000)
   })
 
-  it('names each uncovered device once and unknown ones generically', async () => {
-    const { text1 } = await revoke({
+  it('names each uncovered device once and counts shared names', async () => {
+    await revoke({
       results: [],
       failures: [],
-      epoch: { ...rotated, uncovered: ['d-old', 'd-old', 'd-x'] }
+      epoch: { ...rotated, uncovered: ['d-ios-1', 'd-ios-2', 'd-x', 'd-x'] }
     })
 
-    expect(text1).toBe(
-      `"Phone" can no longer edit this vault. Old laptop, Unknown Device can't read new items until they open this vault once on a current Lockwright version.`
-    )
-  })
-
-  it('counts distinct devices that share a name', async () => {
-    const { text1 } = await revoke({
-      results: [],
-      failures: [],
-      epoch: { ...rotated, uncovered: ['d-ios-1', 'd-ios-2', 'd-tab'] }
-    })
-
-    expect(text1).toBe(
-      `"Phone" can no longer edit this vault. iPhone (2), Tablet can't read new items until they open this vault once on a current Lockwright version.`
+    await waitFor(() => expect(Toast.show).toHaveBeenCalled())
+    expect(Toast.show.mock.calls[0][0].text2).toBe(
+      "iPhone (2), Unknown Device can't read new items until they open this vault once on a current Lockwright version."
     )
   })
 })
