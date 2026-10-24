@@ -133,8 +133,14 @@ grep -A20 'listCanonicalRecords()' "$CLIENT" | grep -q 'requireEpochKey' || {
   echo "listCanonicalRecords must check the epoch key before listing" >&2
   exit 1
 }
-grep -A20 'CompletableFuture<Void> requireEpochKey()' "$CLIENT" | grep -q 'VaultEpochGate.canFill' || {
-  echo "requireEpochKey must decide through VaultEpochGate.canFill" >&2
+grep -A20 'CompletableFuture<Void> requireEpochKey()' "$CLIENT" | grep -q 'VaultEpochGate.failure' || {
+  echo "requireEpochKey must decide through VaultEpochGate.failure" >&2
+  exit 1
+}
+# A deferred migrate fails as key pending. The epoch status tells a revoked
+# device apart.
+grep -A20 'listCanonicalRecords()' "$CLIENT" | awk '/waitForVaultMigration/{w=1} /requireEpochKey/{if(w) r=1} /VaultEpochGate.isKeyPending/{k=1} END{exit !(r && k)}' || {
+  echo "listCanonicalRecords must ask the epoch status after a key-pending migrate" >&2
   exit 1
 }
 grep -q 'GENERATE_OTP_CODES_BY_IDS(56)' "$CLIENT"
@@ -214,8 +220,13 @@ printf '%s\n' "$save_req" | grep -q 'callback.onSuccess(' && {
 }
 
 COMBINED="$ROOT/android-template/java/autofill/ui/CombinedItemsFragment.java"
-grep -A12 'unlockAndLoad failed' "$COMBINED" | grep -q 'VaultEpochGate.isKeyPending(e)' || {
+grep -A12 'unlockAndLoad failed' "$COMBINED" | grep -q 'VaultEpochGate.sheetMessage(e)' || {
   echo "a missing epoch key must lock the cached session, not prompt for a password" >&2
+  exit 1
+}
+# The empty sheet says why, and offers no "save it as a new item" link.
+awk '/private void applyEmptyStateText\(/,/private void showPasswordPrompt\(/' "$COMBINED" | awk '/epochBlockedMessage != null/{b=1} /MODE_REGISTRATION/{if(!b) exit 1} END{exit !b}' || {
+  echo "applyEmptyStateText must show the epoch message before the registration link" >&2
   exit 1
 }
 grep -q 'TYPE_IDENTITY' "$COMBINED"

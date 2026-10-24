@@ -22,6 +22,8 @@ public final class VaultEpochGateTest {
         pendingErrorIsKeyPending();
         wrappedPendingErrorIsKeyPending();
         otherErrorIsNotKeyPending();
+        failureNamesRevokedApart();
+        sheetSaysWhyItIsEmpty();
 
         if (failures > 0) {
             System.err.println(failures + " VaultEpochGate checks failed");
@@ -91,6 +93,32 @@ public final class VaultEpochGateTest {
                 VaultEpochGate.isKeyPending(new RuntimeException("Failed to activate vault")),
                 false);
         expect("null error is not key pending", VaultEpochGate.isKeyPending(null), false);
+    }
+
+    private static void failureNamesRevokedApart() {
+        expect("readable key has no failure", VaultEpochGate.failure(status(true, false)), null);
+        expect("missing key is pending",
+                VaultEpochGate.failure(status(false, false)), "epoch-key-pending");
+        expect("revoked is revoked", VaultEpochGate.failure(status(false, true)), "epoch-revoked");
+        expect("revoked wins over a readable key",
+                VaultEpochGate.failure(status(true, true)), "epoch-revoked");
+        expect("null status is pending", VaultEpochGate.failure(null), "epoch-key-pending");
+    }
+
+    private static void sheetSaysWhyItIsEmpty() {
+        expect("pending sheet text",
+                VaultEpochGate.sheetMessage(new ExecutionException(
+                        new RuntimeException("epoch-key-pending"))),
+                "This vault is updating its keys. Open Lockwright to finish.");
+        expect("revoked sheet text",
+                VaultEpochGate.sheetMessage(new ExecutionException(
+                        new RuntimeException("epoch-revoked"))),
+                "This device no longer has access to this vault.");
+        expect("revoked is not key pending",
+                VaultEpochGate.isKeyPending(new RuntimeException("epoch-revoked")), false);
+        expect("other errors keep their own handling",
+                VaultEpochGate.sheetMessage(new RuntimeException("Failed to activate vault")),
+                null);
     }
 
     private static void expect(String label, Object got, Object want) {

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 public class PearPassVaultClient {
@@ -692,7 +693,20 @@ public class PearPassVaultClient {
      */
     public CompletableFuture<List<Map<String, Object>>> listCanonicalRecords() {
         return waitForVaultMigration()
-                .thenCompose(v -> requireEpochKey())
+                .handle((v, error) -> error)
+                .thenCompose(error -> {
+                    if (error != null && !VaultEpochGate.isKeyPending(error)) {
+                        CompletableFuture<Void> failed = new CompletableFuture<>();
+                        failed.completeExceptionally(error);
+                        return failed;
+                    }
+                    // A deferred migrate reads as key pending. The epoch
+                    // status says if this device was revoked instead.
+                    return requireEpochKey().thenApply(v -> {
+                        if (error != null) throw new CompletionException(error);
+                        return v;
+                    });
+                })
                 .thenCompose(v -> activeVaultList("record-v2/"))
                 .thenCompose(v2 -> {
                     if (v2 != null && !v2.isEmpty()) {
@@ -755,8 +769,9 @@ public class PearPassVaultClient {
     public CompletableFuture<Void> requireEpochKey() {
         return sendRequest(API.ACTIVE_VAULT_GET_EPOCH_STATUS.getValue(), null)
                 .thenApply(status -> {
-                    if (!VaultEpochGate.canFill(status)) {
-                        throw new PearPassVaultException(VaultEpochGate.KEY_PENDING);
+                    String failure = VaultEpochGate.failure(status);
+                    if (failure != null) {
+                        throw new PearPassVaultException(failure);
                     }
                     return (Void) null;
                 });

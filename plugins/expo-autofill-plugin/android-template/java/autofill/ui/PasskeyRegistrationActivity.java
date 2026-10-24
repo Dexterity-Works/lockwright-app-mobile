@@ -34,6 +34,7 @@ import com.pears.pass.autofill.utils.AutofillFillWindow;
 import com.pears.pass.autofill.utils.PasskeyCaller;
 import com.pears.pass.autofill.utils.PasskeyCallerOrigin;
 import com.pears.pass.autofill.utils.SecureLog;
+import com.pears.pass.autofill.utils.VaultEpochGate;
 import com.pears.pass.autofill.utils.VaultInitializer;
 
 import org.json.JSONObject;
@@ -605,7 +606,7 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
                     vaultClient.requireEpochKey().get(30, java.util.concurrent.TimeUnit.SECONDS);
                 } catch (Exception e) {
                     SecureLog.e(TAG, "Refusing passkey save: no current vault key");
-                    runOnUiThread(this::failRegistration);
+                    runOnUiThread(() -> failRegistration(e));
                     return;
                 }
 
@@ -783,14 +784,15 @@ public class PasskeyRegistrationActivity extends AppCompatActivity implements Na
 
     // NotAllowedError is what WebAuthn create() rejects with when no
     // credential was made. A cancel reads as the user backing out.
-    private void failRegistration() {
+    private void failRegistration(Throwable error) {
         Intent resultData = new Intent();
         androidx.credentials.provider.PendingIntentHandler.setCreateCredentialException(
                 resultData,
                 new androidx.credentials.exceptions.publickeycredential.CreatePublicKeyCredentialDomException(
                         new NotAllowedError(), "Lockwright could not save the passkey"));
+        String why = VaultEpochGate.sheetMessage(error);
         android.widget.Toast.makeText(this,
-                "Passkey not saved",
+                why != null ? "Passkey not saved. " + why : "Passkey not saved",
                 android.widget.Toast.LENGTH_LONG).show();
         setResult(Activity.RESULT_OK, resultData);
         finish();
