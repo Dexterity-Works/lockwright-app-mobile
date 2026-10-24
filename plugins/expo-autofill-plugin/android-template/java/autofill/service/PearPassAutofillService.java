@@ -447,7 +447,8 @@ public class PearPassAutofillService extends AutofillService {
 
     @Override
     public void onSaveRequest(@NonNull SaveRequest request, @NonNull SaveCallback callback) {
-        callback.onSuccess();
+        // No SaveInfo is set, and nothing here writes to the vault.
+        callback.onFailure("Lockwright didn't save this. Add it in the Lockwright app.");
     }
 
     @Override

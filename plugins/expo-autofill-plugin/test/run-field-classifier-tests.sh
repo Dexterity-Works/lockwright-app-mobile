@@ -202,6 +202,17 @@ if grep -q 'FLAG_CANCEL_CURRENT' "$SERVICE"; then
   exit 1
 fi
 
+# Nothing is saved from a save request, so it must not report success.
+save_req="$(awk '/void onSaveRequest\(/,/void onConnected\(/' "$SERVICE")"
+printf '%s\n' "$save_req" | grep -q 'callback.onFailure(' || {
+  echo "onSaveRequest saves nothing, so it must report failure" >&2
+  exit 1
+}
+printf '%s\n' "$save_req" | grep -q 'callback.onSuccess(' && {
+  echo "onSaveRequest must not report success" >&2
+  exit 1
+}
+
 COMBINED="$ROOT/android-template/java/autofill/ui/CombinedItemsFragment.java"
 grep -A12 'unlockAndLoad failed' "$COMBINED" | grep -q 'VaultEpochGate.isKeyPending(e)' || {
   echo "a missing epoch key must lock the cached session, not prompt for a password" >&2
