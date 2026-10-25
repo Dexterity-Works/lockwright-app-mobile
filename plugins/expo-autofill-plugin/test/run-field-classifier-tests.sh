@@ -24,6 +24,11 @@ javac -d "$TMP" \
 java -cp "$TMP" com.pears.pass.autofill.utils.VaultMigrationGateTest
 
 javac -d "$TMP" \
+  "$ROOT/android-template/java/autofill/utils/VaultEpochGate.java" \
+  "$ROOT/test/VaultEpochGateTest.java"
+java -cp "$TMP" com.pears.pass.autofill.utils.VaultEpochGateTest
+
+javac -d "$TMP" \
   "$ROOT/android-template/java/autofill/utils/PasswordSetGate.java" \
   "$ROOT/test/PasswordSetGateTest.java"
 java -cp "$TMP" com.pears.pass.autofill.utils.PasswordSetGateTest
@@ -121,6 +126,23 @@ grep -q 'RecordStoreKeys.fileKeyV2' "$CLIENT"
 grep -q 'GET_VAULT_MIGRATION_STATUS(82)' "$CLIENT"
 grep -q 'waitForVaultMigration' "$CLIENT"
 grep -A20 'listCanonicalRecords()' "$CLIENT" | grep -q 'waitForVaultMigration'
+# No current epoch key (a joiner, a revoked device, a deferred migrate):
+# list nothing, so nothing fills or gets cached.
+grep -q 'ACTIVE_VAULT_GET_EPOCH_STATUS(84)' "$CLIENT"
+grep -A20 'listCanonicalRecords()' "$CLIENT" | grep -q 'requireEpochKey' || {
+  echo "listCanonicalRecords must check the epoch key before listing" >&2
+  exit 1
+}
+grep -A20 'CompletableFuture<Void> requireEpochKey()' "$CLIENT" | grep -q 'VaultEpochGate.failure' || {
+  echo "requireEpochKey must decide through VaultEpochGate.failure" >&2
+  exit 1
+}
+# A deferred migrate fails as key pending. The epoch status tells a revoked
+# device apart.
+grep -A20 'listCanonicalRecords()' "$CLIENT" | awk '/waitForVaultMigration/{w=1} /requireEpochKey/{if(w) r=1} /VaultEpochGate.isKeyPending/{k=1} END{exit !(r && k)}' || {
+  echo "listCanonicalRecords must ask the epoch status after a key-pending migrate" >&2
+  exit 1
+}
 grep -q 'GENERATE_OTP_CODES_BY_IDS(56)' "$CLIENT"
 grep -q 'generateOtpCode' "$CLIENT"
 grep -q 'OtpCodeResponse.codeFor' "$CLIENT"
@@ -186,7 +208,27 @@ if grep -q 'FLAG_CANCEL_CURRENT' "$SERVICE"; then
   exit 1
 fi
 
+# Nothing is saved from a save request, so it must not report success.
+save_req="$(awk '/void onSaveRequest\(/,/void onConnected\(/' "$SERVICE")"
+printf '%s\n' "$save_req" | grep -q 'callback.onFailure(' || {
+  echo "onSaveRequest saves nothing, so it must report failure" >&2
+  exit 1
+}
+printf '%s\n' "$save_req" | grep -q 'callback.onSuccess(' && {
+  echo "onSaveRequest must not report success" >&2
+  exit 1
+}
+
 COMBINED="$ROOT/android-template/java/autofill/ui/CombinedItemsFragment.java"
+grep -A12 'unlockAndLoad failed' "$COMBINED" | grep -q 'VaultEpochGate.sheetMessage(e)' || {
+  echo "a missing epoch key must lock the cached session, not prompt for a password" >&2
+  exit 1
+}
+# The empty sheet says why, and offers no "save it as a new item" link.
+awk '/private void applyEmptyStateText\(/,/private void showPasswordPrompt\(/' "$COMBINED" | awk '/epochBlockedMessage != null/{b=1} /MODE_REGISTRATION/{if(!b) exit 1} END{exit !b}' || {
+  echo "applyEmptyStateText must show the epoch message before the registration link" >&2
+  exit 1
+}
 grep -q 'TYPE_IDENTITY' "$COMBINED"
 grep -q 'fullName' "$COMBINED"
 grep -q 'AutofillSheetLoad.searchQuery' "$COMBINED" || {
@@ -320,6 +362,35 @@ for f in "$AUTH" "$PASSKEY_REG"; do
   }
 done
 
+# Without the vault's current epoch key the main app can't write the passkey.
+# The site must hear that it wasn't created, not get a credential that is
+# never stored.
+save_body="$(awk '/private void handleFormSave\(/,/private void completeRegistration\(/' "$PASSKEY_REG")"
+printf '%s\n' "$save_body" | awk '/requireEpochKey/{seen=1} /createAddPasskeyJob|createUpdatePasskeyJob/{if(!seen) exit 1} END{exit !seen}' || {
+  echo "handleFormSave must check the epoch key before queueing a passkey job" >&2
+  exit 1
+}
+printf '%s\n' "$save_body" | grep -q 'failRegistration' || {
+  echo "handleFormSave must fail the request back to the site when the key check fails" >&2
+  exit 1
+}
+grep -A12 'private void failRegistration(' "$PASSKEY_REG" | grep -q 'setCreateCredentialException' || {
+  echo "failRegistration must answer with setCreateCredentialException" >&2
+  exit 1
+}
+grep -A12 'private void failRegistration(' "$PASSKEY_REG" | grep -q 'new NotAllowedError()' || {
+  echo "failRegistration must tell the site NotAllowedError" >&2
+  exit 1
+}
+grep -B8 'onV2VaultReady(vault.getId()' "$COMBINED" | grep -q 'requireEpochKey' || {
+  echo "registration must check the epoch key before it marks the vault ready" >&2
+  exit 1
+}
+grep -q 'public CompletableFuture<Void> requireEpochKey()' "$CLIENT" || {
+  echo "requireEpochKey must be reachable from the registration UI" >&2
+  exit 1
+}
+
 SESSION="$ROOT/android-template/java/autofill/data/AutofillUnlockSession.java"
 grep -q 'pageUrlsForAutofill' "$SESSION" || {
   echo "Unlock session chips must match androidapp package URIs via pageUrlsForAutofill" >&2
@@ -357,6 +428,11 @@ grep -q 'AutofillScreenOffLock.register(this)' "$MAIN_APP" || {
 }
 
 IOS_CLIENT="$ROOT/ios-template/PearPassAutofillExtension/PearPassVaultClient.swift"
+grep -q 'case ACTIVE_VAULT_GET_EPOCH_STATUS = 84' "$IOS_CLIENT"
+grep -A8 'func listCanonicalRecords()' "$IOS_CLIENT" | grep -q 'try await requireEpochKey()' || {
+  echo "iOS listCanonicalRecords must check the epoch key before listing" >&2
+  exit 1
+}
 grep -q 'includeOtpCodes' "$IOS_CLIENT" || {
   echo "iOS autofill list must skip TOTP generation on ACTIVE_VAULT_LIST" >&2
   exit 1

@@ -45,6 +45,7 @@ import com.pears.pass.autofill.utils.ChipFillDecision;
 import com.pears.pass.autofill.utils.SecureBufferUtils;
 import com.pears.pass.autofill.utils.SecureLog;
 import com.pears.pass.autofill.utils.UriMatchHelper;
+import com.pears.pass.autofill.utils.VaultEpochGate;
 import com.pears.pass.autofill.utils.VaultErrorUtils;
 
 import java.util.ArrayList;
@@ -110,6 +111,8 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
     private CredentialAdapter credentialsAdapter;
     private final List<VaultItem> vaults = new ArrayList<>();
     private VaultItem selectedVault;
+    // Why the selected vault shows nothing: its epoch key is missing.
+    private String epochBlockedMessage;
     private final List<CredentialItem> allCredentials = new ArrayList<>();
     private final Map<String, Map<String, Object>> rawRecordsById = new HashMap<>();
     private boolean hasUserSearched = false;
@@ -431,6 +434,8 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
 
     private void selectVault(VaultItem vault) {
         this.selectedVault = vault;
+        epochBlockedMessage = null;
+        if (MODE_REGISTRATION.equals(mode)) addNewButton.setVisibility(View.VISIBLE);
         vaultSelectorTitle.setText(vault.getName());
         if (vault.isLocked()) {
             showPasswordPrompt();
@@ -451,6 +456,8 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
 
                 // Registration: inform activity so vaultReadyFuture + selectedVaultId get set.
                 if (MODE_REGISTRATION.equals(mode) && getActivity() instanceof PasskeyRegistrationActivity) {
+                    // A vault without its current key can't take the passkey.
+                    vaultClient.requireEpochKey().get();
                     byte[] copy = null;
                     if (passwordBuffer != null) {
                         copy = new byte[passwordBuffer.length];
@@ -521,6 +528,18 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
                 });
             } catch (Exception e) {
                 handleAsyncError(TAG, "unlockAndLoad failed: " + e.getMessage(), () -> {
+                    // No current epoch key: drop what an earlier unlock cached
+                    // and say why. The password was not the problem.
+                    String blocked = VaultEpochGate.sheetMessage(e);
+                    if (blocked != null) {
+                        AutofillUnlockSession.get().lock();
+                        allCredentials.clear();
+                        epochBlockedMessage = blocked;
+                        addNewButton.setVisibility(View.GONE);
+                        hidePasswordPrompt();
+                        showEmpty();
+                        return;
+                    }
                     if (!AutofillSheetLoad.showEmptyAfterLoadFailure(
                             VaultErrorUtils.isDatabaseLockError(e)
                                     || AutofillSheetLoad.isTransientLoadFailure(e))) {
@@ -710,7 +729,11 @@ public class CombinedItemsFragment extends BaseAutofillFragment {
      * accent-colored clickable span. Assertion mode gets a plain fallback.
      */
     private void applyEmptyStateText() {
-        if (MODE_REGISTRATION.equals(mode)) {
+        if (epochBlockedMessage != null) {
+            // Nothing can be saved here either, so no "save it as a new item".
+            emptyState.setText(epochBlockedMessage);
+            emptyState.setMovementMethod(null);
+        } else if (MODE_REGISTRATION.equals(mode)) {
             String full = "We couldn't find a matching item in this vault. Would you like to save it as a new item or look in another vault?";
             String link = "save it as a new item";
             int start = full.indexOf(link);

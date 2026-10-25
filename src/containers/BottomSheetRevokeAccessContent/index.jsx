@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useLingui } from '@lingui/react/macro'
 import {
@@ -9,94 +9,327 @@ import {
   useTheme
 } from 'lockwright-lib-ui-react-native-components'
 import { kickDevice } from 'lockwright-lib-vault'
+import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
 import { TOAST_CONFIG } from '../../constants/toast'
 import { logger } from '../../utils/logger'
+import { markKeyRotated, rememberRevoked } from '../../utils/revokedDevices'
 import { SheetHeader } from '../BottomSheet/SheetHeader'
+
+const POLL_MS = 1000
+const DEADLINE_MS = 15000
+// As desktop's dialog: a kick that hangs gives its result up as unknown.
+const KICK_DEADLINE_MS = 50000
+const TIMED_OUT = Symbol('timed out')
+
+// The kick counts once this vault's latest key leaves the device out and
+// reaches roster devices only: a member with an older roster can still seal
+// to a duplicate row of the same peer.
+const rotatedPast = (status, vaultId, deviceId, roster) =>
+  status?.vaultId === vaultId &&
+  !status.legacy &&
+  !!status.epoch &&
+  Array.isArray(status.members) &&
+  !status.members.includes(deviceId) &&
+  status.members.every((id) => roster.has(id))
+
+const Bullet = ({ children }) => (
+  <View style={styles.bulletRow}>
+    <Text variant="label" style={styles.bulletGlyph}>
+      {'•'}
+    </Text>
+    <Text variant="label" style={styles.bulletText}>
+      {children}
+    </Text>
+  </View>
+)
 
 export const BottomSheetRevokeAccessContent = ({
   vaultId,
   targetDeviceId,
-  deviceName
+  deviceName,
+  devices = []
 }) => {
   const { t } = useLingui()
   const { theme } = useTheme()
   const close = useBottomSheetClose()
   const { bottom } = useSafeAreaInsets()
   const [isLoading, setIsLoading] = useState(false)
+  // 'confirm', then 'rotating' or 'failed' once the device is removed, or
+  // 'unknown' when the kick did not return in time.
+  const [phase, setPhase] = useState('confirm')
+  const [waiting, setWaiting] = useState(false)
+  // The kick message did not reach the device (a failure with no kind).
+  const [unreachable, setUnreachable] = useState(false)
+  const unmounted = useRef(false)
+  useEffect(
+    () => () => {
+      unmounted.current = true
+    },
+    []
+  )
 
   const onRevoke = async () => {
     if (isLoading) return
     setIsLoading(true)
     let failures = []
+    let epoch = null
+    let timer
     try {
-      ;({ failures } = await kickDevice({ vaultId, targetDeviceId }))
+      const result = await Promise.race([
+        kickDevice({ vaultId, targetDeviceId }),
+        new Promise((resolve) => {
+          timer = setTimeout(() => resolve(TIMED_OUT), KICK_DEADLINE_MS)
+        })
+      ])
+      if (result === TIMED_OUT) {
+        logger.warn('BottomSheetRevokeAccessContent', 'kickDevice timed out')
+        if (!unmounted.current) setPhase('unknown')
+        return
+      }
+      ;({ failures, epoch } = result)
     } catch (error) {
       logger.error(
         'BottomSheetRevokeAccessContent',
         'kickDevice failed:',
         error
       )
-      Toast.show({
-        type: 'baseToast',
-        text1: t`Couldn't revoke access. Please try again.`,
-        position: 'bottom',
-        bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
-      })
-      setIsLoading(false)
+      showRevokeFailed()
+      return
+    } finally {
+      clearTimeout(timer)
+    }
+
+    // A null epoch with no rotation failure means the device was not removed.
+    const rotationFailure = failures?.find((f) => f?.kind === 'epoch')
+    if (!epoch && !rotationFailure) {
+      logger.error(
+        'BottomSheetRevokeAccessContent',
+        'kickDevice did not remove the device:',
+        failures?.at(-1)?.error
+      )
+      showRevokeFailed()
       return
     }
 
-    close()
+    rememberRevoked(vaultId, targetDeviceId, deviceName)
+    const offline = failures?.some((f) => !f?.kind)
+    setUnreachable(offline)
+    const pending = epoch?.rotated === false && epoch.reason === 'pending'
+    if (!epoch || (!epoch.rotated && epoch.reason !== 'current' && !pending)) {
+      logNotRotated(epoch, rotationFailure)
+      if (unmounted.current) toastDetail(failedDetail)
+      else setPhase('failed')
+      return
+    }
+
+    setPhase('rotating')
+    setWaiting(true)
+    // 'pending': another member rotates when it syncs, so look once.
+    const confirmed = await waitForRotation(pending ? 0 : DEADLINE_MS)
+    // Closed while it ran: the outcome goes to a toast, as on desktop.
+    if (unmounted.current && !confirmed) {
+      toastDetail(pendingDetail)
+      return
+    }
+    if (!unmounted.current) setWaiting(false)
+    if (!confirmed) return
+
+    markKeyRotated(vaultId, targetDeviceId, await rotationTime(confirmed.epoch))
+    if (!unmounted.current) close()
+    const text2 =
+      [offline && unreachableText, uncoveredText(epoch.uncovered)]
+        .filter(Boolean)
+        .join(' ') || null
     Toast.show({
       type: 'baseToast',
-      text1: failures?.length
-        ? t`Couldn't reach the device. It will lose edit access next time it comes online.`
-        : t`"${deviceName}" can no longer edit this vault`,
+      text1: t`${deviceName} revoked. Vault key rotated.`,
+      ...(text2 && { text2, visibilityTime: 8000 }),
       position: 'bottom',
       bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
     })
   }
 
+  const waitForRotation = async (deadlineMs) => {
+    const until = Date.now() + deadlineMs
+    for (;;) {
+      try {
+        const status = await pearpassVaultClient.activeVaultGetEpochStatus()
+        const rows = await pearpassVaultClient.activeVaultList('device/')
+        const roster = new Set((rows ?? []).map((d) => d?.id))
+        if (rotatedPast(status, vaultId, targetDeviceId, roster)) return status
+      } catch (error) {
+        logger.warn(
+          'BottomSheetRevokeAccessContent',
+          'epoch status read failed:',
+          error?.message
+        )
+      }
+      if (unmounted.current || Date.now() >= until) return null
+      await new Promise((resolve) => setTimeout(resolve, POLL_MS))
+    }
+  }
+
+  // When the epoch record was written, as desktop and the extension show it.
+  const rotationTime = async (epochId) => {
+    try {
+      const record = await pearpassVaultClient.activeVaultGet(
+        `epoch/${epochId}`
+      )
+      if (Number.isFinite(record?.createdAt)) return record.createdAt
+    } catch (error) {
+      logger.warn(
+        'BottomSheetRevokeAccessContent',
+        'epoch record read failed:',
+        error?.message
+      )
+    }
+    return Date.now()
+  }
+
+  const showRevokeFailed = () => {
+    Toast.show({
+      type: 'baseToast',
+      text1: t`Couldn't revoke access. Please try again.`,
+      position: 'bottom',
+      bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
+    })
+    setIsLoading(false)
+  }
+
+  // A thrown error's text stays in the log, with its stack.
+  const logNotRotated = (epoch, rotationFailure) => {
+    const reason =
+      epoch?.reason ??
+      rotationFailure?.error?.message?.replace(/^epoch rotation failed: /, '')
+    const known = ['not-writable', 'self-not-in-roster', 'legacy']
+    if (!known.includes(reason) && rotationFailure?.error) {
+      logger.error(
+        'BottomSheetRevokeAccessContent',
+        'vault key not rotated:',
+        rotationFailure.error
+      )
+    } else {
+      logger.warn(
+        'BottomSheetRevokeAccessContent',
+        'vault key not rotated:',
+        reason
+      )
+    }
+  }
+
+  const unreachableText = t`Couldn't reach the device. It will stop editing next time it comes online.`
+  const failedDetail = t`${deviceName} can't change this vault, but it can still read new items until the key rotates.`
+  const pendingDetail = t`${deviceName} can't change this vault. The vault key will rotate when the vault next syncs. Until then it can still read new items.`
+  const toastDetail = (text1) =>
+    Toast.show({
+      type: 'baseToast',
+      text1,
+      position: 'bottom',
+      bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
+    })
+
+  const uncoveredText = (uncovered) => {
+    if (!uncovered?.length) return null
+    // Distinct devices can share a label ("iPhone"), so count them.
+    const counts = new Map()
+    for (const id of new Set(uncovered)) {
+      const label = devices.find((d) => d?.id === id)?.name ?? t`Unknown Device`
+      counts.set(label, (counts.get(label) ?? 0) + 1)
+    }
+    const names = [...counts]
+      .map(([label, count]) => (count > 1 ? `${label} (${count})` : label))
+      .join(', ')
+    return t`${names} can't read new items until they open this vault once on a current Lockwright version.`
+  }
+
+  if (phase === 'unknown') {
+    return (
+      <View style={[styles.container, { paddingBottom: bottom }]}>
+        <SheetHeader title={t`Revoke ${deviceName}?`} onClose={close} />
+        <View style={styles.content}>
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {t`The revoke didn't finish in time, so the result is unknown. Check the device list after the next sync.`}
+          </Text>
+          <Button
+            variant="secondary"
+            size="medium"
+            fullWidth
+            onClick={close}
+            testID="revoke-access-done"
+          >
+            {t`Done`}
+          </Button>
+        </View>
+      </View>
+    )
+  }
+
+  if (phase !== 'confirm') {
+    const failed = phase === 'failed'
+    return (
+      <View style={[styles.container, { paddingBottom: bottom }]}>
+        <SheetHeader
+          title={
+            failed ? t`Removed · key not rotated` : t`Removed · key rotating`
+          }
+          onClose={close}
+        />
+        <View style={styles.content}>
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {failed ? failedDetail : pendingDetail}
+          </Text>
+          {unreachable && (
+            <Text variant="label" color={theme.colors.colorTextSecondary}>
+              {unreachableText}
+            </Text>
+          )}
+          <Button
+            variant="secondary"
+            size="medium"
+            fullWidth
+            isLoading={waiting}
+            onClick={close}
+            testID="revoke-access-done"
+          >
+            {t`Done`}
+          </Button>
+        </View>
+      </View>
+    )
+  }
+
   return (
     <View style={[styles.container, { paddingBottom: bottom }]}>
-      <SheetHeader
-        title={t`Revoke access for ${deviceName}?`}
-        onClose={close}
-      />
+      <SheetHeader title={t`Revoke ${deviceName}?`} onClose={close} />
 
       <View style={styles.content}>
         <View style={styles.body}>
-          <View>
-            <Text variant="label" color={theme.colors.colorTextSecondary}>
-              {t`Revoking stops this device from making changes. It can still read what has already synced, and anything synced later, until you move your items to a new vault.`}
-            </Text>
-            <Text variant="label" color={theme.colors.colorTextSecondary}>
-              {t`Before you proceed, please note:`}
-            </Text>
-          </View>
-
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {t`Revoking this device:`}
+          </Text>
           <View style={styles.bulletList}>
-            <View style={styles.bulletRow}>
-              <Text variant="label" style={styles.bulletGlyph}>
-                {'•'}
-              </Text>
-              <Text variant="label" style={styles.bulletText}>
-                {t`For Your Security: We recommend moving your items to a new vault and updating your passwords. This is especially important if the device was lost or stolen, as it ensures your data remains protected even if a local copy exists on the revoked device.`}
-              </Text>
-            </View>
-            <View style={styles.bulletRow}>
-              <Text variant="label" style={styles.bulletGlyph}>
-                {'•'}
-              </Text>
-              <Text variant="label" style={styles.bulletText}>
-                {t`Offline Data: Revoking cannot remotely delete data already on the device.`}
-              </Text>
-            </View>
+            <Bullet>
+              {t`removes it from the vault, so it can't add or change items`}
+            </Bullet>
+            <Bullet>
+              {t`rotates the vault key, so it can't read anything saved or changed after that`}
+            </Bullet>
           </View>
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {t`It doesn't:`}
+          </Text>
+          <View style={styles.bulletList}>
+            <Bullet>
+              {t`erase what's already on the device. It can still read every item it synced before the key rotated.`}
+            </Bullet>
+          </View>
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {t`If the device was lost or stolen, change the passwords it could see.`}
+          </Text>
         </View>
 
         <View style={styles.actions}>

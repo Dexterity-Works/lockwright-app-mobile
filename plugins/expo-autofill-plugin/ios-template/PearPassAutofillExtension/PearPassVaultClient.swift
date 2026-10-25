@@ -56,6 +56,7 @@ import Foundation
         case BACKGROUND_BEGIN = 47
         case BACKGROUND_END = 48
         case SET_CORE_STORE_OPTIONS = 49
+        case ACTIVE_VAULT_GET_EPOCH_STATUS = 84
     }
     
     // MARK: - Properties
@@ -585,12 +586,25 @@ import Foundation
 
     /// Schema-2 canonical list. Falls back to v1 keys when the v2 namespace is empty.
     func listCanonicalRecords() async throws -> [VaultRecord] {
+        try await requireEpochKey()
         let v2 = try await activeVaultList(filterKey: "record-v2/")
         if !v2.isEmpty { return v2 }
         log("record-v2/ empty; falling back to record/")
         return try await activeVaultList(filterKey: "record/")
     }
     
+    /// The vault core lists every record it can still open, so without the
+    /// latest epoch key (a joiner, a revoked device, a deferred migrate) this
+    /// would offer items sealed under older keys. List nothing instead.
+    private func requireEpochKey() async throws {
+        let status = try await sendRequest(command: API.ACTIVE_VAULT_GET_EPOCH_STATUS.rawValue)
+        let canRead = status?["canRead"] as? Bool ?? false
+        let revoked = status?["revoked"] as? Bool ?? false
+        guard canRead && !revoked else {
+            throw PearPassVaultError.unknown("epoch-key-pending")
+        }
+    }
+
     /// Initialize active vault and fetch records for a specific vault
     /// This follows the RN app pattern for getting vault records
     func initializeVaultAndFetchRecords(vault: Vault) async throws -> [VaultRecord] {

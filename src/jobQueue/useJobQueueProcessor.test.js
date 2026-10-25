@@ -6,7 +6,9 @@ import { useSelector } from 'react-redux'
 import { jobFileExists } from './JobFileReader'
 import { processJobQueue } from './processJobQueue'
 import { useJobQueueProcessor } from './useJobQueueProcessor'
+import { PasskeyNotSavedModalContent } from '../containers/Modal/PasskeyNotSavedModalContent'
 import { useAutoLockContext } from '../context/AutoLockContext'
+import { useModal } from '../context/ModalContext'
 import { getLastActivityAt, setLastActivityAt } from '../utils/autoLockStorage'
 
 jest.mock('react-redux', () => ({
@@ -47,6 +49,14 @@ jest.mock('../context/AutoLockContext', () => ({
   useAutoLockContext: jest.fn()
 }))
 
+jest.mock('../context/ModalContext', () => ({
+  useModal: jest.fn()
+}))
+
+jest.mock('../containers/Modal/PasskeyNotSavedModalContent', () => ({
+  PasskeyNotSavedModalContent: jest.fn(() => null)
+}))
+
 jest.mock('../utils/autoLockStorage', () => ({
   getLastActivityAt: jest.fn(),
   setLastActivityAt: jest.fn()
@@ -62,6 +72,7 @@ jest.mock('../utils/logger', () => ({
 describe('useJobQueueProcessor', () => {
   let mockAppStateListener
   const mockNotifyInteraction = jest.fn()
+  const mockOpenModal = jest.fn()
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -79,12 +90,14 @@ describe('useJobQueueProcessor', () => {
       notifyInteraction: mockNotifyInteraction
     })
 
+    useModal.mockReturnValue({ openModal: mockOpenModal })
     jobFileExists.mockResolvedValue(true)
     processJobQueue.mockResolvedValue({
       processed: 0,
       succeeded: 0,
       failed: 0,
-      errors: []
+      errors: [],
+      notSaved: []
     })
     getLastActivityAt.mockResolvedValue(Date.now() - 1000)
     setLastActivityAt.mockResolvedValue()
@@ -199,6 +212,46 @@ describe('useJobQueueProcessor', () => {
     const record = await getRecord('rec-1')
 
     expect(record.data.uris).toEqual([{ uri: 'https://a.com', match: 'exact' }])
+  })
+
+  it('tells the user which passkeys were not saved', async () => {
+    const notSaved = [
+      {
+        jobId: 'job-1',
+        type: 'ADD_PASSKEY',
+        site: 'github.com',
+        keyMissing: true
+      }
+    ]
+    processJobQueue.mockResolvedValue({
+      processed: 1,
+      succeeded: 0,
+      failed: 1,
+      errors: [],
+      notSaved
+    })
+
+    renderHook(() => useJobQueueProcessor())
+
+    await act(async () => {
+      await jest.runAllTimersAsync()
+    })
+
+    expect(mockOpenModal).toHaveBeenCalledTimes(1)
+    const modal = mockOpenModal.mock.calls[0][0]
+    expect(modal.type).toBe(PasskeyNotSavedModalContent)
+    expect(modal.props.passkeys).toEqual(notSaved)
+  })
+
+  it('opens no notice when every passkey was saved', async () => {
+    renderHook(() => useJobQueueProcessor())
+
+    await act(async () => {
+      await jest.runAllTimersAsync()
+    })
+
+    expect(processJobQueue).toHaveBeenCalled()
+    expect(mockOpenModal).not.toHaveBeenCalled()
   })
 
   it('should skip processing when auto-lock is imminent', async () => {

@@ -13,7 +13,9 @@ import { useSelector } from 'react-redux'
 import { POST_RESUME_DELAY_MS, SAFETY_THRESHOLD_MS } from './constants'
 import { jobFileExists } from './JobFileReader'
 import { processJobQueue } from './processJobQueue'
+import { PasskeyNotSavedModalContent } from '../containers/Modal/PasskeyNotSavedModalContent'
 import { useAutoLockContext } from '../context/AutoLockContext'
+import { useModal } from '../context/ModalContext'
 import { getLastActivityAt, setLastActivityAt } from '../utils/autoLockStorage'
 import { logger } from '../utils/logger'
 
@@ -33,6 +35,8 @@ export const useJobQueueProcessor = () => {
 
   const { autoLockTimeout, isAutoLockEnabled, notifyInteraction } =
     useAutoLockContext()
+
+  const { openModal } = useModal()
 
   const { createRecord } = useCreateRecord()
 
@@ -111,12 +115,23 @@ export const useJobQueueProcessor = () => {
           `[jobQueue] Processed ${result.processed} jobs: ${result.succeeded} succeeded, ${result.failed} failed`
         )
       }
+
+      if (result.notSaved?.length) {
+        openModal(<PasskeyNotSavedModalContent passkeys={result.notSaved} />)
+      }
     } catch (error) {
       logger.error('[jobQueue] Error processing job queue:', error)
     } finally {
       processingRef.current = false
     }
-  }, [isVaultActive, activeVaultId, createRecord, getRecord, updateRecord])
+  }, [
+    isVaultActive,
+    activeVaultId,
+    createRecord,
+    getRecord,
+    updateRecord,
+    openModal
+  ])
 
   const triggerProcessing = useCallback(async () => {
     const now = Date.now()
