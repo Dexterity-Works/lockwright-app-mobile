@@ -133,6 +133,17 @@ export const PairedDevicesScreen = () => {
   const devices = data?.devices ?? []
   const vaultId = data?.id
   const removed = removedDevices(epochStatus, vaultId, devices)
+
+  // As the revoke sheet's failed state: this device holds the key, so it
+  // can rotate past the removed device itself.
+  const rotateNow = async () => {
+    try {
+      await pearpassVaultClient.activeVaultEnsureEpoch({ start: true })
+      setEpochStatus(await pearpassVaultClient.activeVaultGetEpochStatus())
+    } catch (error) {
+      logger.warn('PairedDevicesScreen', 'rotation failed:', error)
+    }
+  }
   const rotatedAt = (at) =>
     `${formatDeviceDate(at)} ${new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
 
@@ -248,9 +259,21 @@ export const PairedDevicesScreen = () => {
                 <Text variant="caption" color={theme.colors.colorTextSecondary}>
                   {device.rotatedAt
                     ? t`Revoked · key rotated ${rotatedAt(device.rotatedAt)}`
-                    : t`Removed · key rotating`}
+                    : epochStatus?.canRead
+                      ? t`Removed · key not rotated`
+                      : t`Removed · key rotating`}
                 </Text>
               </View>
+              {!device.rotatedAt && epochStatus?.canRead && (
+                <Button
+                  variant="secondary"
+                  size="small"
+                  onClick={rotateNow}
+                  testID={`paired-devices-rotate-${device.id}`}
+                >
+                  {t`Rotate key now`}
+                </Button>
+              )}
             </View>
           ))}
         </View>

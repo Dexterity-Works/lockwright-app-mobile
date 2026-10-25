@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
-import { act, render, waitFor } from '@testing-library/react-native'
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native'
 import { getMyDeviceId, useVault } from 'lockwright-lib-vault'
 import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 
@@ -23,6 +23,7 @@ jest.mock('lockwright-lib-vault', () => ({
 jest.mock('lockwright-lib-vault/src/instances', () => ({
   pearpassVaultClient: {
     activeVaultGetEpochStatus: jest.fn(),
+    activeVaultEnsureEpoch: jest.fn(),
     on: jest.fn(),
     off: jest.fn()
   }
@@ -52,7 +53,11 @@ jest.mock('lockwright-lib-ui-react-native-components/icons', () => {
 jest.mock('lockwright-lib-ui-react-native-components', () => {
   const RN = require('react-native')
   return {
-    Button: () => null,
+    Button: ({ onClick, children, testID }) => (
+      <RN.TouchableOpacity testID={testID} onPress={onClick}>
+        <RN.Text>{children}</RN.Text>
+      </RN.TouchableOpacity>
+    ),
     ContextMenu: () => null,
     NativeBottomSheet: ({ children }) => children ?? null,
     NavbarListItem: () => null,
@@ -115,6 +120,32 @@ describe('PairedDevicesScreen', () => {
 
     await waitFor(() => screen.getByText(/^Revoked · key rotated /))
     expect(screen.queryByText('Removed · key rotating')).toBeNull()
+  })
+
+  it('offers Rotate key now when this device holds the key but it did not rotate', async () => {
+    useVaultWith('v-fail')
+    rememberRevoked('v-fail', 'd-gone', 'Phone')
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ vaultId: 'v-fail', canRead: true, members: ['d-me', 'd-gone'] })
+    )
+    pearpassVaultClient.activeVaultEnsureEpoch.mockResolvedValue({
+      rotated: true
+    })
+
+    const screen = renderScreen()
+    await waitFor(() => screen.getByText('Removed · key not rotated'))
+
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ vaultId: 'v-fail', canRead: true, epoch: 'e3' })
+    )
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('paired-devices-rotate-d-gone'))
+    })
+
+    expect(pearpassVaultClient.activeVaultEnsureEpoch).toHaveBeenCalledWith({
+      start: true
+    })
+    await waitFor(() => screen.getByText(/^Revoked · key rotated /))
   })
 
   it('keeps a pushed status over an older read that resolves after it', async () => {
