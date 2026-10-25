@@ -121,7 +121,8 @@ export const BottomSheetRevokeAccessContent = ({
     const pending = epoch?.rotated === false && epoch.reason === 'pending'
     if (!epoch || (!epoch.rotated && epoch.reason !== 'current' && !pending)) {
       logNotRotated(epoch, rotationFailure)
-      setPhase('failed')
+      if (unmounted.current) toastDetail(failedDetail)
+      else setPhase('failed')
       return
     }
 
@@ -129,12 +130,16 @@ export const BottomSheetRevokeAccessContent = ({
     setWaiting(true)
     // 'pending': another member rotates when it syncs, so look once.
     const confirmed = await waitForRotation(pending ? 0 : DEADLINE_MS)
-    if (unmounted.current) return
-    setWaiting(false)
+    // Closed while it ran: the outcome goes to a toast, as on desktop.
+    if (unmounted.current && !confirmed) {
+      toastDetail(pendingDetail)
+      return
+    }
+    if (!unmounted.current) setWaiting(false)
     if (!confirmed) return
 
     markKeyRotated(vaultId, targetDeviceId, await rotationTime(confirmed.epoch))
-    close()
+    if (!unmounted.current) close()
     const text2 =
       [offline && unreachableText, uncoveredText(epoch.uncovered)]
         .filter(Boolean)
@@ -217,6 +222,15 @@ export const BottomSheetRevokeAccessContent = ({
   }
 
   const unreachableText = t`Couldn't reach the device. It will stop editing next time it comes online.`
+  const failedDetail = t`${deviceName} can't change this vault, but it can still read new items until the key rotates.`
+  const pendingDetail = t`${deviceName} can't change this vault. The vault key will rotate when the vault next syncs. Until then it can still read new items.`
+  const toastDetail = (text1) =>
+    Toast.show({
+      type: 'baseToast',
+      text1,
+      position: 'bottom',
+      bottomOffset: TOAST_CONFIG.BOTTOM_OFFSET
+    })
 
   const uncoveredText = (uncovered) => {
     if (!uncovered?.length) return null
@@ -266,9 +280,7 @@ export const BottomSheetRevokeAccessContent = ({
         />
         <View style={styles.content}>
           <Text variant="label" color={theme.colors.colorTextSecondary}>
-            {failed
-              ? t`${deviceName} can't change this vault, but it can still read new items until the key rotates.`
-              : t`${deviceName} can't change this vault. The vault key will rotate when the vault next syncs. Until then it can still read new items.`}
+            {failed ? failedDetail : pendingDetail}
           </Text>
           {unreachable && (
             <Text variant="label" color={theme.colors.colorTextSecondary}>

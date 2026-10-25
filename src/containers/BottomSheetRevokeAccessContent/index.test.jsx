@@ -364,6 +364,33 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(mockClose).not.toHaveBeenCalled()
   })
 
+  it('toasts the outcome when the sheet is closed while the revoke runs', async () => {
+    jest.useFakeTimers()
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ members: ['d-old', 'd-gone'] })
+    )
+    let resolveKick
+    kickDevice.mockReturnValue(
+      new Promise((resolve) => {
+        resolveKick = resolve
+      })
+    )
+    const screen = renderSheet()
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('revoke-access-submit'))
+    })
+
+    screen.unmount()
+    await act(async () => {
+      resolveKick({ results: [], failures: [], epoch: rotated })
+      await jest.advanceTimersByTimeAsync(20000)
+    })
+
+    expect(Toast.show).toHaveBeenCalledWith(
+      expect.objectContaining({ text1: pendingText })
+    )
+  })
+
   it('gives the result up as unknown when the kick never returns', async () => {
     jest.useFakeTimers()
     kickDevice.mockReturnValue(new Promise(() => {}))
