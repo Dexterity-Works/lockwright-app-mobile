@@ -114,6 +114,7 @@ describe('useVaultAccessRevoked', () => {
 
   it('ignores payloads with no vaultId or unknown vault', async () => {
     renderRevokedHook()
+    await act(async () => revokedHandler(undefined))
     await act(async () => revokedHandler({}))
     await act(async () => revokedHandler({ vaultId: 'v-unknown' }))
     expect(deleteVaultLocal).not.toHaveBeenCalled()
