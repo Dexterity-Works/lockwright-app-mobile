@@ -18,7 +18,10 @@ const mockClose = jest.fn()
 jest.mock('lockwright-lib-vault', () => ({ kickDevice: jest.fn() }))
 
 jest.mock('lockwright-lib-vault/src/instances', () => ({
-  pearpassVaultClient: { activeVaultGetEpochStatus: jest.fn() }
+  pearpassVaultClient: {
+    activeVaultGetEpochStatus: jest.fn(),
+    activeVaultList: jest.fn()
+  }
 }))
 
 jest.mock('react-native-toast-message', () => ({
@@ -115,6 +118,7 @@ describe('BottomSheetRevokeAccessContent', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(status())
+    pearpassVaultClient.activeVaultList.mockResolvedValue(devices)
   })
 
   afterEach(() => {
@@ -163,6 +167,21 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(mockClose).toHaveBeenCalled()
     expect(rememberRevoked).toHaveBeenCalledWith('v1', 'd-gone', 'Phone')
     expect(markKeyRotated).toHaveBeenCalledWith('v1', 'd-gone')
+  })
+
+  it('does not confirm while the new key still reaches a device off the roster', async () => {
+    jest.useFakeTimers()
+    // A member with an older roster rotated: the target's swept duplicate
+    // is still sealed to.
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ members: ['d-old', 'd-dup'] })
+    )
+    const screen = await revoke({ results: [], failures: [], epoch: rotated })
+    await pastDeadline()
+
+    expect(Toast.show).not.toHaveBeenCalled()
+    expect(markKeyRotated).not.toHaveBeenCalled()
+    expect(screen.getByText('Removed · key rotating')).toBeTruthy()
   })
 
   it('treats a key that already leaves the device out as rotated', async () => {

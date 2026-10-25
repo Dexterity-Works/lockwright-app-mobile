@@ -42,6 +42,21 @@ describe('removedDevices', () => {
     ])
   })
 
+  it('keeps a revoked device rotating while the key still reaches another removed device', () => {
+    rememberRevoked('v8', 'd-gone', 'Phone')
+
+    expect(
+      removedDevices(
+        status({ vaultId: 'v8', members: ['d-me', 'd-dup'] }),
+        'v8',
+        roster
+      )
+    ).toEqual([
+      { id: 'd-gone', name: 'Phone', rotatedAt: null },
+      { id: 'd-dup', name: null, rotatedAt: null }
+    ])
+  })
+
   it('stamps a rotation it first sees in the list', () => {
     rememberRevoked('v4', 'd-gone', 'Phone')
     const before = Date.now()

@@ -22,13 +22,16 @@ import { SheetHeader } from '../BottomSheet/SheetHeader'
 const POLL_MS = 1000
 const DEADLINE_MS = 15000
 
-// The kick counts once this vault's latest key leaves the device out.
-const rotatedPast = (status, vaultId, deviceId) =>
+// The kick counts once this vault's latest key leaves the device out and
+// reaches roster devices only: a member with an older roster can still seal
+// to a duplicate row of the same peer.
+const rotatedPast = (status, vaultId, deviceId, roster) =>
   status?.vaultId === vaultId &&
   !status.legacy &&
   !!status.epoch &&
   Array.isArray(status.members) &&
-  !status.members.includes(deviceId)
+  !status.members.includes(deviceId) &&
+  status.members.every((id) => roster.has(id))
 
 const Bullet = ({ children }) => (
   <View style={styles.bulletRow}>
@@ -125,7 +128,9 @@ export const BottomSheetRevokeAccessContent = ({
     for (;;) {
       try {
         const status = await pearpassVaultClient.activeVaultGetEpochStatus()
-        if (rotatedPast(status, vaultId, targetDeviceId)) return true
+        const rows = await pearpassVaultClient.activeVaultList('device/')
+        const roster = new Set((rows ?? []).map((d) => d?.id))
+        if (rotatedPast(status, vaultId, targetDeviceId, roster)) return true
       } catch (error) {
         logger.warn(
           'BottomSheetRevokeAccessContent',

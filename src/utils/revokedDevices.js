@@ -29,7 +29,12 @@ export const removedDevices = (status, vaultId, devices) => {
   if (!status || status.vaultId !== vaultId) return []
   const onRoster = new Set(devices.map((d) => d?.id))
   const sealed = new Set(status.members ?? [])
-  const rotated = !status.legacy && !!status.epoch
+  // Rotated past the removal only when the key reaches roster devices
+  // alone: a member with an older roster can still seal to a removed one.
+  const rotated =
+    !status.legacy &&
+    !!status.epoch &&
+    [...sealed].every((id) => onRoster.has(id))
   const known = entries(vaultId)
   const rows = []
   for (const id of new Set([...known.keys(), ...sealed])) {
