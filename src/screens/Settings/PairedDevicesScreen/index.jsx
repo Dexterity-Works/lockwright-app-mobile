@@ -94,6 +94,22 @@ export const PairedDevicesScreen = () => {
 
   const [revokeTarget, setRevokeTarget] = useState(null)
 
+  // The latest epoch record's time rides on the status, so a rotation shows
+  // when it happened, not when this device saw it.
+  const withRotatedAt = async (status) => {
+    if (!status?.epoch) return status
+    try {
+      const record = await pearpassVaultClient.activeVaultGet(
+        `epoch/${status.epoch}`
+      )
+      return Number.isFinite(record?.createdAt)
+        ? { ...status, rotatedAt: record.createdAt }
+        : status
+    } catch {
+      return status
+    }
+  }
+
   // Read again after a revoke, and on every pushed status.
   const [epochStatus, setEpochStatus] = useState(null)
   useEffect(() => {
@@ -105,10 +121,11 @@ export const PairedDevicesScreen = () => {
     }
     const onPush = (status) => {
       pushed = true
-      onStatus(status)
+      withRotatedAt(status).then(onStatus)
     }
     pearpassVaultClient
       .activeVaultGetEpochStatus()
+      .then(withRotatedAt)
       .then((status) => {
         if (!pushed) onStatus(status)
       })
@@ -139,7 +156,11 @@ export const PairedDevicesScreen = () => {
   const rotateNow = async () => {
     try {
       await pearpassVaultClient.activeVaultEnsureEpoch({ start: true })
-      setEpochStatus(await pearpassVaultClient.activeVaultGetEpochStatus())
+      setEpochStatus(
+        await withRotatedAt(
+          await pearpassVaultClient.activeVaultGetEpochStatus()
+        )
+      )
     } catch (error) {
       logger.warn('PairedDevicesScreen', 'rotation failed:', error)
     }

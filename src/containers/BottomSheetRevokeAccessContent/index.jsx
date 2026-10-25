@@ -111,7 +111,7 @@ export const BottomSheetRevokeAccessContent = ({
     setWaiting(false)
     if (!confirmed) return
 
-    markKeyRotated(vaultId, targetDeviceId)
+    markKeyRotated(vaultId, targetDeviceId, await rotationTime(confirmed.epoch))
     close()
     const text2 = uncoveredText(epoch.uncovered)
     Toast.show({
@@ -130,7 +130,7 @@ export const BottomSheetRevokeAccessContent = ({
         const status = await pearpassVaultClient.activeVaultGetEpochStatus()
         const rows = await pearpassVaultClient.activeVaultList('device/')
         const roster = new Set((rows ?? []).map((d) => d?.id))
-        if (rotatedPast(status, vaultId, targetDeviceId, roster)) return true
+        if (rotatedPast(status, vaultId, targetDeviceId, roster)) return status
       } catch (error) {
         logger.warn(
           'BottomSheetRevokeAccessContent',
@@ -138,9 +138,26 @@ export const BottomSheetRevokeAccessContent = ({
           error?.message
         )
       }
-      if (unmounted.current || Date.now() >= until) return false
+      if (unmounted.current || Date.now() >= until) return null
       await new Promise((resolve) => setTimeout(resolve, POLL_MS))
     }
+  }
+
+  // When the epoch record was written, as desktop and the extension show it.
+  const rotationTime = async (epochId) => {
+    try {
+      const record = await pearpassVaultClient.activeVaultGet(
+        `epoch/${epochId}`
+      )
+      if (Number.isFinite(record?.createdAt)) return record.createdAt
+    } catch (error) {
+      logger.warn(
+        'BottomSheetRevokeAccessContent',
+        'epoch record read failed:',
+        error?.message
+      )
+    }
+    return Date.now()
   }
 
   const showRevokeFailed = () => {

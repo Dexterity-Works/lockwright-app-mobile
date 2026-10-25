@@ -20,7 +20,8 @@ jest.mock('lockwright-lib-vault', () => ({ kickDevice: jest.fn() }))
 jest.mock('lockwright-lib-vault/src/instances', () => ({
   pearpassVaultClient: {
     activeVaultGetEpochStatus: jest.fn(),
-    activeVaultList: jest.fn()
+    activeVaultList: jest.fn(),
+    activeVaultGet: jest.fn()
   }
 }))
 
@@ -119,6 +120,10 @@ describe('BottomSheetRevokeAccessContent', () => {
     jest.clearAllMocks()
     pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(status())
     pearpassVaultClient.activeVaultList.mockResolvedValue(devices)
+    pearpassVaultClient.activeVaultGet.mockResolvedValue({
+      id: 'e2',
+      createdAt: 1600000000000
+    })
   })
 
   afterEach(() => {
@@ -166,7 +171,9 @@ describe('BottomSheetRevokeAccessContent', () => {
     )
     expect(mockClose).toHaveBeenCalled()
     expect(rememberRevoked).toHaveBeenCalledWith('v1', 'd-gone', 'Phone')
-    expect(markKeyRotated).toHaveBeenCalledWith('v1', 'd-gone')
+    // When the epoch was written, not when this device saw it.
+    expect(pearpassVaultClient.activeVaultGet).toHaveBeenCalledWith('epoch/e2')
+    expect(markKeyRotated).toHaveBeenCalledWith('v1', 'd-gone', 1600000000000)
   })
 
   it('does not confirm while the new key still reaches a device off the roster', async () => {

@@ -57,6 +57,18 @@ describe('removedDevices', () => {
     ])
   })
 
+  it('stamps a rotation with the time its epoch record was written', () => {
+    rememberRevoked('v9', 'd-gone', 'Phone')
+
+    const [row] = removedDevices(
+      status({ vaultId: 'v9', rotatedAt: 1600000000000 }),
+      'v9',
+      roster
+    )
+
+    expect(row.rotatedAt).toBe(1600000000000)
+  })
+
   it('stamps a rotation it first sees in the list', () => {
     rememberRevoked('v4', 'd-gone', 'Phone')
     const before = Date.now()
