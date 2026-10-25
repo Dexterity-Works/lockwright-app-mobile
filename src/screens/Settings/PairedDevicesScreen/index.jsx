@@ -98,19 +98,27 @@ export const PairedDevicesScreen = () => {
   const [epochStatus, setEpochStatus] = useState(null)
   useEffect(() => {
     let cancelled = false
+    // A push is newer than the read started before it.
+    let pushed = false
     const onStatus = (status) => {
       if (!cancelled) setEpochStatus(status)
     }
+    const onPush = (status) => {
+      pushed = true
+      onStatus(status)
+    }
     pearpassVaultClient
       .activeVaultGetEpochStatus()
-      .then(onStatus)
+      .then((status) => {
+        if (!pushed) onStatus(status)
+      })
       .catch((error) => {
         logger.warn('PairedDevicesScreen', 'epoch status failed:', error)
       })
-    pearpassVaultClient.on?.('epoch-status', onStatus)
+    pearpassVaultClient.on?.('epoch-status', onPush)
     return () => {
       cancelled = true
-      pearpassVaultClient.off?.('epoch-status', onStatus)
+      pearpassVaultClient.off?.('epoch-status', onPush)
     }
   }, [data?.id, revokeTarget])
 

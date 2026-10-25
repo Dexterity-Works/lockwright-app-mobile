@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core'
 import { I18nProvider } from '@lingui/react'
-import { render, waitFor } from '@testing-library/react-native'
+import { act, render, waitFor } from '@testing-library/react-native'
 import { getMyDeviceId, useVault } from 'lockwright-lib-vault'
 import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 
@@ -114,6 +114,35 @@ describe('PairedDevicesScreen', () => {
     const screen = renderScreen()
 
     await waitFor(() => screen.getByText(/^Revoked · key rotated /))
+    expect(screen.queryByText('Removed · key rotating')).toBeNull()
+  })
+
+  it('keeps a pushed status over an older read that resolves after it', async () => {
+    useVaultWith('v-race')
+    rememberRevoked('v-race', 'd-gone', 'Phone')
+    let resolveRead
+    pearpassVaultClient.activeVaultGetEpochStatus.mockReturnValue(
+      new Promise((resolve) => {
+        resolveRead = resolve
+      })
+    )
+
+    const screen = renderScreen()
+    await waitFor(() =>
+      expect(pearpassVaultClient.on).toHaveBeenCalledWith(
+        'epoch-status',
+        expect.any(Function)
+      )
+    )
+    const onStatus = pearpassVaultClient.on.mock.calls.at(-1)[1]
+    await act(async () => {
+      onStatus(status({ vaultId: 'v-race', epoch: 'e3' }))
+    })
+    await act(async () => {
+      resolveRead(status({ vaultId: 'v-race', members: ['d-me', 'd-gone'] }))
+    })
+
+    expect(screen.getByText(/^Revoked · key rotated /)).toBeTruthy()
     expect(screen.queryByText('Removed · key rotating')).toBeNull()
   })
 
