@@ -21,6 +21,9 @@ import { SheetHeader } from '../BottomSheet/SheetHeader'
 
 const POLL_MS = 1000
 const DEADLINE_MS = 15000
+// As desktop's dialog: a kick that hangs gives its result up as unknown.
+const KICK_DEADLINE_MS = 50000
+const TIMED_OUT = Symbol('timed out')
 
 // The kick counts once this vault's latest key leaves the device out and
 // reaches roster devices only: a member with an older roster can still seal
@@ -55,7 +58,8 @@ export const BottomSheetRevokeAccessContent = ({
   const close = useBottomSheetClose()
   const { bottom } = useSafeAreaInsets()
   const [isLoading, setIsLoading] = useState(false)
-  // 'confirm', then 'rotating' or 'failed' once the device is removed.
+  // 'confirm', then 'rotating' or 'failed' once the device is removed, or
+  // 'unknown' when the kick did not return in time.
   const [phase, setPhase] = useState('confirm')
   const [waiting, setWaiting] = useState(false)
   // The kick message did not reach the device (a failure with no kind).
@@ -73,8 +77,20 @@ export const BottomSheetRevokeAccessContent = ({
     setIsLoading(true)
     let failures = []
     let epoch = null
+    let timer
     try {
-      ;({ failures, epoch } = await kickDevice({ vaultId, targetDeviceId }))
+      const result = await Promise.race([
+        kickDevice({ vaultId, targetDeviceId }),
+        new Promise((resolve) => {
+          timer = setTimeout(() => resolve(TIMED_OUT), KICK_DEADLINE_MS)
+        })
+      ])
+      if (result === TIMED_OUT) {
+        logger.warn('BottomSheetRevokeAccessContent', 'kickDevice timed out')
+        if (!unmounted.current) setPhase('unknown')
+        return
+      }
+      ;({ failures, epoch } = result)
     } catch (error) {
       logger.error(
         'BottomSheetRevokeAccessContent',
@@ -83,6 +99,8 @@ export const BottomSheetRevokeAccessContent = ({
       )
       showRevokeFailed()
       return
+    } finally {
+      clearTimeout(timer)
     }
 
     // A null epoch with no rotation failure means the device was not removed.
@@ -212,6 +230,28 @@ export const BottomSheetRevokeAccessContent = ({
       .map(([label, count]) => (count > 1 ? `${label} (${count})` : label))
       .join(', ')
     return t`${names} can't read new items until they open this vault once on a current Lockwright version.`
+  }
+
+  if (phase === 'unknown') {
+    return (
+      <View style={[styles.container, { paddingBottom: bottom }]}>
+        <SheetHeader title={t`Revoke ${deviceName}?`} onClose={close} />
+        <View style={styles.content}>
+          <Text variant="label" color={theme.colors.colorTextSecondary}>
+            {t`The revoke didn't finish in time, so the result is unknown. Check the device list after the next sync.`}
+          </Text>
+          <Button
+            variant="secondary"
+            size="medium"
+            fullWidth
+            onClick={close}
+            testID="revoke-access-done"
+          >
+            {t`Done`}
+          </Button>
+        </View>
+      </View>
+    )
   }
 
   if (phase !== 'confirm') {

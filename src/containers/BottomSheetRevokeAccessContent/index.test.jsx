@@ -364,6 +364,27 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(mockClose).not.toHaveBeenCalled()
   })
 
+  it('gives the result up as unknown when the kick never returns', async () => {
+    jest.useFakeTimers()
+    kickDevice.mockReturnValue(new Promise(() => {}))
+    const screen = renderSheet()
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('revoke-access-submit'))
+    })
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(50000)
+    })
+
+    expect(
+      screen.getByText(
+        "The revoke didn't finish in time, so the result is unknown. Check the device list after the next sync."
+      )
+    ).toBeTruthy()
+    expect(Toast.show).not.toHaveBeenCalled()
+    expect(rememberRevoked).not.toHaveBeenCalled()
+  })
+
   it('says when the kick message could not reach the device', async () => {
     const unreachable =
       "Couldn't reach the device. It will stop editing next time it comes online."
