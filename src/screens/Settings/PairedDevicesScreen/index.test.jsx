@@ -6,6 +6,7 @@ import { pearpassVaultClient } from 'lockwright-lib-vault/src/instances'
 
 import { PairedDevicesScreen } from './index'
 import messages from '../../../locales/en/messages'
+import { formatDeviceDate } from '../../../utils/devicePresentation'
 import { rememberRevoked } from '../../../utils/revokedDevices'
 
 i18n.load('en', messages)
@@ -22,6 +23,7 @@ jest.mock('lockwright-lib-vault', () => ({
 
 jest.mock('lockwright-lib-vault/src/instances', () => ({
   pearpassVaultClient: {
+    activeVaultGet: jest.fn(),
     activeVaultGetEpochStatus: jest.fn(),
     activeVaultEnsureEpoch: jest.fn(),
     on: jest.fn(),
@@ -120,6 +122,61 @@ describe('PairedDevicesScreen', () => {
 
     await waitFor(() => screen.getByText(/^Revoked · key rotated /))
     expect(screen.queryByText('Removed · key rotating')).toBeNull()
+  })
+
+  it('does not look up epoch metadata for a legacy status', async () => {
+    useVaultWith('v-legacy')
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ vaultId: 'v-legacy', epoch: null, legacy: true })
+    )
+
+    const screen = renderScreen()
+
+    await waitFor(() => expect(pearpassVaultClient.on).toHaveBeenCalled())
+    expect(pearpassVaultClient.activeVaultGet).not.toHaveBeenCalled()
+    expect(screen.queryByText('Removed device')).toBeNull()
+  })
+
+  it('keeps a rotated status when its epoch record has no valid creation time', async () => {
+    useVaultWith('v-invalid-time')
+    rememberRevoked('v-invalid-time', 'd-gone', 'Phone')
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ vaultId: 'v-invalid-time' })
+    )
+    pearpassVaultClient.activeVaultGet.mockResolvedValue({
+      createdAt: 'later'
+    })
+
+    const screen = renderScreen()
+
+    await waitFor(() => screen.getByText(/^Revoked · key rotated /))
+    expect(pearpassVaultClient.activeVaultGet).toHaveBeenCalledWith('epoch/e2')
+    expect(screen.queryByText('Removed · key rotating')).toBeNull()
+  })
+
+  it('shows the creation time stored on the latest epoch record', async () => {
+    const rotatedAt = new Date('2025-01-15T12:00:00.000Z').getTime()
+    useVaultWith('v-record-time')
+    rememberRevoked('v-record-time', 'd-gone', 'Phone')
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status({ vaultId: 'v-record-time' })
+    )
+    pearpassVaultClient.activeVaultGet.mockResolvedValue({
+      createdAt: rotatedAt
+    })
+
+    const screen = renderScreen()
+
+    const time = new Date(rotatedAt).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+    await waitFor(() =>
+      screen.getByText(
+        `Revoked · key rotated ${formatDeviceDate(rotatedAt)} ${time}`
+      )
+    )
+    expect(pearpassVaultClient.activeVaultGet).toHaveBeenCalledWith('epoch/e2')
   })
 
   it('offers Rotate key now when this device holds the key but it did not rotate', async () => {
