@@ -69,6 +69,32 @@ describe('removedDevices', () => {
     expect(row.rotatedAt).toBe(1600000000000)
   })
 
+  it('uses the current time when marking a rotation without a timestamp', () => {
+    rememberRevoked('v-default-time', 'd-gone', 'Phone')
+    const before = Date.now()
+
+    markKeyRotated('v-default-time', 'd-gone')
+
+    const [row] = removedDevices(
+      status({ vaultId: 'v-default-time' }),
+      'v-default-time',
+      roster
+    )
+    expect(row.rotatedAt).toBeGreaterThanOrEqual(before)
+  })
+
+  it('treats a missing member list as empty', () => {
+    rememberRevoked('v-no-members', 'd-gone', 'Phone')
+
+    expect(
+      removedDevices(
+        status({ vaultId: 'v-no-members', members: undefined }),
+        'v-no-members',
+        roster
+      )
+    ).toEqual([{ id: 'd-gone', name: 'Phone', rotatedAt: expect.any(Number) }])
+  })
+
   it('stamps a rotation it first sees in the list', () => {
     rememberRevoked('v4', 'd-gone', 'Phone')
     const before = Date.now()
