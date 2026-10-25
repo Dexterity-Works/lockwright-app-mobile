@@ -79,9 +79,17 @@ export const processJobQueue = async ({
         job.updatedAt = Date.now()
         result.succeeded++
       } catch (error) {
-        job.retryCount = (job.retryCount || 0) + 1
         job.updatedAt = Date.now()
         job.error = error.message
+        // A missing or owed vault key is a wait, not a failed save: the job
+        // holds the passkey's private key and the site already has the
+        // passkey, so it stays queued until the key arrives.
+        if (isKeyError(error.message)) {
+          job.status = JobStatus.PENDING
+          logger.log(`[jobQueue] Job ${job.id} waits for the vault key`)
+          continue
+        }
+        job.retryCount = (job.retryCount || 0) + 1
 
         if (job.retryCount >= (job.maxRetries || 3)) {
           job.status = JobStatus.FAILED

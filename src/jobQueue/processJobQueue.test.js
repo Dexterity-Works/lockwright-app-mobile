@@ -318,9 +318,7 @@ describe('processJobQueue', () => {
       }
     ]
     mockVaultClient.readJobQueue.mockResolvedValue(jobs)
-    processJob.mockRejectedValue(
-      new Error('Vault key not available yet: another device must rotate it')
-    )
+    processJob.mockRejectedValue(new Error('Disk full'))
 
     const result = await processJobQueue(makeParams())
 
@@ -329,7 +327,7 @@ describe('processJobQueue', () => {
         jobId: 'job-1',
         type: 'ADD_PASSKEY',
         site: 'github.com',
-        keyMissing: true
+        keyMissing: false
       }
     ])
     expect(mockVaultClient.writeJobQueue).toHaveBeenCalledWith([
@@ -385,6 +383,41 @@ describe('processJobQueue', () => {
       { jobId: 'job-1', type: 'ADD_PASSKEY', site: 'Example', keyMissing: true }
     ])
   })
+
+  it.each([
+    'Error adding record to active vault: Error: Vault key must rotate first: wait for a device that can rotate it',
+    'Vault key not available yet: another device must rotate it'
+  ])(
+    'keeps a job waiting for the vault key without using up its retries (%s)',
+    async (message) => {
+      const job = {
+        id: 'job-1',
+        type: 'ADD_PASSKEY',
+        status: 'PENDING',
+        vaultId: 'vault-123',
+        retryCount: 0,
+        maxRetries: 3,
+        payload: { rpId: 'example.com' }
+      }
+      mockVaultClient.readJobQueue.mockImplementation(async () => [{ ...job }])
+      processJob.mockRejectedValue(new Error(message))
+
+      for (let run = 0; run < 3; run++) {
+        const result = await processJobQueue(makeParams())
+        expect(result.notSaved).toEqual([])
+      }
+
+      const written = mockVaultClient.writeJobQueue.mock.calls.at(-1)[0]
+      expect(written).toEqual([
+        expect.objectContaining({
+          id: 'job-1',
+          status: 'PENDING',
+          retryCount: 0
+        })
+      ])
+      expect(deleteJobFile).not.toHaveBeenCalled()
+    }
+  )
 
   it('counts the key error as the worklet wraps it as a missing key', async () => {
     const jobs = [
