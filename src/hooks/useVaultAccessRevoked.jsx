@@ -116,8 +116,9 @@ export const useVaultAccessRevoked = () => {
     )
   }, [])
 
-  // The lib emits once per vault, but a revoked:false status during the wipe
-  // re-arms it, and a repeat can land while the wipe still runs.
+  // The lib emits once per vault per process, but this hook can be mounted
+  // again (and announcements can arrive from the kick envelope and the
+  // epoch status at once), so a repeat can land while the wipe still runs.
   const handling = useRef(new Set())
   const handleAccessRevoked = useCallback(
     async (payload = {}) => {
