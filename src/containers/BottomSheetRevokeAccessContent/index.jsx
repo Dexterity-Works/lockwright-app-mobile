@@ -58,6 +58,8 @@ export const BottomSheetRevokeAccessContent = ({
   // 'confirm', then 'rotating' or 'failed' once the device is removed.
   const [phase, setPhase] = useState('confirm')
   const [waiting, setWaiting] = useState(false)
+  // The kick message did not reach the device (a failure with no kind).
+  const [unreachable, setUnreachable] = useState(false)
   const unmounted = useRef(false)
   useEffect(
     () => () => {
@@ -96,6 +98,8 @@ export const BottomSheetRevokeAccessContent = ({
     }
 
     rememberRevoked(vaultId, targetDeviceId, deviceName)
+    const offline = failures?.some((f) => !f?.kind)
+    setUnreachable(offline)
     const pending = epoch?.rotated === false && epoch.reason === 'pending'
     if (!epoch || (!epoch.rotated && epoch.reason !== 'current' && !pending)) {
       logNotRotated(epoch, rotationFailure)
@@ -113,7 +117,10 @@ export const BottomSheetRevokeAccessContent = ({
 
     markKeyRotated(vaultId, targetDeviceId, await rotationTime(confirmed.epoch))
     close()
-    const text2 = uncoveredText(epoch.uncovered)
+    const text2 =
+      [offline && unreachableText, uncoveredText(epoch.uncovered)]
+        .filter(Boolean)
+        .join(' ') || null
     Toast.show({
       type: 'baseToast',
       text1: t`${deviceName} revoked. Vault key rotated.`,
@@ -191,6 +198,8 @@ export const BottomSheetRevokeAccessContent = ({
     }
   }
 
+  const unreachableText = t`Couldn't reach the device. It will stop editing next time it comes online.`
+
   const uncoveredText = (uncovered) => {
     if (!uncovered?.length) return null
     // Distinct devices can share a label ("iPhone"), so count them.
@@ -221,6 +230,11 @@ export const BottomSheetRevokeAccessContent = ({
               ? t`${deviceName} can't change this vault, but it can still read new items until the key rotates.`
               : t`${deviceName} can't change this vault. The vault key will rotate when the vault next syncs. Until then it can still read new items.`}
           </Text>
+          {unreachable && (
+            <Text variant="label" color={theme.colors.colorTextSecondary}>
+              {unreachableText}
+            </Text>
+          )}
           <Button
             variant="secondary"
             size="medium"

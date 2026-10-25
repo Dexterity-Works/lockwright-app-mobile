@@ -364,6 +364,23 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(mockClose).not.toHaveBeenCalled()
   })
 
+  it('says when the kick message could not reach the device', async () => {
+    const unreachable =
+      "Couldn't reach the device. It will stop editing next time it comes online."
+    const offline = { targetDeviceId: 'd-gone', error: new Error('offline') }
+
+    await revoke({ results: [], failures: [offline], epoch: rotated })
+    await waitFor(() => expect(Toast.show).toHaveBeenCalled())
+    expect(Toast.show.mock.calls[0][0].text2).toBe(unreachable)
+
+    const failed = await revoke({
+      results: [],
+      failures: [offline],
+      epoch: { rotated: false, reason: 'not-writable', uncovered: [] }
+    })
+    expect(failed.getByText(unreachable)).toBeTruthy()
+  })
+
   it('names the devices the new key could not reach', async () => {
     await revoke({
       results: [],
