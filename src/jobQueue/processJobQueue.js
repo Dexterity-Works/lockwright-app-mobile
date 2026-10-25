@@ -4,13 +4,14 @@ import { processJob } from './JobWorker'
 import { acquireDbWriteGuard, releaseDbWriteGuard } from '../utils/dbGuard'
 import { logger } from '../utils/logger'
 
-// The vault core's words for a write without the current epoch key.
+// The vault core's words for a write without the current epoch key. The
+// worklet's reply puts its own prefix in front of them.
 const KEY_ERRORS = [
   'Vault key not available yet',
   'Vault key must rotate first'
 ]
 const isKeyError = (message) =>
-  typeof message === 'string' && KEY_ERRORS.some((m) => message.startsWith(m))
+  typeof message === 'string' && KEY_ERRORS.some((m) => message.includes(m))
 
 /**
  * Orchestrates job queue processing.

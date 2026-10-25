@@ -385,4 +385,24 @@ describe('processJobQueue', () => {
       { jobId: 'job-1', type: 'ADD_PASSKEY', site: 'Example', keyMissing: true }
     ])
   })
+
+  it('counts the key error as the worklet wraps it as a missing key', async () => {
+    const jobs = [
+      {
+        id: 'job-1',
+        type: 'ADD_PASSKEY',
+        status: 'FAILED',
+        vaultId: 'vault-123',
+        payload: { rpName: 'Example' },
+        // The text appCore replies with for an ACTIVE_VAULT_ADD failure.
+        error:
+          'Error adding record to active vault: Error: Vault key must rotate first: wait for a device that can rotate it'
+      }
+    ]
+    mockVaultClient.readJobQueue.mockResolvedValue(jobs)
+
+    const result = await processJobQueue(makeParams())
+
+    expect(result.notSaved[0].keyMissing).toBe(true)
+  })
 })
