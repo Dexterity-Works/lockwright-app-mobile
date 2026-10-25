@@ -122,6 +122,64 @@ describe('useVaultAccessRevoked', () => {
     expect(lockAutofillSession).not.toHaveBeenCalled()
   })
 
+  it('does not wipe when the vault list is not loaded', async () => {
+    useVaults.mockReturnValue({ data: null })
+    renderRevokedHook()
+
+    await act(async () => revokedHandler({ vaultId: 'v-active' }))
+
+    expect(deleteVaultLocal).not.toHaveBeenCalled()
+    expect(openModal).not.toHaveBeenCalled()
+  })
+
+  it('uses the vault id when a revoked vault has no name', async () => {
+    useVaults.mockReturnValue({ data: [{ id: 'v-unnamed' }] })
+    renderRevokedHook()
+
+    await act(async () => revokedHandler({ vaultId: 'v-unnamed' }))
+
+    expect(openModal.mock.calls[0][0].props.vaultName).toBe('v-unnamed')
+  })
+
+  it('uses the latest empty vault list after deleting the active vault', async () => {
+    let currentVaults = [activeVault]
+    let finishDelete
+    useVaults.mockImplementation(() => ({ data: currentVaults }))
+    deleteVaultLocal.mockReturnValue(
+      new Promise((resolve) => {
+        finishDelete = resolve
+      })
+    )
+    const hook = renderRevokedHook()
+    let pending
+
+    await act(async () => {
+      pending = revokedHandler({ vaultId: 'v-active' })
+      await Promise.resolve()
+      await Promise.resolve()
+    })
+    currentVaults = undefined
+    hook.rerender()
+    await act(async () => {
+      finishDelete()
+      await pending
+    })
+
+    expect(createVault).toHaveBeenCalled()
+    expect(switchVault).not.toHaveBeenCalled()
+  })
+
+  it('mounts when the vault client cannot subscribe to revocations', () => {
+    const on = pearpassVaultClient.on
+    pearpassVaultClient.on = undefined
+
+    try {
+      expect(() => renderRevokedHook()).not.toThrow()
+    } finally {
+      pearpassVaultClient.on = on
+    }
+  })
+
   // The Android fill sheet caches logins for its unlock window and fills
   // from that cache without asking the vault.
   it('locks the autofill session before wiping a revoked vault', async () => {
