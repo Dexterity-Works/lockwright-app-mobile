@@ -11,8 +11,11 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [0.0.33] - 2026-10-26
 
+`415c39865b5b2a0d2491b3b7b6ad78f659512043`
+
 ### Changed
 
+- Play versionCode 23.
 - The unique-id, password check, password generator, QR and validator utils come from one package, lockwright-lib-utils.
 
 ### Fixed
