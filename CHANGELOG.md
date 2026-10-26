@@ -18,7 +18,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 - Play versionCode 23.
 - The unique-id, password check, password generator, QR and validator utils come from one package, lockwright-lib-utils.
 
-### Fixed
+### Security
 
 - A use-after-free in the network library (host lookups and network-interface watching) could corrupt the vault process's memory and crash it. udx-native moves to 1.22.0, which fixes it.
 
