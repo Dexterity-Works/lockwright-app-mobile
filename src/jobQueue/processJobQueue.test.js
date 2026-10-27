@@ -386,7 +386,8 @@ describe('processJobQueue', () => {
 
   it.each([
     'Error adding record to active vault: Error: Vault key must rotate first: wait for a device that can rotate it',
-    'Vault key not available yet: another device must rotate it'
+    'Vault key not available yet: another device must rotate it',
+    'Error adding record to active vault: Error: epochStore: the vault view kept moving'
   ])(
     'keeps a job waiting for the vault key without using up its retries (%s)',
     async (message) => {

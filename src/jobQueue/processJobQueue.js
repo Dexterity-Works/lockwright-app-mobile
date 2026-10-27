@@ -12,6 +12,12 @@ const KEY_ERRORS = [
 ]
 const isKeyError = (message) =>
   typeof message === 'string' && KEY_ERRORS.some((m) => message.includes(m))
+// Refusals that pass on their own: a missing key, or a vault view still
+// moving under a large sync.
+const mustWait = (message) =>
+  isKeyError(message) ||
+  (typeof message === 'string' &&
+    message.includes('the vault view kept moving'))
 
 /**
  * Orchestrates job queue processing.
@@ -84,7 +90,7 @@ export const processJobQueue = async ({
         // A missing or owed vault key is a wait, not a failed save: the job
         // holds the passkey's private key and the site already has the
         // passkey, so it stays queued until the key arrives.
-        if (isKeyError(error.message)) {
+        if (mustWait(error.message)) {
           job.status = JobStatus.PENDING
           logger.log(`[jobQueue] Job ${job.id} waits for the vault key`)
           continue
