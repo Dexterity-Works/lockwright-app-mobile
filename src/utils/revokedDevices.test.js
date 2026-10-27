@@ -95,6 +95,19 @@ describe('removedDevices', () => {
     ).toEqual([{ id: 'd-gone', name: 'Phone', rotatedAt: expect.any(Number) }])
   })
 
+  it('keeps a revoked device rotating while a rotation is owed or the vault is legacy', () => {
+    rememberRevoked('v10', 'd-gone', 'Phone')
+
+    for (const owed of [
+      { epoch: null, members: [] },
+      { legacy: true, members: ['d-me'] }
+    ]) {
+      expect(
+        removedDevices(status({ vaultId: 'v10', ...owed }), 'v10', roster)
+      ).toEqual([{ id: 'd-gone', name: 'Phone', rotatedAt: null }])
+    }
+  })
+
   it('stamps a rotation it first sees in the list', () => {
     rememberRevoked('v4', 'd-gone', 'Phone')
     const before = Date.now()

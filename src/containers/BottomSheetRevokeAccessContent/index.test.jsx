@@ -176,6 +176,27 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(markKeyRotated).toHaveBeenCalledWith('v1', 'd-gone', 1600000000000)
   })
 
+  it.each([
+    ['no latest epoch while a rotation is owed', { epoch: null, members: [] }],
+    ['a legacy status', { legacy: true, members: ['d-old'] }],
+    ['a key that still includes the device', { members: ['d-old', 'd-gone'] }]
+  ])('does not confirm on %s', async (_, overrides) => {
+    jest.useFakeTimers()
+    pearpassVaultClient.activeVaultGetEpochStatus.mockResolvedValue(
+      status(overrides)
+    )
+    // The device's row is still listed, so only the status can tell.
+    pearpassVaultClient.activeVaultList.mockResolvedValue([
+      ...devices,
+      { id: 'd-gone', name: 'Phone' }
+    ])
+    await revoke({ results: [], failures: [], epoch: rotated })
+    await pastDeadline()
+
+    expect(Toast.show).not.toHaveBeenCalled()
+    expect(markKeyRotated).not.toHaveBeenCalled()
+  })
+
   it('does not confirm while the new key still reaches a device off the roster', async () => {
     jest.useFakeTimers()
     // A member with an older roster rotated: the target's swept duplicate
