@@ -179,7 +179,10 @@ export const BottomSheetRevokeAccessContent = ({
       const record = await pearpassVaultClient.activeVaultGet(
         `epoch/${epochId}`
       )
-      if (Number.isFinite(record?.createdAt)) return record.createdAt
+      // A signed record can carry any number; keep only one that makes a date.
+      if (!Number.isNaN(new Date(record?.createdAt ?? NaN).getTime())) {
+        return record.createdAt
+      }
     } catch (error) {
       logger.warn(
         'BottomSheetRevokeAccessContent',

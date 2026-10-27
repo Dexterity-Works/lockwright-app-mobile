@@ -197,6 +197,17 @@ describe('BottomSheetRevokeAccessContent', () => {
     expect(markKeyRotated).not.toHaveBeenCalled()
   })
 
+  it('records the confirmation time when the epoch record has no valid date', async () => {
+    pearpassVaultClient.activeVaultGet.mockResolvedValue({ createdAt: 1e16 })
+
+    await revoke({ results: [], failures: [], epoch: rotated })
+
+    await waitFor(() => expect(markKeyRotated).toHaveBeenCalled())
+    const at = markKeyRotated.mock.calls[0][2]
+    expect(Number.isNaN(new Date(at).getTime())).toBe(false)
+    expect(at).not.toBe(1e16)
+  })
+
   it('does not confirm while the new key still reaches a device off the roster', async () => {
     jest.useFakeTimers()
     // A member with an older roster rotated: the target's swept duplicate

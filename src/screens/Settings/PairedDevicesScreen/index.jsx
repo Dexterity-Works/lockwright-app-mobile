@@ -102,9 +102,9 @@ export const PairedDevicesScreen = () => {
       const record = await pearpassVaultClient.activeVaultGet(
         `epoch/${status.epoch}`
       )
-      return Number.isFinite(record?.createdAt)
-        ? { ...status, rotatedAt: record.createdAt }
-        : status
+      return Number.isNaN(new Date(record?.createdAt ?? NaN).getTime())
+        ? status
+        : { ...status, rotatedAt: record.createdAt }
     } catch {
       return status
     }
