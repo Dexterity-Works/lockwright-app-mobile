@@ -22,6 +22,7 @@ Community fork of PearPass (Apache 2.0). Not affiliated with or endorsed by Teth
 - [Architecture](#architecture)
 - [Starting the Application](#starting-the-application)
 - [Prebuild](#prebuild)
+- [Dev variant](#dev-variant)
 - [Testing](#testing)
 - [Dependencies](#dependencies)
 - [Related Projects](#related-projects)
@@ -149,6 +150,34 @@ More details:
 
 - [`docs/fdroid/build.md`](docs/fdroid/build.md)
 - [`docs/fdroid/version-check.md`](docs/fdroid/version-check.md)
+
+---
+
+## Dev variant
+
+`APP_VARIANT=dev` builds Lockwright Dev, a test app that installs next to the store app and never shares its data. Unset, the build is the store app. Any other value fails the config.
+
+| | Store app | Dev variant |
+| --- | --- | --- |
+| Name | Lockwright | Lockwright Dev, icon with a DEV band |
+| Android package, iOS bundle ID | `works.dexterity.lockwright` | `works.dexterity.lockwright.dev` |
+| iOS autofill extension | `works.dexterity.lockwright.PearPassAutoFillExtension` | `works.dexterity.lockwright.dev.PearPassAutoFillExtension` |
+| iOS app group and keychain group | `group.works.dexterity.lockwright` | `group.works.dexterity.lockwright.dev` |
+| iOS URL scheme | `pearpassappmobile` | `lockwrightdev` |
+
+The dev variant also asks the vault worker to write a trace to `<storage dir>/logs/trace.jsonl`, next to the vault. A vault-core without the `traceFile` option ignores it.
+
+```bash
+APP_VARIANT=dev npx expo prebuild --platform android --clean
+APP_VARIANT=dev pnpm run android
+```
+
+EAS profiles: `development-dev` (dev client) and `preview-dev-apk` (release APK).
+
+Steps only a person can do:
+
+- **iOS.** In the Apple developer account, register the App IDs `works.dexterity.lockwright.dev` and `works.dexterity.lockwright.dev.PearPassAutoFillExtension` with the App Groups and AutoFill Credential Provider capabilities. Register the app group `group.works.dexterity.lockwright.dev` and assign it to both. Create provisioning profiles for both App IDs with the test devices on them. EAS builds use local credentials, so point `credentials.json` at those profiles for a dev build.
+- **Android.** Nothing beyond a signing key. A debug build uses the debug key. The dev package is new to Play and to the phone, so any key works and the store app stays installed.
 
 ---
 
