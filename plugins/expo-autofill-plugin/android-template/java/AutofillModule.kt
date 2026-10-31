@@ -29,6 +29,11 @@ class AutofillModule(reactContext: ReactApplicationContext) :
         return "AutofillModule"
     }
 
+    // The installed package. JS reads it instead of the Expo config, which
+    // follows whatever APP_VARIANT Metro was started with.
+    override fun getConstants(): Map<String, Any> =
+        mapOf("applicationId" to reactApplicationContext.packageName)
+
     /**
      * Checks if this specific app is set as the default autofill service
      */

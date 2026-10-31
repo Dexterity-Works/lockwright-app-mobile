@@ -16,7 +16,8 @@ jest.mock('lockwright-lib-vault-core', () => ({
     .fn()
     .mockImplementation(function PearpassVaultClient() {
       return {
-        setJobStoragePath: jest.fn()
+        setJobStoragePath: jest.fn(),
+        setLogOptions: jest.fn()
       }
     })
 }))
@@ -42,6 +43,9 @@ jest.mock(
     virtual: true
   }
 )
+jest.mock('../constants/appVariant.js', () => ({
+  isDevVariant: jest.fn(() => false)
+}))
 jest.mock('../utils/AppGroupHelper.js', () => ({
   getSharedDirectoryPath: jest.fn().mockResolvedValue('/test-dir')
 }))
@@ -157,5 +161,36 @@ describe('createPearpassVaultClient', () => {
         debugMode: true
       }
     )
+  })
+
+  describe('trace file', () => {
+    const logOptions = async (devVariant, logsDirExists = true) => {
+      require('../constants/appVariant.js').isDevVariant.mockReturnValue(
+        devVariant
+      )
+      Platform.select.mockReturnValue(
+        require('../../bundles/app-ios.bundle.js')
+      )
+      FileSystem.getInfoAsync.mockImplementation(async (uri) => ({
+        exists: uri.endsWith('/logs') ? logsDirExists : true
+      }))
+      const client = await createPearpassVaultClient()
+      return client.setLogOptions.mock.calls[0][0]
+    }
+
+    it('sends a trace file under the storage dir in the dev variant', async () => {
+      expect(await logOptions(true, false)).toMatchObject({
+        traceFile: '/test-dir/pearpass/logs/trace.jsonl'
+      })
+      expect(FileSystem.makeDirectoryAsync).toHaveBeenCalledWith(
+        'file:///test-dir/pearpass/logs',
+        { intermediates: true }
+      )
+    })
+
+    it('sends no trace file without the variant', async () => {
+      expect(await logOptions(false)).not.toHaveProperty('traceFile')
+      expect(FileSystem.makeDirectoryAsync).not.toHaveBeenCalled()
+    })
   })
 })
