@@ -174,7 +174,7 @@ pnpm run android:dev   # prebuild --clean with APP_VARIANT=dev, then run
 pnpm run ios:dev
 ```
 
-`expo run` prebuilds only when `android/` or `ios/` is missing. If the folder was prebuilt for the other variant, `expo run` stops with an error that names both app IDs and the `prebuild --clean` command to run. That covers `pnpm run android`, `pnpm run ios`, the `:dev` scripts, `expo run:android`, `expo run:ios`, `expo run android` and `expo run ios`. A bare `expo run` checks both folders, and so does `expo run --flag ios`, because Expo prompts for the platform when a flag comes before it. Without that check a store run would build the dev app, or a dev run the store app, which on iOS would replace the App Store install and open the real vault. `prebuild`, `expo start`, Xcode and Gradle are not checked.
+`expo run` prebuilds only when `android/` or `ios/` is missing. If the folder was prebuilt for the other variant, `expo run` stops with an error that names both app IDs and the `prebuild --clean` command to run. That covers `pnpm run android`, `pnpm run ios`, the `:dev` scripts, `expo run:android`, `expo run:ios`, `expo run android` and `expo run ios`. A bare `expo run` checks both folders, and so does `expo run --flag ios`, because Expo prompts for the platform when a flag comes before it. Without that check a store run would build the dev app, or a dev run the store app, which on iOS would replace the App Store install and open the real vault. `prebuild`, `expo start`, `react-native run-android`, `react-native run-ios`, Xcode and Gradle are not checked, so run `prebuild --clean` before any of them when switching variants.
 
 EAS profiles: `development-dev` (dev client) and `preview-dev-apk` (release APK).
 
