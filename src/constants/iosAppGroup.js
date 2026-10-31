@@ -1,8 +1,9 @@
-import Constants from 'expo-constants'
+import { NativeModules } from 'react-native'
 
-// The app group comes from the resolved Expo config, so the dev variant
-// (APP_VARIANT=dev) uses its own group and keychain access group.
+import { readNativeConstant } from './appVariant'
+
+// The app group the installed binary was built with, so a dev build uses its
+// own group and keychain access group whatever env Metro ran in.
 export const IOS_APP_GROUP_ID =
-  Constants.expoConfig?.ios?.entitlements?.[
-    'com.apple.security.application-groups'
-  ]?.[0] ?? 'group.works.dexterity.lockwright'
+  readNativeConstant(NativeModules.AppGroupHelper, 'appGroupIdentifier') ??
+  'group.works.dexterity.lockwright'

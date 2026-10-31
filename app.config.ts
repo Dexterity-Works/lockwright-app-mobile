@@ -58,7 +58,6 @@ function withDevVariant(base: ExpoConfig): ExpoConfig {
       `$(AppIdentifierPrefix)${appId}`
     ]
   }
-  config.extra!.appVariant = 'dev'
   return config
 }
 

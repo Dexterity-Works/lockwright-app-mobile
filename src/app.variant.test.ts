@@ -74,7 +74,6 @@ describe("app variant", () => {
     expect(config.android).toEqual(app.android);
     expect(config.ios).toEqual(app.ios);
     expect(config.extra?.eas).toEqual(app.extra.eas);
-    expect(config.extra).not.toHaveProperty("appVariant");
     expect(autofillOptions(config).ios.appGroupIdentifier).toBe(
       "group.works.dexterity.lockwright",
     );
@@ -108,7 +107,6 @@ describe("app variant", () => {
         "keychain-access-groups": [`$(AppIdentifierPrefix)${id}`],
       },
     });
-    expect(config.extra?.appVariant).toBe("dev");
     expect(JSON.stringify(config)).not.toMatch(
       /works\.dexterity\.lockwright(?!\.dev)/,
     );

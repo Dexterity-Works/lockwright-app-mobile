@@ -44,6 +44,7 @@ jest.mock('src/utils/colors', () => ({
 }))
 
 jest.mock('react-native', () => ({
+  NativeModules: {},
   Platform: { OS: 'ios' }
 }))
 
