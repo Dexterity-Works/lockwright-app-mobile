@@ -1,23 +1,53 @@
 import type { ExpoConfig } from "@expo/config";
-import { readFileSync } from "fs";
-import path from "path";
 
 import resolveConfig from "../app.config";
 
-const readApp = () =>
-  JSON.parse(readFileSync(path.resolve(__dirname, "../app.json"), "utf8"));
+const ROOT = "/app";
+let mockNativeFiles: Record<string, string> = {};
 
-const resolve = (variant: string | undefined, app = readApp().expo) => {
+jest.mock("node:fs", () => ({
+  existsSync: (file: string) =>
+    Object.keys(mockNativeFiles).some(
+      (known) => known === file || known.startsWith(`${file}/`),
+    ),
+  readFileSync: (file: string) => mockNativeFiles[file],
+  readdirSync: (dir: string) => [
+    ...new Set(
+      Object.keys(mockNativeFiles)
+        .filter((known) => known.startsWith(`${dir}/`))
+        .map((known) => known.slice(dir.length + 1).split("/")[0]),
+    ),
+  ],
+}));
+
+const readApp = () => JSON.parse(JSON.stringify(require("../app.json")));
+
+const resolve = (
+  variant: string | undefined,
+  app = readApp().expo,
+  command?: string,
+) => {
   const saved = process.env.APP_VARIANT;
+  const savedArgv = process.argv;
   if (variant === undefined) delete process.env.APP_VARIANT;
   else process.env.APP_VARIANT = variant;
+  if (command) process.argv = [...savedArgv, command];
   try {
-    return resolveConfig({ config: app } as never);
+    return resolveConfig({ config: app, projectRoot: ROOT } as never);
   } finally {
     if (saved === undefined) delete process.env.APP_VARIANT;
     else process.env.APP_VARIANT = saved;
+    process.argv = savedArgv;
   }
 };
+
+const gradle = (applicationId: string) =>
+  `android {\n    namespace '${applicationId}'\n    defaultConfig {\n        applicationId '${applicationId}'\n    }\n}\n`;
+
+const pbxproj = (bundleId: string) =>
+  [bundleId, bundleId, `${bundleId}.PearPassAutoFillExtension`]
+    .map((id) => `\t\t\t\tPRODUCT_BUNDLE_IDENTIFIER = ${id};\n`)
+    .join("");
 
 const autofillOptions = (config: { plugins?: unknown[] }) =>
   (
@@ -31,6 +61,10 @@ const appExtension = (config: ExpoConfig) =>
   config.extra?.eas.build.experimental.ios.appExtensions[0];
 
 describe("app variant", () => {
+  beforeEach(() => {
+    mockNativeFiles = {};
+  });
+
   it("keeps the store IDs when APP_VARIANT is unset", () => {
     const app = readApp().expo;
     const config = resolve(undefined);
@@ -83,5 +117,46 @@ describe("app variant", () => {
 
   it("refuses any other APP_VARIANT", () => {
     expect(() => resolve("staging")).toThrow(/APP_VARIANT/);
+  });
+
+  describe("expo run with a prebuilt native project", () => {
+    it("refuses a dev run on a store android/", () => {
+      mockNativeFiles = { [`${ROOT}/android/app/build.gradle`]: gradle("works.dexterity.lockwright") };
+
+      expect(() => resolve("dev", undefined, "run:android")).toThrow(
+        /android\/ was prebuilt for works\.dexterity\.lockwright,.*works\.dexterity\.lockwright\.dev.*APP_VARIANT=dev npx expo prebuild --platform android --clean/,
+      );
+    });
+
+    it("refuses a store run on a dev ios/", () => {
+      mockNativeFiles = {
+        [`${ROOT}/ios/LockwrightDev.xcodeproj/project.pbxproj`]: pbxproj(
+          "works.dexterity.lockwright.dev",
+        ),
+      };
+
+      expect(() => resolve(undefined, undefined, "run:ios")).toThrow(
+        /ios\/ was prebuilt for works\.dexterity\.lockwright\.dev,.*`npx expo prebuild --platform ios --clean`/,
+      );
+    });
+
+    it("accepts a native project prebuilt for the same variant", () => {
+      mockNativeFiles = {
+        [`${ROOT}/android/app/build.gradle`]: gradle("works.dexterity.lockwright.dev"),
+        [`${ROOT}/ios/LockwrightDev.xcodeproj/project.pbxproj`]: pbxproj(
+          "works.dexterity.lockwright.dev",
+        ),
+      };
+
+      expect(() => resolve("dev", undefined, "run:android")).not.toThrow();
+      expect(() => resolve("dev", undefined, "run:ios")).not.toThrow();
+    });
+
+    it("leaves prebuild, start and Xcode or Gradle config reads alone", () => {
+      mockNativeFiles = { [`${ROOT}/android/app/build.gradle`]: gradle("works.dexterity.lockwright") };
+
+      expect(() => resolve("dev", undefined, "prebuild")).not.toThrow();
+      expect(() => resolve("dev")).not.toThrow();
+    });
   });
 });
