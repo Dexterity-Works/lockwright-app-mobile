@@ -4,6 +4,7 @@ import { PearpassVaultClient } from 'lockwright-lib-vault-core'
 import { Platform } from 'react-native'
 import { Worklet } from 'react-native-bare-kit'
 
+import { isDevVariant } from '../constants/appVariant.js'
 import { isNightly } from '../constants/distribution.js'
 import { getSharedDirectoryPath } from '../utils/AppGroupHelper.js'
 import {
@@ -90,6 +91,13 @@ export const createPearpassVaultClient = async ({ debugMode } = {}) => {
       logger.debug('[pearpass] init: client created')
 
       const corePath = coreLogsFileURI.replace(/^file:\/\//, '')
+      // The dev variant also asks vault-core for a JSONL trace next to the
+      // vault. vault-core versions that predate traceFile ignore the key.
+      let traceFile = null
+      if (isDevVariant()) {
+        await ensureDirectoryExist(`${path}/logs`)
+        traceFile = `${path.replace(/^file:\/\//, '')}/logs/trace.jsonl`
+      }
       const sentryDsn =
         isNightly() && !__DEV__
           ? (process.env.EXPO_PUBLIC_SENTRY_DSN ?? null)
@@ -105,7 +113,8 @@ export const createPearpassVaultClient = async ({ debugMode } = {}) => {
           logFile: enabled ? corePath : null,
           logLevel: enabled ? level : 'info',
           dev: __DEV__,
-          sentryDsn
+          sentryDsn,
+          ...(traceFile ? { traceFile } : {})
         }
       }
 
