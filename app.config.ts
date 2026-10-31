@@ -97,34 +97,55 @@ function iosAppIds(projectRoot: string, config: Partial<ExpoConfig>) {
   return ids
 }
 
-// expo run:* prebuilds only when the native folder is missing, so a folder
+type Platform = 'android' | 'ios'
+
+// The platforms an `expo run` invocation builds, or none for any other
+// command. Expo CLI 53 accepts `run:android`, `run:ios`, `run android`,
+// `run ios`, and a bare `run` that prompts. A flag right after `run`
+// (`run --device ios`) also makes it prompt, so both folders count then.
+function runPlatforms(argv: string[]): Platform[] {
+  // argv is `node <expo cli> [global flags] <command> ...`.
+  const index = argv.findIndex((arg, i) => i >= 2 && !arg.startsWith('-'))
+  const command = argv[index] ?? ''
+  const named = command.startsWith('run:')
+    ? command.slice('run:'.length)
+    : command === 'run'
+      ? argv[index + 1]
+      : null
+  if (named === null) {
+    return []
+  }
+  if (named === 'android' || named === 'ios') {
+    return [named]
+  }
+  return ['android', 'ios']
+}
+
+// expo run prebuilds only when the native folder is missing, so a folder
 // left from the other variant would build that variant's app. A store build
 // signed with the team replaces the App Store app and opens the real vault.
-// Only run:* is checked: prebuild must be free to replace the folder, and
+// Only expo run is checked: prebuild must be free to replace the folder, and
 // Metro, Xcode and Gradle read this config without APP_VARIANT.
 function assertNativeProjectMatches(
   projectRoot: string,
   config: Partial<ExpoConfig>
 ) {
-  const command = process.argv.find(
-    (arg) => arg === 'run:android' || arg === 'run:ios'
-  )
-  if (!command) {
-    return
-  }
-  const ios = command === 'run:ios'
-  const expected = ios ? config.ios?.bundleIdentifier : config.android?.package
-  const found = ios
-    ? iosAppIds(projectRoot, config)
-    : androidAppIds(projectRoot)
-  const stray = found.find((id) => id !== expected)
-  if (stray) {
-    const folder = ios ? 'ios/' : 'android/'
-    const variant = process.env.APP_VARIANT ? 'APP_VARIANT=dev ' : ''
-    throw new Error(
-      `${folder} was prebuilt for ${stray}, but this run builds ${expected}. ` +
-        `Run \`${variant}npx expo prebuild --platform ${ios ? 'ios' : 'android'} --clean\` first.`
-    )
+  for (const platform of runPlatforms(process.argv)) {
+    const ios = platform === 'ios'
+    const expected = ios
+      ? config.ios?.bundleIdentifier
+      : config.android?.package
+    const found = ios
+      ? iosAppIds(projectRoot, config)
+      : androidAppIds(projectRoot)
+    const stray = found.find((id) => id !== expected)
+    if (stray) {
+      const variant = process.env.APP_VARIANT ? 'APP_VARIANT=dev ' : ''
+      throw new Error(
+        `${platform}/ was prebuilt for ${stray}, but this run builds ${expected}. ` +
+          `Run \`${variant}npx expo prebuild --platform ${platform} --clean\` first.`
+      )
+    }
   }
 }
 

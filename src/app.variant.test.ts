@@ -27,11 +27,12 @@ const resolve = (
   app = readApp().expo,
   command?: string,
 ) => {
+  // Expo CLI sees `node <expo cli> <command...>`.
   const saved = process.env.APP_VARIANT;
   const savedArgv = process.argv;
   if (variant === undefined) delete process.env.APP_VARIANT;
   else process.env.APP_VARIANT = variant;
-  if (command) process.argv = [...savedArgv, command];
+  if (command) process.argv = ["node", "expo", ...command.split(" ")];
   try {
     return resolveConfig({ config: app, projectRoot: ROOT } as never);
   } finally {
@@ -154,7 +155,54 @@ describe("app variant", () => {
       mockNativeFiles = { [`${ROOT}/android/app/build.gradle`]: gradle("works.dexterity.lockwright") };
 
       expect(() => resolve("dev", undefined, "prebuild")).not.toThrow();
+      expect(() => resolve("dev", undefined, "prebuild --platform android --clean")).not.toThrow();
+      expect(() => resolve("dev", undefined, "start --dev-client")).not.toThrow();
       expect(() => resolve("dev")).not.toThrow();
+    });
+
+    describe("expo run <platform> and bare expo run", () => {
+      const storeAndroid = { [`${ROOT}/android/app/build.gradle`]: gradle("works.dexterity.lockwright") };
+      const devAndroid = { [`${ROOT}/android/app/build.gradle`]: gradle("works.dexterity.lockwright.dev") };
+      const storeIos = {
+        [`${ROOT}/ios/Lockwright.xcodeproj/project.pbxproj`]: pbxproj("works.dexterity.lockwright"),
+      };
+      const devIos = {
+        [`${ROOT}/ios/LockwrightDev.xcodeproj/project.pbxproj`]: pbxproj("works.dexterity.lockwright.dev"),
+      };
+
+      it("checks android/ for run android, both ways", () => {
+        mockNativeFiles = storeAndroid;
+        expect(() => resolve("dev", undefined, "run android")).toThrow(/android\/ was prebuilt for works\.dexterity\.lockwright,/);
+        mockNativeFiles = devAndroid;
+        expect(() => resolve(undefined, undefined, "run android --variant debug")).toThrow(/android\/ was prebuilt for works\.dexterity\.lockwright\.dev,/);
+      });
+
+      it("checks ios/ for run ios, both ways", () => {
+        mockNativeFiles = storeIos;
+        expect(() => resolve("dev", undefined, "run ios")).toThrow(/ios\/ was prebuilt for works\.dexterity\.lockwright,/);
+        mockNativeFiles = devIos;
+        expect(() => resolve(undefined, undefined, "run ios --device")).toThrow(/ios\/ was prebuilt for works\.dexterity\.lockwright\.dev,/);
+      });
+
+      it("checks only the named platform", () => {
+        mockNativeFiles = { ...devIos, ...storeAndroid };
+        expect(() => resolve("dev", undefined, "run ios")).not.toThrow();
+        expect(() => resolve("dev", undefined, "run:ios")).not.toThrow();
+      });
+
+      it("checks both folders when expo run will prompt for the platform", () => {
+        mockNativeFiles = { ...devAndroid, ...storeIos };
+        expect(() => resolve("dev", undefined, "run")).toThrow(/ios\/ was prebuilt for works\.dexterity\.lockwright,/);
+        // A flag before the platform makes Expo prompt too.
+        expect(() => resolve("dev", undefined, "run --device ios")).toThrow(/ios\/ was prebuilt/);
+        mockNativeFiles = { ...devAndroid, ...storeIos };
+        expect(() => resolve(undefined, undefined, "run")).toThrow(/android\/ was prebuilt for works\.dexterity\.lockwright\.dev,/);
+      });
+
+      it("finds the command after Expo's global flags", () => {
+        mockNativeFiles = storeAndroid;
+        expect(() => resolve("dev", undefined, "--non-interactive run android")).toThrow(/android\/ was prebuilt/);
+      });
     });
   });
 });
