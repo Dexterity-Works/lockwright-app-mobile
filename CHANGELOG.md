@@ -11,7 +11,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ### Added
 
-- `APP_VARIANT=dev` builds Lockwright Dev (`works.dexterity.lockwright.dev`), a test app with its own app group, keychain group, URL scheme and a DEV icon. It installs next to the store app and does not share its vault, secure store or autofill data. EAS profiles `development-dev` and `preview-dev-apk` set it. The dev variant also asks vault-core for a trace file at `<storage dir>/logs/trace.jsonl`. Unset, the build is unchanged.
+- `APP_VARIANT=dev` builds Lockwright Dev (`works.dexterity.lockwright.dev`), a test app with its own app group, keychain group, URL scheme and a DEV icon. It installs next to the store app and does not share its vault, secure store or autofill data. EAS profiles `development-dev` and `preview-dev-apk` set it. `pnpm run android:dev` and `ios:dev` prebuild it clean before running, and `expo run` stops when `android/` or `ios/` was prebuilt for the other variant. At run time the iOS app group and the dev check come from the installed binary's IDs. The dev variant also asks vault-core for a trace file at `<storage dir>/logs/trace.jsonl`. Unset, the build is unchanged.
 
 ## [0.0.33] - 2026-10-17
 

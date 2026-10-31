@@ -165,18 +165,23 @@ More details:
 | iOS app group and keychain group | `group.works.dexterity.lockwright` | `group.works.dexterity.lockwright.dev` |
 | iOS URL scheme | `pearpassappmobile` | `lockwrightdev` |
 
+At run time the app trusts the installed binary, not the JS config. The app group and the dev check come from the native app ID (`AppGroupHelper` on iOS, `AutofillModule` on Android), so a dev client served by a plain `pnpm start` still uses its own group.
+
 The dev variant also asks the vault worker to write a trace to `<storage dir>/logs/trace.jsonl`, next to the vault. A vault-core without the `traceFile` option ignores it.
 
 ```bash
-APP_VARIANT=dev npx expo prebuild --platform android --clean
-APP_VARIANT=dev pnpm run android
+pnpm run android:dev   # prebuild --clean with APP_VARIANT=dev, then run
+pnpm run ios:dev
 ```
+
+`expo run` prebuilds only when `android/` or `ios/` is missing. If the folder was prebuilt for the other variant, `pnpm run android`, `pnpm run ios` and the `:dev` runs stop with an error that names both app IDs and the `prebuild --clean` command to run. Without that check a store run would build the dev app, or a dev run the store app, which on iOS would replace the App Store install and open the real vault. `prebuild`, `expo start`, Xcode and Gradle are not checked.
 
 EAS profiles: `development-dev` (dev client) and `preview-dev-apk` (release APK).
 
 Steps only a person can do:
 
-- **iOS.** In the Apple developer account, register the App IDs `works.dexterity.lockwright.dev` and `works.dexterity.lockwright.dev.PearPassAutoFillExtension` with the App Groups and AutoFill Credential Provider capabilities. Register the app group `group.works.dexterity.lockwright.dev` and assign it to both. Create provisioning profiles for both App IDs with the test devices on them. EAS builds use local credentials, so point `credentials.json` at those profiles for a dev build.
+- **iOS.** In the Apple developer account, register the App IDs `works.dexterity.lockwright.dev` and `works.dexterity.lockwright.dev.PearPassAutoFillExtension` with the App Groups and AutoFill Credential Provider capabilities. Register the app group `group.works.dexterity.lockwright.dev` and assign it to both. Create provisioning profiles for both App IDs with the test devices on them.
+- **iOS credentials.** EAS builds use local credentials. In `credentials.json` the iOS keys are Xcode target names: the dev main target is `LockwrightDev` (the store one is `Lockwright`) and the extension is `PearPassAutoFillExtension`. A dev build needs its own `credentials.json` with the dev profiles swapped in before `eas build`, and the store file put back after.
 - **Android.** Nothing beyond a signing key. A debug build uses the debug key. The dev package is new to Play and to the phone, so any key works and the store app stays installed.
 
 ---
