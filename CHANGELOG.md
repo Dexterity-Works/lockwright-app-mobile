@@ -11,6 +11,12 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [0.0.34] - 2026-11-01
 
+`2e18e9a33c64916ad54576ff6af442bacbf4509c`
+
+### Changed
+
+- Play versionCode 24.
+
 ### Fixed
 
 - Locking, or switching to another vault, while a vault was applying synced changes could crash the vault process with `Cannot read properties of null (reading 'flushing')`. hypercore moves to 11.39.6, which fixes it.
