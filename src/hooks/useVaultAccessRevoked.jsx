@@ -9,6 +9,7 @@ import { useVaultSwitch } from './useVaultSwitch'
 import { TOAST_CONFIG } from '../constants/toast'
 import { AccessRemovedModalContent } from '../containers/Modal/AccessRemovedModalContent'
 import { useModal } from '../context/ModalContext'
+import { lockAutofillSession } from '../utils/AutofillModule'
 import { logger } from '../utils/logger'
 
 export const useVaultAccessRevoked = () => {
@@ -41,7 +42,7 @@ export const useVaultAccessRevoked = () => {
     }
   })
 
-  const handleAccessRevoked = useCallback(async ({ vaultId, actor } = {}) => {
+  const wipeRevokedVault = useCallback(async ({ vaultId, actor } = {}) => {
     if (!vaultId) return
     const {
       vaults,
@@ -59,6 +60,9 @@ export const useVaultAccessRevoked = () => {
     const vaultName = vault.name ?? vaultId
     const deviceName = vault.devices?.find((d) => d?.id === actor)?.name
     const wasActive = activeVault?.id === vaultId
+
+    // The Android fill sheet fills from logins it cached at unlock.
+    await lockAutofillSession()
 
     try {
       await deleteVaultLocal(vaultId)
@@ -111,6 +115,24 @@ export const useVaultAccessRevoked = () => {
       />
     )
   }, [])
+
+  // The lib emits once per vault per process, but this hook can be mounted
+  // again (and announcements can arrive from the kick envelope and the
+  // epoch status at once), so a repeat can land while the wipe still runs.
+  const handling = useRef(new Set())
+  const handleAccessRevoked = useCallback(
+    async (payload = {}) => {
+      const { vaultId } = payload
+      if (!vaultId || handling.current.has(vaultId)) return
+      handling.current.add(vaultId)
+      try {
+        await wipeRevokedVault(payload)
+      } finally {
+        handling.current.delete(vaultId)
+      }
+    },
+    [wipeRevokedVault]
+  )
 
   useEffect(() => {
     if (!pearpassVaultClient?.on) return

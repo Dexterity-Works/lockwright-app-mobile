@@ -9,13 +9,26 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+## [0.0.35] - 2026-11-03
+
+`c1db44ec11c9415abd3250e0b05f4dc866a8867d`
+
+### Added
+
+- After a revoke, a toast warns when the vault key could not be rotated, with a plain reason for known causes and a generic line otherwise, or names the devices that can't read new items until they open this vault once on a current Lockwright version.
+
 ### Changed
 
+- Play versionCode 25.
 - The vault process runs on react-native-bare-kit 0.16.0, bare-fetch 3, hyperswarm 4.17.2 and hyperdht 6.35.0.
+- The revoke-access sheet says revoking rotates the vault key, and once the key rotates the device can't read items added or changed after that. Items from before the rotation aren't re-encrypted, so the device can still read them. It no longer suggests moving items to a new vault.
 
 ### Fixed
 
 - Connections a site closed after a favicon fetch stayed open in the vault process and piled up. bare-http1 moves to 4.6.3, which fixes it.
+- Autofill on Android and iOS lists nothing while this device can't read the vault's latest key (a revoked device, a new device whose key hasn't arrived, or a deferred migration), instead of offering items sealed under older keys. On Android it also drops logins an earlier unlock cached, and no longer asks for the vault password in that case.
+- A vault revoked from another device locks Android autofill's cached logins before the wipe.
+- Revoking a device sends it the revoke notice only after it is removed from the vault, so the device can no longer take the notice as a cue to write first. If the removal fails, no notice goes out.
 
 ## [0.0.34] - 2026-11-01
 

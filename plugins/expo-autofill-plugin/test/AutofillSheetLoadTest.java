@@ -29,6 +29,7 @@ public final class AutofillSheetLoadTest {
         lockErrorIsNotEmptyVault();
         workletDownIsNotEmptyVault();
         failedActivateIsNotEmptyVault();
+        deferredEpochKeyShowsEmptySheet();
         forgejoHostFindsForgejoLogin();
         emptyListAfterActivateIsNotEmptyVault();
         emptyUnlockMustNotCacheSession();
@@ -246,6 +247,25 @@ public final class AutofillSheetLoadTest {
                 AutofillSheetLoad.showEmptyAfterLoadFailure(
                         AutofillSheetLoad.isTransientLoadFailure(
                                 new RuntimeException("bad record id"))),
+                true);
+    }
+
+    /**
+     * Residual: a FAILED migrate gate fails listCanonicalRecords with
+     * PearPassVaultException("epoch-key-pending"), and get() wraps it.
+     * That is not transient, so the sheet shows empty with no retry.
+     */
+    private static void deferredEpochKeyShowsEmptySheet() {
+        Exception failure = new java.util.concurrent.ExecutionException(
+                new RuntimeException("epoch-key-pending"));
+        expect(
+                "deferred epoch-key-pending is not a transient load failure",
+                AutofillSheetLoad.isTransientLoadFailure(failure),
+                false);
+        expect(
+                "deferred epoch-key-pending shows the empty sheet",
+                AutofillSheetLoad.showEmptyAfterLoadFailure(
+                        AutofillSheetLoad.isTransientLoadFailure(failure)),
                 true);
     }
 

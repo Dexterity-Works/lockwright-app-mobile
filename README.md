@@ -45,6 +45,7 @@ The on-disk vault at the fork point is PearPass's. Vault work in this tree aims 
 - **Encrypted-at-rest storage.** Lockwright encrypts passwords, credit cards, secure notes, and custom fields before writing them to disk.
 - **Biometric authentication.** Unlock your vault with fingerprint or face recognition.
 - **Cross-device sync.** Credentials sync directly between your devices, with no central server.
+- **Device revoke.** Revoking a device removes it from the vault and rotates the vault key, so it can't read anything saved or changed after that. It keeps every item it synced before the key rotated: if it was lost or stolen, change the passwords it could see.
 - **Offline access.** Access your vault anytime, even without a network connection.
 - **Password health.** Analyse password strength and identify weak passwords.
 - **Random password generator.** Generate strong, unique passwords.

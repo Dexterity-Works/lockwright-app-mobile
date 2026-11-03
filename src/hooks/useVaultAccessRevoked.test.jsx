@@ -9,6 +9,7 @@ import { useVaultAccessRevoked } from './useVaultAccessRevoked'
 import { useVaultSwitch } from './useVaultSwitch'
 import { useModal } from '../context/ModalContext'
 import messages from '../locales/en/messages'
+import { lockAutofillSession } from '../utils/AutofillModule'
 
 i18n.load('en', messages)
 i18n.activate('en')
@@ -52,6 +53,10 @@ jest.mock('../containers/Modal/AccessRemovedModalContent', () => ({
 
 jest.mock('@lingui/react/macro', () => ({
   useLingui: () => ({ t: (text) => text })
+}))
+
+jest.mock('../utils/AutofillModule', () => ({
+  lockAutofillSession: jest.fn()
 }))
 
 jest.mock('../utils/logger', () => ({
@@ -109,10 +114,91 @@ describe('useVaultAccessRevoked', () => {
 
   it('ignores payloads with no vaultId or unknown vault', async () => {
     renderRevokedHook()
+    await act(async () => revokedHandler(undefined))
     await act(async () => revokedHandler({}))
     await act(async () => revokedHandler({ vaultId: 'v-unknown' }))
     expect(deleteVaultLocal).not.toHaveBeenCalled()
     expect(openModal).not.toHaveBeenCalled()
+    expect(lockAutofillSession).not.toHaveBeenCalled()
+  })
+
+  it('does not wipe when the vault list is not loaded', async () => {
+    useVaults.mockReturnValue({ data: null })
+    renderRevokedHook()
+
+    await act(async () => revokedHandler({ vaultId: 'v-active' }))
+
+    expect(deleteVaultLocal).not.toHaveBeenCalled()
+    expect(openModal).not.toHaveBeenCalled()
+  })
+
+  it('uses the vault id when a revoked vault has no name', async () => {
+    useVaults.mockReturnValue({ data: [{ id: 'v-unnamed' }] })
+    renderRevokedHook()
+
+    await act(async () => revokedHandler({ vaultId: 'v-unnamed' }))
+
+    expect(openModal.mock.calls[0][0].props.vaultName).toBe('v-unnamed')
+  })
+
+  it('uses the latest empty vault list after deleting the active vault', async () => {
+    let currentVaults = [activeVault]
+    let finishDelete
+    useVaults.mockImplementation(() => ({ data: currentVaults }))
+    deleteVaultLocal.mockReturnValue(
+      new Promise((resolve) => {
+        finishDelete = resolve
+      })
+    )
+    const hook = renderRevokedHook()
+    let pending
+
+    await act(async () => {
+      pending = revokedHandler({ vaultId: 'v-active' })
+      await Promise.resolve()
+      await Promise.resolve()
+    })
+    currentVaults = undefined
+    hook.rerender()
+    await act(async () => {
+      finishDelete()
+      await pending
+    })
+
+    expect(createVault).toHaveBeenCalled()
+    expect(switchVault).not.toHaveBeenCalled()
+  })
+
+  it('mounts when the vault client cannot subscribe to revocations', () => {
+    const on = pearpassVaultClient.on
+    pearpassVaultClient.on = undefined
+
+    try {
+      expect(() => renderRevokedHook()).not.toThrow()
+    } finally {
+      pearpassVaultClient.on = on
+    }
+  })
+
+  // The Android fill sheet caches logins for its unlock window and fills
+  // from that cache without asking the vault.
+  it('locks the autofill session before wiping a revoked vault', async () => {
+    renderRevokedHook()
+    await act(async () => revokedHandler({ vaultId: 'v-other' }))
+
+    expect(lockAutofillSession).toHaveBeenCalledTimes(1)
+    expect(lockAutofillSession.mock.invocationCallOrder[0]).toBeLessThan(
+      deleteVaultLocal.mock.invocationCallOrder[0]
+    )
+  })
+
+  it('locks the autofill session even when the local wipe fails', async () => {
+    deleteVaultLocal.mockRejectedValue(new Error('disk'))
+    renderRevokedHook()
+    await act(async () => revokedHandler({ vaultId: 'v-active' }))
+
+    expect(lockAutofillSession).toHaveBeenCalledTimes(1)
+    expect(openModal).toHaveBeenCalledTimes(1)
   })
 
   it('wipes the active vault and switches to the next when one exists', async () => {
@@ -147,6 +233,34 @@ describe('useVaultAccessRevoked', () => {
     // toast and once for the original delete-confirmation toast.
     expect(Toast.show).toHaveBeenCalled()
     expect(createVault).toHaveBeenCalled()
+  })
+
+  it('wipes once when the same vault is announced twice', async () => {
+    let finishDelete
+    deleteVaultLocal.mockReturnValue(
+      new Promise((resolve) => {
+        finishDelete = resolve
+      })
+    )
+
+    renderRevokedHook()
+    await act(async () => {
+      const first = revokedHandler({ vaultId: 'v-active' })
+      const second = revokedHandler({ vaultId: 'v-active', actor: null })
+      finishDelete()
+      await Promise.all([first, second])
+    })
+
+    expect(deleteVaultLocal).toHaveBeenCalledTimes(1)
+    expect(openModal).toHaveBeenCalledTimes(1)
+  })
+
+  it('wipes again when the vault is announced after the first wipe', async () => {
+    renderRevokedHook()
+    await act(async () => revokedHandler({ vaultId: 'v-active' }))
+    await act(async () => revokedHandler({ vaultId: 'v-active' }))
+
+    expect(deleteVaultLocal).toHaveBeenCalledTimes(2)
   })
 
   it('still opens the access-removed modal when delete fails locally', async () => {
