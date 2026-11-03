@@ -28,6 +28,7 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 - Connections a site closed after a favicon fetch stayed open in the vault process and piled up. bare-http1 moves to 4.6.3, which fixes it.
 - Autofill on Android and iOS lists nothing while this device can't read the vault's latest key (a revoked device, a new device whose key hasn't arrived, or a deferred migration), instead of offering items sealed under older keys. On Android it also drops logins an earlier unlock cached, and no longer asks for the vault password in that case.
 - A vault revoked from another device locks Android autofill's cached logins before the wipe.
+- Revoking a device sends it the revoke notice only after it is removed from the vault, so the device can no longer take the notice as a cue to write first. If the removal fails, no notice goes out.
 
 ## [0.0.34] - 2026-11-01
 
