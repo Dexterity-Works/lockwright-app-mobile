@@ -17,6 +17,10 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 - Connections a site closed after a favicon fetch stayed open in the vault process and piled up. bare-http1 moves to 4.6.3, which fixes it.
 
+### Removed
+
+- The F-Droid build: its scripts, the `fdroid` Android flavor and the `android:fdroid` script. Android ships through Play and Forgejo releases.
+
 ## [0.0.34] - 2026-11-01
 
 `2e18e9a33c64916ad54576ff6af442bacbf4509c`
