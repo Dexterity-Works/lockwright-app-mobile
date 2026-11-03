@@ -12,9 +12,10 @@
 #   node_modules/react-native-bare-kit/android/libs/bare-kit/classes.jar
 #   node_modules/<addon>/prebuilds/<android-host>/<addon>.bare
 #
-# Addon `.bare` files are placed where bare-link expects them. Gradle's
-# preBuild → link.mjs → bare-link will then handle the ELF SONAME/DT_NEEDED
-# rewriting and copy them to react-native-bare-kit/android/src/main/addons/.
+# Addon `.bare` files are placed where bare-link expects them.
+# `npm run barekit:link:android` (fdroid-build.sh build) then handles the ELF
+# SONAME/DT_NEEDED rewriting and copies them to
+# react-native-bare-kit/android/src/main/addons/.
 #
 # Required environment:
 #   ANDROID_NDK_ROOT (or ANDROID_NDK_HOME) — pointing at NDK r27+
@@ -27,8 +28,8 @@
 #                      each build only compiles what it needs.
 #
 # Optional environment:
-#   BARE_KIT_VERSION   git ref to clone (default: v2.0.0 — matches the
-#                      prebuilts shipped by react-native-bare-kit 0.13.0)
+#   BARE_KIT_VERSION   git ref to clone (default: v2.5.4 — matches the
+#                      prebuilts shipped by react-native-bare-kit 0.16.0)
 #   BARE_BUILD_DIR     workspace root    (default: <project>/.bare-build)
 #   ANDROID_PLATFORM   min API level     (default: 29)
 #   ABIS               space-separated   (default: "arm64-v8a armeabi-v7a x86 x86_64";
@@ -38,7 +39,7 @@
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-BARE_KIT_VERSION="${BARE_KIT_VERSION:-v2.0.0}"
+BARE_KIT_VERSION="${BARE_KIT_VERSION:-v2.5.4}"
 BARE_BUILD_DIR="${BARE_BUILD_DIR:-$PROJECT_DIR/.bare-build}"
 ANDROID_PLATFORM="${ANDROID_PLATFORM:-29}"
 ABIS="${ABIS:-arm64-v8a armeabi-v7a x86 x86_64}"
@@ -270,7 +271,7 @@ EOF
     [ -n "$out" ] || fatal "no .bare produced for $name@$version $abi (check $build_dir)"
 
     # Place into the addon's prebuilds/ dir at the canonical name expected by
-    # bare-link. Gradle's preBuild task will run link.mjs → bare-link, which
+    # bare-link. `npm run barekit:link:android` runs bare-link, which
     # reads from here, rewrites SONAME / DT_NEEDED, and emits the final
     # lib<name>.<version>.so into react-native-bare-kit/android/src/main/addons/.
     local host
@@ -315,7 +316,7 @@ main() {
   log "  $RNBK_LIBS/classes.jar"
   log "  $RNBK_LIBS/jni/<abi>/libbare-kit.so"
   log "  node_modules/<addon>/prebuilds/<host>/<addon>.bare"
-  log "    (gradle preBuild will run bare-link to finalize these)"
+  log "    (npm run barekit:link:android finalizes these)"
 }
 
 main "$@"

@@ -9,24 +9,46 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
-## [0.0.33] - 2026-10-17
-
-`a1ec88474b3c2dce06eb5ff2521ad7fa87e4be2b`
-
 ### Added
 
 - After a revoke, a toast warns when the vault key could not be rotated, with a plain reason for known causes and a generic line otherwise, or names the devices that can't read new items until they open this vault once on a current Lockwright version.
 
 ### Changed
 
-- Play versionCode 23.
+- The vault process runs on react-native-bare-kit 0.16.0, bare-fetch 3, hyperswarm 4.17.2 and hyperdht 6.35.0.
 - The revoke-access sheet says revoking rotates the vault key, and once the key rotates the device can't read items added or changed after that. Items from before the rotation aren't re-encrypted, so the device can still read them. It no longer suggests moving items to a new vault.
-- The unique-id, password check, password generator, QR and validator utils come from one package, lockwright-lib-utils.
 
 ### Fixed
 
+- Connections a site closed after a favicon fetch stayed open in the vault process and piled up. bare-http1 moves to 4.6.3, which fixes it.
 - Autofill on Android and iOS lists nothing while this device can't read the vault's latest key (a revoked device, a new device whose key hasn't arrived, or a deferred migration), instead of offering items sealed under older keys. On Android it also drops logins an earlier unlock cached, and no longer asks for the vault password in that case.
 - A vault revoked from another device locks Android autofill's cached logins before the wipe.
+
+## [0.0.34] - 2026-11-01
+
+`2e18e9a33c64916ad54576ff6af442bacbf4509c`
+
+### Changed
+
+- Play versionCode 24.
+
+### Fixed
+
+- Locking, or switching to another vault, while a vault was applying synced changes could crash the vault process with `Cannot read properties of null (reading 'flushing')`. hypercore moves to 11.39.6, which fixes it.
+- Quitting the app while the vault database was still opening could crash it. rocksdb-native moves to 3.19.2, which fixes it.
+
+## [0.0.33] - 2026-10-26
+
+`415c39865b5b2a0d2491b3b7b6ad78f659512043`
+
+### Changed
+
+- Play versionCode 23.
+- The unique-id, password check, password generator, QR and validator utils come from one package, lockwright-lib-utils.
+
+### Security
+
+- A use-after-free in the network library (host lookups and network-interface watching) could corrupt the vault process's memory and crash it. udx-native moves to 1.22.0, which fixes it.
 
 ## [0.0.32] - 2026-10-03
 
