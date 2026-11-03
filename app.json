@@ -6,7 +6,7 @@
     "version": "0.0.35",
     "android": {
       "package": "works.dexterity.lockwright",
-      "versionCode": 24,
+      "versionCode": 25,
       "allowBackup": false,
       "permissions": [
         "android.permission.CAMERA",
