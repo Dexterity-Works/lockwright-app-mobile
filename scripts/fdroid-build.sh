@@ -96,6 +96,9 @@ run_build() {
   if [ -d node_modules/bare-link/prebuilds ]; then
     find node_modules/bare-link/prebuilds -type f -name patchelf -exec chmod +x {} +
   fi
+  # react-native-bare-kit 0.16 no longer links addons in Gradle preBuild.
+  # Relink so the from-source addons replace the ones postinstall linked.
+  npm run barekit:link:android
   if [ -n "${ANDROID_HOME:-}" ]; then
     printf 'sdk.dir=%s\n' "$ANDROID_HOME" > android/local.properties
   fi
