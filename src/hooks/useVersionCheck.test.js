@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { act, renderHook, waitFor } from '@testing-library/react-native'
 import { VERSION_CHECK_CONFIG } from 'lockwright-lib-constants'
-import { Platform } from 'react-native'
 
 import {
   compareVersions,
@@ -129,9 +128,6 @@ describe('useVersionCheck', () => {
     jest.clearAllMocks()
     jest.useFakeTimers()
     global.fetch = jest.fn()
-    Platform.OS = 'ios'
-    const Constants = require('expo-constants')
-    Constants.expoConfig.extra.distribution = 'standard'
     AsyncStorage.getItem.mockResolvedValue(null)
     AsyncStorage.setItem.mockResolvedValue()
   })
@@ -180,18 +176,6 @@ describe('useVersionCheck', () => {
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalled())
     expect(result.current.needsUpdate).toBe(false)
-  })
-
-  it('skips entirely on F-Droid distribution', async () => {
-    Platform.OS = 'android'
-    const Constants = require('expo-constants')
-    Constants.expoConfig.extra.distribution = 'fdroid'
-
-    const { result } = renderAndAdvance()
-
-    await waitFor(() => expect(AsyncStorage.getItem).not.toHaveBeenCalled())
-    expect(result.current.needsUpdate).toBe(false)
-    expect(global.fetch).not.toHaveBeenCalled()
   })
 
   it('uses cached release when cache is fresh', async () => {

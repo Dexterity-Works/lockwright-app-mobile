@@ -6,9 +6,7 @@ import {
   GITHUB_LATEST_RELEASE_URLS,
   VERSION_CHECK_CONFIG
 } from 'lockwright-lib-constants'
-import { Platform } from 'react-native'
 
-import { isFdroid } from '../constants/distribution'
 import { logger } from '../utils/logger'
 
 const MS_PER_HOUR = 1000 * 60 * 60
@@ -149,8 +147,6 @@ export const useVersionCheck = () => {
     let isMounted = true
 
     const run = async () => {
-      if (Platform.OS === 'android' && isFdroid()) return
-
       let record = await readCache()
       if (!record) {
         record = await fetchLatestRelease()

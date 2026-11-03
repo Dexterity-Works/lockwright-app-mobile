@@ -5,8 +5,6 @@ import { copyAndProcessSourceFiles, copyDirectory } from '../utils';
 import { AutofillPluginOptions } from '../index';
 
 export const withAndroidAutofillService: ConfigPlugin<AutofillPluginOptions> = (config, options) => {
-  const isFdroid = config.extra?.distribution === 'fdroid'
-
   // Add Gradle task to copy extension bundle at every build
   if (options.extensionBundlePath) {
     config = withAppBuildGradle(config, (cfg) => {
@@ -52,8 +50,8 @@ preBuild.dependsOn copyAutofillBundle
         const insertIndex = cfg.modResults.contents.indexOf('{', dependenciesIndex) + 1;
         const credentialsDeps = `
     // Passkey / Credential Provider support
-    ${credentialsDep}${isFdroid ? '' : `
-    implementation "androidx.credentials:credentials-play-services-auth:1.6.0-beta03"`}`;
+    ${credentialsDep}
+    implementation "androidx.credentials:credentials-play-services-auth:1.6.0-beta03"`;
         cfg.modResults.contents =
           cfg.modResults.contents.slice(0, insertIndex) +
           credentialsDeps +

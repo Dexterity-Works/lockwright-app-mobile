@@ -137,18 +137,6 @@ pnpm run bundle-bare
 npx expo prebuild --platform android --clean
 ```
 
-### F-Droid Android prebuild
-
-```bash
-pnpm run bundle-bare
-PEARPASS_DISTRIBUTION=fdroid npx expo prebuild --platform android --clean
-```
-
-More details:
-
-- [`docs/fdroid/build.md`](docs/fdroid/build.md)
-- [`docs/fdroid/version-check.md`](docs/fdroid/version-check.md)
-
 ---
 
 ## Testing
@@ -219,7 +207,7 @@ Logs can be shared via the Diagnostics screen **Share logs** action, which zips 
 Verifying:
 
 - The gate is `isNightly()` from `src/constants/distribution.js`. Returns `false` unless the distribution channel is `nightly`.
-- The Expo config plugin for Sentry is only loaded when `PEARPASS_DISTRIBUTION=nightly` at build time. `app.config.ts`. `app.json` has no Sentry plugin entry, so standard / F-Droid builds never include it.
+- The Expo config plugin for Sentry is only loaded when `PEARPASS_DISTRIBUTION=nightly` at build time. `app.config.ts`. `app.json` has no Sentry plugin entry, so standard builds never include it.
 - The Bare-side Sentry SDK (`sentry-bare`) is an optional peer dependency of `pearpass-lib-vault-core`. Public builds don't install it.
 
 ---

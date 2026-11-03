@@ -26,7 +26,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const appVersion = config.version || '0.0.1'
 
   const plugins = config.plugins ? [...config.plugins] : []
-  plugins.push(['./plugins/withAndroidDistribution', { distribution }])
   plugins.push([
     './plugins/expo-autofill-plugin',
     {
