@@ -207,6 +207,7 @@ overrides:
   lockwright-lib-constants: git+https://github.com/Dexterity-Works/lockwright-lib-constants.git#f6142c9554e9f972519dd8115b2b73f02b73d5fb
   lockwright-lib-ui-react-native-components: git+https://github.com/Dexterity-Works/lockwright-lib-ui-react-native-components.git#5a4ed69feda9b76c0de6f40cb12df72569beb9b4
   kdbxweb>@xmldom/xmldom: 0.8.15
+  bare-http1: ^4.5.8
   hypercore: ^11.39.6
   rocksdb-native: ^3.19.2
   udx-native: ^1.22.0
@@ -248,9 +249,12 @@ importers:
       '@sentry/react-native':
         specifier: 8.9.2
         version: 8.9.2(@expo/env@1.0.7)(dotenv@16.4.7)(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0)
+      bare-link:
+        specifier: 4.1.0
+        version: 4.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)
       bare-pack:
-        specifier: 1.4.1
-        version: 1.4.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+        specifier: 3.0.2
+        version: 3.0.2(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -325,7 +329,7 @@ importers:
         version: file:../pearpass-lib-vault(@types/react@19.2.18)(lockwright-lib-constants@https://codeload.github.com/Dexterity-Works/lockwright-lib-constants/tar.gz/f6142c9554e9f972519dd8115b2b73f02b73d5fb)(lockwright-lib-utils@https://codeload.github.com/Dexterity-Works/lockwright-lib-utils/tar.gz/32ffefed29db8d198f96401c780e09e70719bcc2(expo-crypto@13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0))))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(redux@5.0.1)
       lockwright-lib-vault-core:
         specifier: file:../pearpass-lib-vault-core
-        version: file:../pearpass-lib-vault-core(bare-events@2.9.1)(bare-pipe@4.2.3(bare-buffer@3.6.2))(bare-url@2.4.7)(lockwright-lib-utils@https://codeload.github.com/Dexterity-Works/lockwright-lib-utils/tar.gz/32ffefed29db8d198f96401c780e09e70719bcc2(expo-crypto@13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0))))
+        version: file:../pearpass-lib-vault-core(bare-events@2.9.2)(bare-pipe@4.4.0(bare-buffer@3.7.1))(bare-url@2.5.5)(lockwright-lib-utils@https://codeload.github.com/Dexterity-Works/lockwright-lib-utils/tar.gz/32ffefed29db8d198f96401c780e09e70719bcc2(expo-crypto@13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0))))
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -336,8 +340,8 @@ importers:
         specifier: 0.79.5
         version: 0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)
       react-native-bare-kit:
-        specifier: 0.13.0
-        version: 0.13.0(bare-buffer@3.6.2)(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0)
+        specifier: 0.16.0
+        version: 0.16.0(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0)
       react-native-gesture-handler:
         specifier: ~2.24.0
         version: 2.24.0(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0)
@@ -2896,37 +2900,37 @@ packages:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
 
-  bare-addon-resolve@1.10.1:
-    resolution: {integrity: sha512-F/SD2du8keuYSb4xipnGz5j2E6yhNdHA8ZVxtHae6h2uOrpBIjjbhXvjzKZbr5XUOzqBzh/i8GVFycj2DlFQIA==}
+  bare-addon-resolve@1.11.0:
+    resolution: {integrity: sha512-bTUBSqBjzQQzo2/iIk6KxAClZfahy38EPsJV2bPJ+p2+kS8h+hT5TE5QggpkFUrCnLL4HDTA4DDM+YiNdyol0w==}
     peerDependencies:
       bare-url: '*'
     peerDependenciesMeta:
       bare-url:
         optional: true
 
-  bare-ansi-escapes@2.2.3:
-    resolution: {integrity: sha512-02ES4/E2RbrtZSnHJ9LntBhYkLA6lPpSEeP8iqS3MccBIVhVBlEmruF1I7HZqx5Q8aiTeYfQVeqmrU9YO2yYoQ==}
+  bare-ansi-escapes@2.2.4:
+    resolution: {integrity: sha512-IGL3L16Sp+8kPOv4+8UCav6FCQtsT7kYEqaB1A1uBesGPMEhc2fe5Je+TZ/+Sekly8ZwxvNbnlNi30X1+fqwFA==}
     peerDependencies:
       bare-buffer: '*'
     peerDependenciesMeta:
       bare-buffer:
         optional: true
 
-  bare-assert@1.2.0:
-    resolution: {integrity: sha512-c6uvgvTJBspTDxtVnPgrBKmLgcpW3Fp72NVKDLg6oT4QjQbhGtvrkHMhGYMK1sh4vjBHOBmuUalyt9hSzV37fQ==}
+  bare-assert@1.3.0:
+    resolution: {integrity: sha512-tF3A1xa5WHzOwn2Y6Pm+mV1NGOztWUKyUQycmtMCnIcEx/0xv5MMgv2qerXQVvhkv6IZJNaEbiGBJNFD6RmunA==}
 
-  bare-buffer@3.6.2:
-    resolution: {integrity: sha512-WT9xx12FJvWbBCkgfjuAeWfY40RW6BKVr2fK9UGrTEYKbvqhcaW0J9AMkA3Sj36Wgi+DUuGXYkZPxn5jVH61LA==}
+  bare-buffer@3.7.1:
+    resolution: {integrity: sha512-cIjZnSO+y89ykVX9x96OVnA6tGORBn7vGJ/e3PCbBHMEyfMNG/ixzOS0lLa6saMlWcs69bSKjxFyDwjK152OMg==}
     engines: {bare: '>=1.20.0'}
 
-  bare-bundle-id@1.0.2:
-    resolution: {integrity: sha512-RG/y1J/s6zWmsqUIDtclXh+xxMRTh1jo/10vFL58FKhe9UESchMNkwn0Cz10o5AdA/35WR/KUGoHhIGdyCjQrg==}
+  bare-bundle-id@1.0.3:
+    resolution: {integrity: sha512-ixL4OdY9ZRcgVl9/cg3LjF1OXCsWP1vWyA5WH89PZQvj2sWXjo3Ueb9sfaz/UR0AO5GttoY40HnGBSvvQlnaLA==}
     peerDependencies:
       bare-buffer: '*'
       bare-bundle: '*'
 
-  bare-bundle@1.10.0:
-    resolution: {integrity: sha512-4LVlnJAHr00Hh6Vu6ZUJS38rcEtJT3b3vChXSsBsJ2mk1TN0lQ+gzd+Dw5L0aV7uqDZv84smuwW+O02X7PfDlw==}
+  bare-bundle@1.11.0:
+    resolution: {integrity: sha512-msaGQLaojz+EszDhf0qvCTmVWgJFSqbC5bUmEb9AKyVeglmJpx1EbCGqQTiXycCV7oA++MYqTagh/YdIZ//bmQ==}
     peerDependencies:
       bare-buffer: '*'
       bare-url: '*'
@@ -2936,31 +2940,36 @@ packages:
       bare-url:
         optional: true
 
-  bare-crypto@1.15.3:
-    resolution: {integrity: sha512-macV9lbyJTsLPRXJkBtz8ivTGEo3LCyJInLT9IB/PWJ7pRXwvHs/FP4bx/fWw+HZkiepIYCAV2cuU5CR92XWCw==}
+  bare-crypto@1.15.4:
+    resolution: {integrity: sha512-4luuiLnxIJvM7ZyyW6pXbaaGoQDZcIkfcVZrPzJ3oIpdi2UIP37dROmzBWqI2lnrzfKoQlKWM8ryHmyG2svViw==}
     peerDependencies:
       bare-buffer: '*'
     peerDependenciesMeta:
       bare-buffer:
         optional: true
 
-  bare-dns@2.1.4:
-    resolution: {integrity: sha512-abwjHmpWqSRNB7V5615QxPH92L71AVzFm/kKTs8VYiNTAi2xVdonpv0BjJ0hwXLwomoW+xsSOPjW6PZPO14asg==}
-    engines: {bare: '>=1.7.0'}
+  bare-dns@2.3.1:
+    resolution: {integrity: sha512-NRGJE+OkJV2v3JEdAC2hBdUSNgeyOS9gUpLNLuVOT0aDmB/IZ59lK+zotKJ5yFnz6rZ0/4y3+9MOOLkemGv1Ig==}
+    engines: {bare: '>=1.33.0'}
+    peerDependencies:
+      bare-buffer: '*'
+    peerDependenciesMeta:
+      bare-buffer:
+        optional: true
 
   bare-env@3.0.1:
     resolution: {integrity: sha512-BdoLvnzaWR0YyyJreEx4zG2Od0AC/s9JSZ+EXyMZKunpn8zEgR/dGv37hdFUaY1bjDkcRKvcKkFyJIwlJ0CaYA==}
 
-  bare-events@2.9.1:
-    resolution: {integrity: sha512-Z0oHEHAFDZkffN8Qc39zNZjQlMDkPJRyyyZieU1VH7u8c5S+qHZ2S8ixdKIAxEjfHO7FJxXmJWgteOghVanIsg==}
+  bare-events@2.9.2:
+    resolution: {integrity: sha512-AIPKioV7/Y/8KfZ3AAhjPJxLLbY49S64Ym5DakZlUg75qQiTgUq9hEJoEwa4eUezPUlXRy/i5NpsKvo9jgKmoA==}
     peerDependencies:
       bare-abort-controller: '*'
     peerDependenciesMeta:
       bare-abort-controller:
         optional: true
 
-  bare-fetch@2.9.1:
-    resolution: {integrity: sha512-OqyubfnEXu9BqIVXg+LcdsutZk+amvPey2N+FeG7zeIk+0qarDreAMtixcRGvpR95rM1SNJedHRpBv3BNjja5g==}
+  bare-fetch@3.4.1:
+    resolution: {integrity: sha512-5rz2ZXXmQfJyYaFqiUPbSsyM464EcJGgRFnfsDRK3RsBLC36+9GXDmqW5vslq+of+qtlOEPK+fN0886vPwHnDQ==}
     peerDependencies:
       bare-abort-controller: '*'
       bare-buffer: '*'
@@ -2976,11 +2985,11 @@ packages:
   bare-form-data@1.2.2:
     resolution: {integrity: sha512-DQyAkCf5mgKT07orewuvaJfoalw7RBSHia4wgkrG7+seI6aHLB+r6gMRdCGrlO+BmCqMwgTeHAHxDU2NrOjQnQ==}
 
-  bare-format@1.0.2:
-    resolution: {integrity: sha512-GswdhnOnP9QtwRbrf4wLApw5widkaLMsLe2XOs35fQD2YfEN1ApoGka+cZ7PfvzxMgfYXmMhj/2OGlVn5/Dxgw==}
+  bare-format@1.0.3:
+    resolution: {integrity: sha512-E/LJdhZ06VSWLlquAjJKZM2B+vLr7lluthTQ6H3H0KvrHMd+Zmdyy6+bW1IITd0x5tYa+C5AYSggyY5ojL9+sg==}
 
-  bare-fs@4.8.0:
-    resolution: {integrity: sha512-fM+MhCvdQhZ7NV6S95a07gPSqjIYKn6mFaXfx266wN3ajZGl/+1AzH+ubkXQ0fFZvOe2nk9VHkzdYkQE5zMV3Q==}
+  bare-fs@4.8.4:
+    resolution: {integrity: sha512-MPC2eyrpbk3A873sK4y6rk+Iv4o2enxTjHZ8zH3HO0mjrpm5XjnguY2XmfidIsDV6vnjpbMBKUAJpV0ISD2SsQ==}
     engines: {bare: '>=1.28.0'}
     peerDependencies:
       bare-buffer: '*'
@@ -2988,11 +2997,14 @@ packages:
       bare-buffer:
         optional: true
 
-  bare-http-parser@1.1.5:
-    resolution: {integrity: sha512-sPaDetLbWRmth04JmuTCvw/hoNdWJvYUJN8n1tYdGW3HM0mMnCvK2f0oIxE6HK7iOq+WlsRzEMg1LT/b0wGbLQ==}
+  bare-hrtime@2.1.2:
+    resolution: {integrity: sha512-ePu0axonbewvuUv9TFqjfvnZTaw+mL4JNx1q79dw8T3DIQEjqHs+pXyj92ghepa8K14KLtX3GdUuAVB+faaGDw==}
 
-  bare-http1@4.5.7:
-    resolution: {integrity: sha512-PRuzs9ywt4vUvrC3mnHhQyaQfLYzdFy8XKOH0oKeKmYfyYYUqXBkdbJE2csESLBxJEbKDBjxPGLU+Qa0l1ds4A==}
+  bare-http-parser@2.1.4:
+    resolution: {integrity: sha512-6CRjxqMdrEoKKBCS6FbdZUuVsRtyqq18BUae9l9N5okSV75S9lUAF9f5aFSKTNybBS/hcnlxFNocdpXbd2Ohaw==}
+
+  bare-http1@4.6.3:
+    resolution: {integrity: sha512-ZkQgU73JWPyjSKOWHeB2EV1HABokjbuwXLbqnsAfmVpy6Ox3Pq4y+A4+A3r15E2HrcybYDz3TCnRBIgUfTn3zw==}
     peerDependencies:
       bare-buffer: '*'
       bare-url: '*'
@@ -3002,44 +3014,45 @@ packages:
       bare-url:
         optional: true
 
-  bare-https@3.0.0:
-    resolution: {integrity: sha512-W1GRSCzn+xXKf5bMcPs/hg6Ga1bxPqb7owGfS+tvlBQfPe5Q2STcanRuKZrgU60v5uKrhXH5cgWwM+DLqvXZgQ==}
+  bare-https@3.1.0:
+    resolution: {integrity: sha512-HNAS0q7CBAXGDFRy/xaYJEsAaVcvyDRXKU1b/KxS/zdcfBWsQVB0TntSzz3IlqZ5ZWHiaOOrMYAO/oIDgpTLkQ==}
 
-  bare-inspect@3.1.4:
-    resolution: {integrity: sha512-jfW5KRA84o3REpI6Vr4nbvMn+hqVAw8GU1mMdRwUsY5yJovQamxYeKGVKGqdzs+8ZbG4jRzGUXP/3Ji/DnqfPg==}
+  bare-inspect@3.1.10:
+    resolution: {integrity: sha512-Qu01XZNTIT2/bS9k7c6A3OXuAzBnWwDCejGri76BUltdFqVe6Et/IxVOSSbcDpreSSWwqQ5pAu/bxFE6hPDWRQ==}
     engines: {bare: '>=1.18.0'}
 
-  bare-lief@0.2.6:
-    resolution: {integrity: sha512-sq1DmnANQ/EYR0gFnt6UnrWGc+QCz1fVXfiqp+Of8WYptoxMXnvUyKw7hIBXxcsrLzhbzQuO8gESlIvPcRZQRA==}
+  bare-lief@0.2.10:
+    resolution: {integrity: sha512-eGQJ06Fkn+qx5KUT67Dxu0ttpymuPpG8f9Uc4QA+GNPr+M1eDewGUU4ENS8nj4JqCXq3qclTc/xTM6ccpdFWTQ==}
 
-  bare-link@3.3.0:
-    resolution: {integrity: sha512-gAa3PJ+kZnL7vT5MGCgqXDfBKDu62turjBaZBRp0ZqnGT3BFeox9jWYrW1zo/8sQqmSpMEcWGWCyJpPt8huYRA==}
+  bare-link@4.1.0:
+    resolution: {integrity: sha512-vzseYttbNgMUEbJCwZPo8gjHpROSvK4Ztth04+NbdWQioXhCpJxrUtGBUNiJyYbV6aOz+GqjjMGZbl0xYihjig==}
     hasBin: true
 
-  bare-logger@2.0.3:
-    resolution: {integrity: sha512-U6K7NxHdeAHxEgHFDV8zXvgjgDZKQO6LlCrxQvUvlrZEVTnoezSImMWizi85rbZpVsbeI1ZWcLCRGnoIf5EV8Q==}
+  bare-logger@2.0.4:
+    resolution: {integrity: sha512-HZB3jmnu0C/hcN4HPtBLe7MA6TuwWHzjn4xalExMLlt20URKNKvRCNEMRsWrcFuBKx3wfC6oWySmGpqpaFcjRg==}
 
   bare-mime@1.0.0:
     resolution: {integrity: sha512-lUOswzBkfqham4zjLDueKOd4Qj3gS56BiZ3q2f0g0adoFhF+HFNupvTUfZBWoicl7fWJ7Hp2RUZjmkY47dxxOQ==}
 
-  bare-module-lexer@1.6.3:
-    resolution: {integrity: sha512-NQY7cnPV3GZlHJphX4nXmPdNPER/Tp17pVi9/he2ODw/GNZ7FXzrZlrS7WMF8zbtWigqW/NMc9aQc2BH8UJXqA==}
+  bare-module-lexer@1.7.0:
+    resolution: {integrity: sha512-LD5eiVhDyiMRfMtxK3E+0SeL95nkLNl37YUccXWEaErmfkJi596OECtUoH3X+YPomthwW2oQEch9c7aOOJ4ePA==}
+    engines: {bare: '>=1.0.0', node: ^22.21.0 || >=24.9.0}
     peerDependencies:
       bare-buffer: '*'
     peerDependenciesMeta:
       bare-buffer:
         optional: true
 
-  bare-module-resolve@1.12.4:
-    resolution: {integrity: sha512-xcfgg2u7HqgJiBmah71O9vvdFAgHCvkqC/WSC2O7Bbgosoc1eC/BWe/6IDJ4OsfKlkxuvC/TDWXC+oH5yeW8mA==}
+  bare-module-resolve@1.12.6:
+    resolution: {integrity: sha512-tsoOqHmtF6VmNX4LYDBZwvQVkSmEagnbykNjK31LMxz/amyKfjCs4K976n7uJd1bvWfxbpLQ3Fy7qq8an6jR6Q==}
     peerDependencies:
       bare-url: '*'
     peerDependenciesMeta:
       bare-url:
         optional: true
 
-  bare-module-traverse@1.4.1:
-    resolution: {integrity: sha512-ehY0gkL17wcU+tfRZIcIFdTf1eb9Up0noqbtPTGiMNxUBu969IyIjwL/42horwtES3mS9poYVSmvqtjrC/HjqA==}
+  bare-module-traverse@2.7.3:
+    resolution: {integrity: sha512-cIOnC+IOVSbKc5DXhKczktSI2lLxoIWQd74bykN595HsXzzFgagsiSQIXC/a5XhvpItc34dNsQ9B57AkEDrM0w==}
     peerDependencies:
       bare-buffer: '*'
       bare-url: '*'
@@ -3056,27 +3069,36 @@ packages:
     resolution: {integrity: sha512-fF4Q7QsyKVF5Rj0qvI8BgUNjqzC2JvQlpTaPLjVJVxYVUX5Zr9un+y3w1HmA4nNKdFmRBT8z/WmrjvXzXVerKQ==}
     engines: {bare: '>=1.14.0'}
 
-  bare-pack@1.4.1:
-    resolution: {integrity: sha512-ZJnb8O+SfLMoJ/eoHTPutAIZj8IgrjyclXVcu9IrvEVpaNXK1pnRkWUsKMn3AjxGOcAjfkFUsUkdPfBrl/H8TA==}
+  bare-pack@3.0.2:
+    resolution: {integrity: sha512-wGwpPaXRuu5zE2SrEV4nZReh36q0Ul3C0JdMR/M7Du2Vc4IrgHr6/ok84bpeAGmB6iCAcDPztiPu5N8f9LeKaw==}
     hasBin: true
     peerDependencies:
-      bare-buffer: '*'
-      bare-url: '*'
+      bare-buffer: ^3.6.0
+      bare-url: ^2.4.0
     peerDependenciesMeta:
       bare-buffer:
         optional: true
       bare-url:
         optional: true
 
-  bare-path@3.1.1:
-    resolution: {integrity: sha512-JprUlveX3QjApC1cTpsUOiscADftCGVWkzitbHsRqv84hzYwYHw2mbluddsq5TvI8mH/8Ov1f4BiMAdcB0oYnQ==}
+  bare-path@3.1.2:
+    resolution: {integrity: sha512-ZyKbsuuqK6Ag0K8pX6V5Txq6XeJRvY+wXucnFGRjiyVYP9YWDpIQugk/b+enRYrEYBJaqLzghRQpXPMR7341Nw==}
 
-  bare-pipe@4.2.3:
-    resolution: {integrity: sha512-MJYji+Vy8cNMAB2fwg1WQAm1hFIOe5ojw5V9EhEa/wEEYpKT8c36WjHBDwgkgAZfUSX6wQcEFX+Q7wN09SgRow==}
+  bare-performance@2.1.1:
+    resolution: {integrity: sha512-nVlulswnYgXS2Fkbk4ZIKgfIWY/rmeG8ljM9aryPYClgPNzpOgOSLQzVSgU/K+ReLJHq7fEUQ9SBdjEs1QTIfw==}
+    engines: {bare: '>=1.27.0'}
+
+  bare-pipe@4.4.0:
+    resolution: {integrity: sha512-fUOLSyMvXvpOoQq/3VN/bmb/mPsfg6JQllLt3cOWbRMEX9uKvq1hSafdYlu4yb7JYIwA8P/ttdIh0RaOy0fGMg==}
     engines: {bare: '>=1.16.0'}
+    peerDependencies:
+      bare-buffer: '*'
+    peerDependenciesMeta:
+      bare-buffer:
+        optional: true
 
-  bare-rpc@1.3.8:
-    resolution: {integrity: sha512-6fnkIHK+mecUjriOmzaXCYPpJm9JZxKHb5q4I1eTclHN5H+M7keYS68YjEhpVomnF14ArZYTWfRHJPZibTEMWA==}
+  bare-rpc@1.3.9:
+    resolution: {integrity: sha512-Q7WKs4StwB0W7WXwleQjdQHoJpjShOhL7uUz3KXHlQH6gsc40hbO1PKNtmgFf8dgh4BxT3lElB3+GQCrXHn7OQ==}
     peerDependencies:
       bare-buffer: '*'
     peerDependenciesMeta:
@@ -3086,8 +3108,8 @@ packages:
   bare-semver@1.1.0:
     resolution: {integrity: sha512-1Hw5qJ7hXdVt3uPUqjeFTuxyvBUJauvz5A1I2jk8gzjZMHp04n//6nV9MDbG9CMw78JHY2lGV0w6s//LrASm2w==}
 
-  bare-stream@2.13.3:
-    resolution: {integrity: sha512-Kc+brLqvEqGkjyfiwJmImAOqLZL7OsoLKuavx+hJjgVV3nLTOjloJyPMFxjUPerGGHrNH0fLU06jjykMLWrERQ==}
+  bare-stream@2.13.4:
+    resolution: {integrity: sha512-PcrQ8lVLbiJscNm1Kez+Yp4Gy4AHGcN1lzwjvf5NybWen7VvEgUfyfnXYJ2zNqWnzOfCb1Abq6lH8ti0syQszA==}
     peerDependencies:
       bare-abort-controller: '*'
       bare-buffer: '*'
@@ -3100,12 +3122,12 @@ packages:
       bare-events:
         optional: true
 
-  bare-structured-clone@1.6.0:
-    resolution: {integrity: sha512-AZjEERyqF7kAuudlmgrweT2KwwWM0LsGG4Gx/bWyFwJrKU7E3wNG8c09z2DIrdw93p3vDtfOX8fyHOcXfy5m+g==}
+  bare-structured-clone@2.0.1:
+    resolution: {integrity: sha512-F/n/etzjf4YlW4OCF0kpe0H6UOcCXZg0LrPMCY2dP9fg2R7fME5crkmQlM1Hl62iKipMQFaT9S2eSyx0tBCJ8g==}
     engines: {bare: '>=1.2.0'}
 
-  bare-subprocess@6.1.0:
-    resolution: {integrity: sha512-8L6KtbmreDy4Fc1BdDqaDo9fg0nbedUmTSFQxYPV0uHIM2BBAX8+E0LyMDKgkk0I+mlKto80WYzOnIhT8VDdOg==}
+  bare-subprocess@6.2.2:
+    resolution: {integrity: sha512-kPyg/+LfML88uypOlbe19pRXsPFKtXXDEI5eEAFqGlmvO9cL/XsIZ+OAWKoNOSsomqcxM1rsvnF/uRE9NFaBLQ==}
     engines: {bare: '>=1.7.0'}
     peerDependencies:
       bare-buffer: '*'
@@ -3113,11 +3135,11 @@ packages:
       bare-buffer:
         optional: true
 
-  bare-system-logger@1.0.3:
-    resolution: {integrity: sha512-HXTXZyhIIS4ZDYun4J9zKNQZDfLgEkkK8wy9nrTFJE5xq8APsOhDxuEsxP0YcNwC23DW1jaNpqD51zDeXPzIdg==}
+  bare-system-logger@1.0.6:
+    resolution: {integrity: sha512-wAyqwfeQ4wVPHnVQTCsDE/kAHRd51XI1LqzgkJegRDX8AFilo1NGprF/5XpNz5uB4MV+hb2O2fe5v3IuCgMTDA==}
 
-  bare-tcp@2.5.4:
-    resolution: {integrity: sha512-o3weBBYeN3tgvTJyglSMpZOfHkfz1nG53M913fvhAKF9ubQ4XsljdX6Uq7H0g/CkyGnR4Ii3OdXJHz7PxgDLGA==}
+  bare-tcp@2.6.1:
+    resolution: {integrity: sha512-8f8UFP7O27gIGaVWJPysQ2am8LSD6YCuVSbnTbOrQjUD0RkWEZexvi2Q66P99MLxSephlyjoU0mLxWmozRJMnA==}
     engines: {bare: '>=1.16.0'}
     peerDependencies:
       bare-pipe: '*'
@@ -3125,16 +3147,16 @@ packages:
       bare-pipe:
         optional: true
 
-  bare-tls@3.1.8:
-    resolution: {integrity: sha512-NVQHioaEzmz6U2CLFRl34c9vTpf01BMkKCCTJWybF/eTKB97kapkZZTrd7bB11rG5W3uiwndsd7pcSPONVx4Ng==}
+  bare-tls@3.2.0:
+    resolution: {integrity: sha512-aPdeROdlokqfaPhrLCxsdURV2pvxOfsM7zkWBaTXwUWLZyFSTXZyIJTiPamcMLdF9L7NtUzZ/CWvT4yj7HAhUw==}
     engines: {bare: '>=1.7.0'}
 
-  bare-type@1.1.0:
-    resolution: {integrity: sha512-LdtnnEEYldOc87Dr4GpsKnStStZk3zfgoEMXy8yvEZkXrcCv9RtYDrUYWFsBQHtaB0s1EUWmcvS6XmEZYIj3Bw==}
-    engines: {bare: '>=1.2.0'}
+  bare-type@1.4.0:
+    resolution: {integrity: sha512-6anDbVGruQLK8m6zxlCPNkUuxXnzChT1aOmJbFRjEGn8MWZqviFP6vGi9NAnG8aRXyRAfXIGLlBJwYGa4Ylcug==}
+    engines: {bare: '>=1.32.0'}
 
-  bare-url@2.4.7:
-    resolution: {integrity: sha512-o8CRCiJtib+ycO3mE4A5UChtGX4dDP2XxsWVu9P+Zc3H8tcmKwNVEDoDTXmwN+uuMhfKeT7/i7Y26xS8W7ohoA==}
+  bare-url@2.5.5:
+    resolution: {integrity: sha512-iM9qJCruvpt2rPaLsrumVDru9pogI7PHziHIa9kTNRFt8C8HuSa+kI9kFezK+NvHEFnnz71rKGZ1EAilq/3V/Q==}
 
   bare-zlib@1.4.1:
     resolution: {integrity: sha512-CsnQl+XyLaUecB9/OUpjqmemung10M7J2UNXz+6NAVrZAI3HC9c5Kxw34aI0jaU9+gb2yUCD31hOrtPZlnE3bA==}
@@ -3632,8 +3654,8 @@ packages:
   device-file@2.3.1:
     resolution: {integrity: sha512-bmON44lwxJPle9N2OcH4tqM44pMGZKT8G6OkzXkz0urvqQ9LKkoQdTS6w0ztYfmLdUE27R4UUmx0+y2gEz4Jug==}
 
-  dht-rpc@6.27.0:
-    resolution: {integrity: sha512-NsfgRlFDQnkA2+H+hJXMPLmBOn/TSIIc0cRMV8q42M4xc1uAXWtpvIIQsONF5tYcYC6px0bslrUGideN1h4S4A==}
+  dht-rpc@6.28.0:
+    resolution: {integrity: sha512-vOwuQKWbqvwRzxBJ+nwXXjI4d/4T0keKLDMjfq8C2KwM7xCBSToRIKYuwhrA9D5cV8Hxct1h1TLJ+O4e6Z+AgA==}
 
   diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
@@ -4426,8 +4448,8 @@ packages:
   hyperdht-address@1.1.1:
     resolution: {integrity: sha512-Mu/+7SW2cwvHxMXswa5mOrhrS5BJyntViAuB25k8d8wNtA8eAPs4LaIq6TwN1SS/KQY02h1r+gM8cQeN/k360w==}
 
-  hyperdht@6.33.0:
-    resolution: {integrity: sha512-veSvVKptjPTu2di3q5IWI62ZDFzEmTj1QSTAkiXW/cg0+lgMUlwfVWB4dX+WI14xNb54vogVIjA/Ph3KiVuRJQ==}
+  hyperdht@6.35.0:
+    resolution: {integrity: sha512-P7OMiY9mo3OlvHjY36WuzJs23rVsCvnX7guLDxGQRrT9I1l/ghRObk7lQd959jVfKpGUyY8h5f+NR+BebDeCLw==}
     hasBin: true
 
   hyperdispatch@1.6.0:
@@ -4436,8 +4458,8 @@ packages:
   hyperschema@1.22.0:
     resolution: {integrity: sha512-h4D00e+tVyT4cDcb68p7ioaQxphBN5UOtiZVQv6RDPdtaKHLdngUWVoG/PL+RJvw/AS/OdZpiReGpLhx9pDHWg==}
 
-  hyperswarm@4.17.0:
-    resolution: {integrity: sha512-oe86sK961Ueg7rvDN/veFwG8xH+Iv6vObPhGDkPJcDVxk/NduW41ZhAcVDnHzRbm7S0eLU7WaDUvehOYoKSpRQ==}
+  hyperswarm@4.17.2:
+    resolution: {integrity: sha512-yKTNgHjijwrmSj5neC2Lu5JyKDvj9gZK/zkVLySP6J2M7nF+uvFMoxzRlWKKjdySfZVHZXPLfhk4xAnpqibm5A==}
 
   iconv-lite@0.7.3:
     resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
@@ -5839,8 +5861,8 @@ packages:
   react-is@19.2.8:
     resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
 
-  react-native-bare-kit@0.13.0:
-    resolution: {integrity: sha512-5BM1cUB5W7JBS9vp/qleAbU6vc3xhGXM2a7S03Xax+vc+IJJMSlRRPxAs22F2yQgwhMIne76ruBROCivP5Mc/A==}
+  react-native-bare-kit@0.16.0:
+    resolution: {integrity: sha512-j3jlvsf+q2506a4+6apKtJsj/TzywAdC/QGPTgBuEkh61bYDJxaZYROnqgRcewfH1U9As6RVpJuO98VdRaKEcg==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -8255,14 +8277,14 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@hyperswarm/secret-stream@6.9.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)':
+  '@hyperswarm/secret-stream@6.9.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)':
     dependencies:
       b4a: 1.8.1
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      noise-curve-ed: 2.1.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      noise-handshake: 4.2.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      sodium-secretstream: 1.2.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      noise-curve-ed: 2.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      noise-handshake: 4.2.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      sodium-secretstream: 1.2.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       streamx: 2.28.0
       timeout-refresh: 2.0.1
       unslab: 1.3.0
@@ -9845,28 +9867,28 @@ snapshots:
 
   async-limiter@1.0.1: {}
 
-  autobase@7.28.1(bare-buffer@3.6.2)(bare-url@2.4.7):
+  autobase@7.28.1(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      bare-events: 2.9.1
+      bare-events: 2.9.2
       compact-encoding: 3.3.0
       core-coupler: 2.0.0
       debounceify: 1.1.0
-      encryption-encoding: 1.0.3(bare-buffer@3.6.2)
+      encryption-encoding: 1.0.3(bare-buffer@3.7.1)
       hyperbee: 2.27.3
-      hypercore: 11.39.6(bare-buffer@3.6.2)(bare-url@2.4.7)
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      hypercore: 11.39.6(bare-buffer@3.7.1)(bare-url@2.5.5)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       hypercore-id-encoding: 1.3.0
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
       index-encoder: 3.5.0
       nanoassert: 2.0.0
-      protomux-wakeup: 2.9.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      protomux-wakeup: 2.9.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       ready-resource: 1.2.0
       resolve-reject-promise: 1.1.0
       safety-catch: 1.0.3
       scope-lock: 1.2.4
       signal-promise: 1.0.3
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       sub-encoder: 2.1.3
       tiny-buffer-map: 1.1.1
     transitivePeerDependencies:
@@ -9876,21 +9898,21 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  autopass@3.3.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  autopass@3.3.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
-      autobase: 7.28.1(bare-buffer@3.6.2)(bare-url@2.4.7)
+      autobase: 7.28.1(bare-buffer@3.7.1)(bare-url@2.5.5)
       b4a: 1.8.1
-      blind-encryption-sodium: 1.0.2(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      blind-pairing: 2.3.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      blind-peering: 1.15.0(bare-buffer@3.6.2)(bare-url@2.4.7)
-      corestore: 7.12.0(bare-buffer@3.6.2)(bare-url@2.4.7)
+      blind-encryption-sodium: 1.0.2(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      blind-pairing: 2.3.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      blind-peering: 1.15.0(bare-buffer@3.7.1)(bare-url@2.5.5)
+      corestore: 7.12.0(bare-buffer@3.7.1)(bare-url@2.5.5)
       hyperbee: 2.27.3
-      hypercore: 11.39.6(bare-buffer@3.6.2)(bare-url@2.4.7)
+      hypercore: 11.39.6(bare-buffer@3.7.1)(bare-url@2.5.5)
       hypercore-id-encoding: 1.3.0
-      hyperdb: 4.22.3(bare-buffer@3.6.2)(bare-url@2.4.7)
-      hyperdispatch: 1.6.0(bare-buffer@3.6.2)
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
-      hyperswarm: 4.17.0(bare-buffer@3.6.2)(bare-url@2.4.7)
+      hyperdb: 4.22.3(bare-buffer@3.7.1)(bare-url@2.5.5)
+      hyperdispatch: 1.6.0(bare-buffer@3.7.1)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
+      hyperswarm: 4.17.2(bare-buffer@3.7.1)(bare-url@2.5.5)
       ready-resource: 1.2.0
     transitivePeerDependencies:
       - bare-abort-controller
@@ -10034,147 +10056,154 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
-  bare-addon-resolve@1.10.1(bare-url@2.4.7):
+  bare-addon-resolve@1.11.0(bare-url@2.5.5):
     dependencies:
-      bare-module-resolve: 1.12.4(bare-url@2.4.7)
+      bare-module-resolve: 1.12.6(bare-url@2.5.5)
       bare-semver: 1.1.0
     optionalDependencies:
-      bare-url: 2.4.7
+      bare-url: 2.5.5
 
-  bare-ansi-escapes@2.2.3(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-ansi-escapes@2.2.4(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
     optionalDependencies:
-      bare-buffer: 3.6.2
+      bare-buffer: 3.7.1
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-events
       - react-native-b4a
 
-  bare-assert@1.2.0(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-assert@1.3.0(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-inspect: 3.1.4(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-inspect: 3.1.10(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-type: 1.4.0
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - bare-events
       - react-native-b4a
 
-  bare-buffer@3.6.2: {}
+  bare-buffer@3.7.1: {}
 
-  bare-bundle-id@1.0.2(bare-buffer@3.6.2)(bare-bundle@1.10.0(bare-buffer@3.6.2)(bare-url@2.4.7))(bare-events@2.9.1)(bare-url@2.4.7):
+  bare-bundle-id@1.0.3(bare-buffer@3.7.1)(bare-bundle@1.11.0(bare-buffer@3.7.1)(bare-url@2.5.5))(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
-      bare-buffer: 3.6.2
-      bare-bundle: 1.10.0(bare-buffer@3.6.2)(bare-url@2.4.7)
-      sodium-native: 5.1.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      bare-buffer: 3.7.1
+      bare-bundle: 1.11.0(bare-buffer@3.7.1)(bare-url@2.5.5)
+      sodium-native: 5.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-events
       - bare-url
       - react-native-b4a
 
-  bare-bundle@1.10.0(bare-buffer@3.6.2)(bare-url@2.4.7):
+  bare-bundle@1.11.0(bare-buffer@3.7.1)(bare-url@2.5.5):
     optionalDependencies:
-      bare-buffer: 3.6.2
-      bare-url: 2.4.7
+      bare-buffer: 3.7.1
+      bare-url: 2.5.5
 
-  bare-crypto@1.15.3(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-crypto@1.15.4(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-assert: 1.2.0(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-assert: 1.3.0(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
     optionalDependencies:
-      bare-buffer: 3.6.2
+      bare-buffer: 3.7.1
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-events
       - react-native-b4a
 
-  bare-dns@2.1.4: {}
+  bare-dns@2.3.1(bare-buffer@3.7.1):
+    optionalDependencies:
+      bare-buffer: 3.7.1
 
   bare-env@3.0.1:
     dependencies:
       bare-os: 3.9.3
 
-  bare-events@2.9.1: {}
+  bare-events@2.9.2: {}
 
-  bare-fetch@2.9.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-pipe@4.2.3(bare-buffer@3.6.2)):
+  bare-fetch@3.4.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-pipe@4.4.0(bare-buffer@3.7.1)):
     dependencies:
-      bare-form-data: 1.2.2(bare-events@2.9.1)
-      bare-http1: 4.5.7(bare-buffer@3.6.2)(bare-pipe@4.2.3(bare-buffer@3.6.2))(bare-url@2.4.7)
-      bare-https: 3.0.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-pipe@4.2.3(bare-buffer@3.6.2))(bare-url@2.4.7)
+      bare-form-data: 1.2.2(bare-events@2.9.2)
+      bare-http1: 4.6.3(bare-buffer@3.7.1)(bare-pipe@4.4.0(bare-buffer@3.7.1))(bare-url@2.5.5)
+      bare-https: 3.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-pipe@4.4.0(bare-buffer@3.7.1))(bare-url@2.5.5)
       bare-mime: 1.0.0
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-url: 2.4.7
-      bare-zlib: 1.4.1(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-performance: 2.1.1
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-url: 2.5.5
+      bare-zlib: 1.4.1(bare-buffer@3.7.1)(bare-events@2.9.2)
     optionalDependencies:
-      bare-buffer: 3.6.2
+      bare-buffer: 3.7.1
     transitivePeerDependencies:
       - bare-events
       - bare-pipe
       - react-native-b4a
 
-  bare-file-logger@1.2.3(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-file-logger@1.2.3(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-fs: 4.8.0(bare-buffer@3.6.2)
-      bare-logger: 2.0.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-fs: 4.8.4(bare-buffer@3.7.1)
+      bare-logger: 2.0.4(bare-buffer@3.7.1)(bare-events@2.9.2)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - bare-events
       - react-native-b4a
 
-  bare-form-data@1.2.2(bare-events@2.9.1):
+  bare-form-data@1.2.2(bare-events@2.9.2):
     dependencies:
-      bare-buffer: 3.6.2
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-buffer: 3.7.1
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-events
       - react-native-b4a
 
-  bare-format@1.0.2(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-format@1.0.3(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-inspect: 3.1.4(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-inspect: 3.1.10(bare-buffer@3.7.1)(bare-events@2.9.2)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - bare-events
       - react-native-b4a
 
-  bare-fs@4.8.0(bare-buffer@3.6.2):
+  bare-fs@4.8.4(bare-buffer@3.7.1):
     dependencies:
-      bare-events: 2.9.1
-      bare-path: 3.1.1
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-url: 2.4.7
+      bare-events: 2.9.2
+      bare-path: 3.1.2
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-url: 2.5.5
       fast-fifo: 1.3.2
     optionalDependencies:
-      bare-buffer: 3.6.2
+      bare-buffer: 3.7.1
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
 
-  bare-http-parser@1.1.5: {}
+  bare-hrtime@2.1.2: {}
 
-  bare-http1@4.5.7(bare-buffer@3.6.2)(bare-pipe@4.2.3(bare-buffer@3.6.2))(bare-url@2.4.7):
+  bare-http-parser@2.1.4: {}
+
+  bare-http1@4.6.3(bare-buffer@3.7.1)(bare-pipe@4.4.0(bare-buffer@3.7.1))(bare-url@2.5.5):
     dependencies:
-      bare-events: 2.9.1
-      bare-http-parser: 1.1.5
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-tcp: 2.5.4(bare-buffer@3.6.2)(bare-pipe@4.2.3(bare-buffer@3.6.2))
+      bare-events: 2.9.2
+      bare-hrtime: 2.1.2
+      bare-http-parser: 2.1.4
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-tcp: 2.6.1(bare-buffer@3.7.1)(bare-pipe@4.4.0(bare-buffer@3.7.1))
     optionalDependencies:
-      bare-buffer: 3.6.2
-      bare-url: 2.4.7
+      bare-buffer: 3.7.1
+      bare-url: 2.5.5
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-pipe
       - react-native-b4a
 
-  bare-https@3.0.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-pipe@4.2.3(bare-buffer@3.6.2))(bare-url@2.4.7):
+  bare-https@3.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-pipe@4.4.0(bare-buffer@3.7.1))(bare-url@2.5.5):
     dependencies:
-      bare-http1: 4.5.7(bare-buffer@3.6.2)(bare-pipe@4.2.3(bare-buffer@3.6.2))(bare-url@2.4.7)
-      bare-tcp: 2.5.4(bare-buffer@3.6.2)(bare-pipe@4.2.3(bare-buffer@3.6.2))
-      bare-tls: 3.1.8(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-http1: 4.6.3(bare-buffer@3.7.1)(bare-pipe@4.4.0(bare-buffer@3.7.1))(bare-url@2.5.5)
+      bare-tcp: 2.6.1(bare-buffer@3.7.1)(bare-pipe@4.4.0(bare-buffer@3.7.1))
+      bare-tls: 3.2.0(bare-buffer@3.7.1)(bare-events@2.9.2)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -10183,20 +10212,20 @@ snapshots:
       - bare-url
       - react-native-b4a
 
-  bare-inspect@3.1.4(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-inspect@3.1.10(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-ansi-escapes: 2.2.3(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-type: 1.1.0
+      bare-ansi-escapes: 2.2.4(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-type: 1.4.0
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - bare-events
       - react-native-b4a
 
-  bare-lief@0.2.6(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  bare-lief@0.2.10(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
-      bare-assert: 1.2.0(bare-buffer@3.6.2)(bare-events@2.9.1)
-      require-addon: 1.2.0(bare-url@2.4.7)
+      bare-assert: 1.3.0(bare-buffer@3.7.1)(bare-events@2.9.2)
+      require-addon: 1.2.0(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -10204,16 +10233,17 @@ snapshots:
       - bare-url
       - react-native-b4a
 
-  bare-link@3.3.0(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-link@4.1.0(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-fs: 4.8.0(bare-buffer@3.6.2)
-      bare-lief: 0.2.6(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      bare-module-resolve: 1.12.4(bare-url@2.4.7)
+      bare-fs: 4.8.4(bare-buffer@3.7.1)
+      bare-lief: 0.2.10(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      bare-module-resolve: 1.12.6(bare-url@2.5.5)
+      bare-module-traverse: 2.7.3(bare-buffer@3.7.1)(bare-url@2.5.5)
       bare-os: 3.9.3
-      bare-path: 3.1.1
+      bare-path: 3.1.2
       bare-semver: 1.1.0
-      bare-subprocess: 6.1.0(bare-buffer@3.6.2)
-      bare-url: 2.4.7
+      bare-subprocess: 6.2.2(bare-buffer@3.7.1)
+      bare-url: 2.5.5
       paparam: 1.11.0
     transitivePeerDependencies:
       - bare-abort-controller
@@ -10221,9 +10251,9 @@ snapshots:
       - bare-events
       - react-native-b4a
 
-  bare-logger@2.0.3(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-logger@2.0.4(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-format: 1.0.2(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-format: 1.0.3(bare-buffer@3.7.1)(bare-events@2.9.2)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -10232,35 +10262,37 @@ snapshots:
 
   bare-mime@1.0.0: {}
 
-  bare-module-lexer@1.6.3(bare-buffer@3.6.2)(bare-url@2.4.7):
+  bare-module-lexer@1.7.0(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
-      require-addon: 1.2.0(bare-url@2.4.7)
+      require-addon: 1.2.0(bare-url@2.5.5)
     optionalDependencies:
-      bare-buffer: 3.6.2
+      bare-buffer: 3.7.1
     transitivePeerDependencies:
       - bare-url
 
-  bare-module-resolve@1.12.4(bare-url@2.4.7):
+  bare-module-resolve@1.12.6(bare-url@2.5.5):
     dependencies:
       bare-semver: 1.1.0
     optionalDependencies:
-      bare-url: 2.4.7
+      bare-url: 2.5.5
 
-  bare-module-traverse@1.4.1(bare-buffer@3.6.2)(bare-url@2.4.7):
+  bare-module-traverse@2.7.3(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
-      bare-addon-resolve: 1.10.1(bare-url@2.4.7)
-      bare-module-lexer: 1.6.3(bare-buffer@3.6.2)(bare-url@2.4.7)
-      bare-module-resolve: 1.12.4(bare-url@2.4.7)
+      bare-addon-resolve: 1.11.0(bare-url@2.5.5)
+      bare-bundle: 1.11.0(bare-buffer@3.7.1)(bare-url@2.5.5)
+      bare-mime: 1.0.0
+      bare-module-lexer: 1.7.0(bare-buffer@3.7.1)(bare-url@2.5.5)
+      bare-module-resolve: 1.12.6(bare-url@2.5.5)
     optionalDependencies:
-      bare-buffer: 3.6.2
-      bare-url: 2.4.7
+      bare-buffer: 3.7.1
+      bare-url: 2.5.5
 
-  bare-net@2.3.3(bare-buffer@3.6.2):
+  bare-net@2.3.3(bare-buffer@3.7.1):
     dependencies:
-      bare-events: 2.9.1
-      bare-pipe: 4.2.3(bare-buffer@3.6.2)
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-tcp: 2.5.4(bare-buffer@3.6.2)(bare-pipe@4.2.3(bare-buffer@3.6.2))
+      bare-events: 2.9.2
+      bare-pipe: 4.4.0(bare-buffer@3.7.1)
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-tcp: 2.6.1(bare-buffer@3.7.1)(bare-pipe@4.4.0(bare-buffer@3.7.1))
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -10268,40 +10300,49 @@ snapshots:
 
   bare-os@3.9.3: {}
 
-  bare-pack@1.4.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  bare-pack@3.0.2(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
-      bare-bundle: 1.10.0(bare-buffer@3.6.2)(bare-url@2.4.7)
-      bare-bundle-id: 1.0.2(bare-buffer@3.6.2)(bare-bundle@1.10.0(bare-buffer@3.6.2)(bare-url@2.4.7))(bare-events@2.9.1)(bare-url@2.4.7)
-      bare-module-traverse: 1.4.1(bare-buffer@3.6.2)(bare-url@2.4.7)
+      bare-bundle: 1.11.0(bare-buffer@3.7.1)(bare-url@2.5.5)
+      bare-bundle-id: 1.0.3(bare-buffer@3.7.1)(bare-bundle@1.11.0(bare-buffer@3.7.1)(bare-url@2.5.5))(bare-events@2.9.2)(bare-url@2.5.5)
+      bare-fs: 4.8.4(bare-buffer@3.7.1)
+      bare-module-traverse: 2.7.3(bare-buffer@3.7.1)(bare-url@2.5.5)
+      bare-path: 3.1.2
       paparam: 1.11.0
       promaphore: 1.0.0
     optionalDependencies:
-      bare-buffer: 3.6.2
-      bare-url: 2.4.7
+      bare-buffer: 3.7.1
+      bare-url: 2.5.5
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-events
       - react-native-b4a
 
-  bare-path@3.1.1: {}
+  bare-path@3.1.2: {}
 
-  bare-pipe@4.2.3(bare-buffer@3.6.2):
+  bare-performance@2.1.1:
     dependencies:
-      bare-events: 2.9.1
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-events: 2.9.2
     transitivePeerDependencies:
       - bare-abort-controller
-      - bare-buffer
+
+  bare-pipe@4.4.0(bare-buffer@3.7.1):
+    dependencies:
+      bare-events: 2.9.2
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
+    optionalDependencies:
+      bare-buffer: 3.7.1
+    transitivePeerDependencies:
+      - bare-abort-controller
       - react-native-b4a
 
-  bare-rpc@1.3.8(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-rpc@1.3.9(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
       b4a: 1.8.1
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
       compact-encoding: 3.3.0
       safety-catch: 1.0.3
     optionalDependencies:
-      bare-buffer: 3.6.2
+      bare-buffer: 3.7.1
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-events
@@ -10309,83 +10350,83 @@ snapshots:
 
   bare-semver@1.1.0: {}
 
-  bare-stream@2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-stream@2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
       b4a: 1.8.1
       streamx: 2.28.0
       teex: 1.0.1
     optionalDependencies:
-      bare-buffer: 3.6.2
-      bare-events: 2.9.1
+      bare-buffer: 3.7.1
+      bare-events: 2.9.2
     transitivePeerDependencies:
       - react-native-b4a
 
-  bare-structured-clone@1.6.0:
+  bare-structured-clone@2.0.1:
     dependencies:
-      bare-buffer: 3.6.2
-      bare-type: 1.1.0
-      bare-url: 2.4.7
+      bare-buffer: 3.7.1
+      bare-type: 1.4.0
+      bare-url: 2.5.5
       compact-encoding: 3.3.0
     transitivePeerDependencies:
       - react-native-b4a
 
-  bare-subprocess@6.1.0(bare-buffer@3.6.2):
+  bare-subprocess@6.2.2(bare-buffer@3.7.1):
     dependencies:
       bare-env: 3.0.1
-      bare-events: 2.9.1
+      bare-events: 2.9.2
       bare-os: 3.9.3
-      bare-pipe: 4.2.3(bare-buffer@3.6.2)
-      bare-structured-clone: 1.6.0
-      bare-tcp: 2.5.4(bare-buffer@3.6.2)(bare-pipe@4.2.3(bare-buffer@3.6.2))
-      bare-url: 2.4.7
+      bare-pipe: 4.4.0(bare-buffer@3.7.1)
+      bare-structured-clone: 2.0.1
+      bare-tcp: 2.6.1(bare-buffer@3.7.1)(bare-pipe@4.4.0(bare-buffer@3.7.1))
+      bare-url: 2.5.5
     optionalDependencies:
-      bare-buffer: 3.6.2
+      bare-buffer: 3.7.1
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
 
-  bare-system-logger@1.0.3(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-system-logger@1.0.6(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-logger: 2.0.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-logger: 2.0.4(bare-buffer@3.7.1)(bare-events@2.9.2)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - bare-events
       - react-native-b4a
 
-  bare-tcp@2.5.4(bare-buffer@3.6.2)(bare-pipe@4.2.3(bare-buffer@3.6.2)):
+  bare-tcp@2.6.1(bare-buffer@3.7.1)(bare-pipe@4.4.0(bare-buffer@3.7.1)):
     dependencies:
-      bare-dns: 2.1.4
-      bare-events: 2.9.1
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-dns: 2.3.1(bare-buffer@3.7.1)
+      bare-events: 2.9.2
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
     optionalDependencies:
-      bare-pipe: 4.2.3(bare-buffer@3.6.2)
+      bare-pipe: 4.4.0(bare-buffer@3.7.1)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - react-native-b4a
 
-  bare-tls@3.1.8(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-tls@3.2.0(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-net: 2.3.3(bare-buffer@3.6.2)
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-net: 2.3.3(bare-buffer@3.7.1)
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - bare-events
       - react-native-b4a
 
-  bare-type@1.1.0: {}
+  bare-type@1.4.0: {}
 
-  bare-url@2.4.7:
+  bare-url@2.5.5:
     dependencies:
-      bare-path: 3.1.1
+      bare-path: 3.1.2
 
-  bare-zlib@1.4.1(bare-buffer@3.6.2)(bare-events@2.9.1):
+  bare-zlib@1.4.1(bare-buffer@3.7.1)(bare-events@2.9.2):
     dependencies:
-      bare-stream: 2.13.3(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-stream: 2.13.4(bare-buffer@3.7.1)(bare-events@2.9.2)
     optionalDependencies:
-      bare-buffer: 3.6.2
+      bare-buffer: 3.7.1
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-events
@@ -10417,10 +10458,10 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  blind-encryption-sodium@1.0.2(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  blind-encryption-sodium@1.0.2(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -10429,10 +10470,10 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  blind-encryption-sodium@3.0.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  blind-encryption-sodium@3.0.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -10441,14 +10482,14 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  blind-pairing-core@2.10.1(bare-buffer@3.6.2)(bare-url@2.4.7):
+  blind-pairing-core@2.10.1(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      bare-events: 2.9.1
+      bare-events: 2.9.2
       bogon: 1.3.0
       compact-encoding: 3.3.0
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       tiny-buffer-map: 1.1.1
     transitivePeerDependencies:
       - bare-abort-controller
@@ -10457,12 +10498,12 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  blind-pairing@2.3.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  blind-pairing@2.3.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      blind-pairing-core: 2.10.1(bare-buffer@3.6.2)(bare-url@2.4.7)
+      blind-pairing-core: 2.10.1(bare-buffer@3.7.1)(bare-url@2.5.5)
       debounceify: 1.1.0
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       is-options: 1.0.2
       ready-resource: 1.2.0
       safety-catch: 1.0.3
@@ -10475,10 +10516,10 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  blind-peer-encodings@3.3.1(bare-buffer@3.6.2)(bare-url@2.4.7):
+  blind-peer-encodings@3.3.1(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       compact-encoding: 3.3.0
-      hyperdb: 6.8.0(bare-buffer@3.6.2)(bare-url@2.4.7)
+      hyperdb: 6.8.0(bare-buffer@3.7.1)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -10486,10 +10527,10 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  blind-peering@1.15.0(bare-buffer@3.6.2)(bare-url@2.4.7):
+  blind-peering@1.15.0(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      blind-peer-encodings: 3.3.1(bare-buffer@3.6.2)(bare-url@2.4.7)
+      blind-peer-encodings: 3.3.1(bare-buffer@3.7.1)(bare-url@2.5.5)
       compact-encoding: 2.19.2
       hypercore-id-encoding: 1.3.0
       protomux-rpc: 1.10.0
@@ -10504,15 +10545,15 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  blind-relay@1.6.1(bare-buffer@3.6.2)(bare-url@2.4.7):
+  blind-relay@1.6.1(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      bare-events: 2.9.1
+      bare-events: 2.9.2
       bits-to-bytes: 1.3.0
       compact-encoding: 3.3.0
       compact-encoding-bitfield: 1.1.0
       protomux: 3.11.0
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       streamx: 2.28.0
     transitivePeerDependencies:
       - bare-abort-controller
@@ -10832,16 +10873,16 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  corestore@7.12.0(bare-buffer@3.6.2)(bare-url@2.4.7):
+  corestore@7.12.0(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      bare-events: 2.9.1
-      hypercore: 11.39.6(bare-buffer@3.6.2)(bare-url@2.4.7)
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      bare-events: 2.9.2
+      hypercore: 11.39.6(bare-buffer@3.7.1)(bare-url@2.5.5)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       hypercore-errors: 1.5.0
       hypercore-id-encoding: 1.3.0
       ready-resource: 1.2.0
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       streamx: 2.28.0
       which-runtime: 1.4.0
     transitivePeerDependencies:
@@ -11002,13 +11043,13 @@ snapshots:
 
   detect-newline@3.1.0: {}
 
-  device-file@2.3.1(bare-buffer@3.6.2)(bare-url@2.4.7):
+  device-file@2.3.1(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      bare-fs: 4.8.0(bare-buffer@3.6.2)
-      bare-path: 3.1.1
-      fd-lock: 2.2.0(bare-buffer@3.6.2)(bare-url@2.4.7)
-      fs-native-extensions: 1.5.0(bare-url@2.4.7)
+      bare-fs: 4.8.4(bare-buffer@3.7.1)
+      bare-path: 3.1.2
+      fd-lock: 2.2.0(bare-buffer@3.7.1)(bare-url@2.5.5)
+      fs-native-extensions: 1.5.0(bare-url@2.5.5)
       ready-resource: 1.2.0
     transitivePeerDependencies:
       - bare-abort-controller
@@ -11016,20 +11057,20 @@ snapshots:
       - bare-url
       - react-native-b4a
 
-  dht-rpc@6.27.0(bare-buffer@3.6.2)(bare-url@2.4.7):
+  dht-rpc@6.28.0(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       adaptive-timeout: 1.0.1
       b4a: 1.8.1
-      bare-events: 2.9.1
+      bare-events: 2.9.2
       compact-encoding: 3.3.0
       compact-encoding-net: 1.3.0
       fast-fifo: 1.3.2
       kademlia-routing-table: 1.0.6
       nat-sampler: 1.0.1
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       streamx: 2.28.0
       time-ordered-set: 2.0.1
-      udx-native: 1.22.0(bare-url@2.4.7)
+      udx-native: 1.22.0(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -11091,9 +11132,9 @@ snapshots:
 
   encodeurl@2.0.0: {}
 
-  encryption-encoding@1.0.3(bare-buffer@3.6.2):
+  encryption-encoding@1.0.3(bare-buffer@3.7.1):
     dependencies:
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -11476,7 +11517,7 @@ snapshots:
 
   events-universal@1.0.1:
     dependencies:
-      bare-events: 2.9.1
+      bare-events: 2.9.2
     transitivePeerDependencies:
       - bare-abort-controller
 
@@ -11705,10 +11746,10 @@ snapshots:
     dependencies:
       bser: 2.1.1
 
-  fd-lock@2.2.0(bare-buffer@3.6.2)(bare-url@2.4.7):
+  fd-lock@2.2.0(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
-      bare-fs: 4.8.0(bare-buffer@3.6.2)
-      fs-native-extensions: 1.5.0(bare-url@2.4.7)
+      bare-fs: 4.8.4(bare-buffer@3.7.1)
+      fs-native-extensions: 1.5.0(bare-url@2.5.5)
       ready-resource: 1.2.0
       resource-on-exit: 1.0.0
     transitivePeerDependencies:
@@ -11815,9 +11856,9 @@ snapshots:
       jsonfile: 4.0.0
       universalify: 0.1.2
 
-  fs-native-extensions@1.5.0(bare-url@2.4.7):
+  fs-native-extensions@1.5.0(bare-url@2.5.5):
     dependencies:
-      require-addon: 1.2.0(bare-url@2.4.7)
+      require-addon: 1.2.0(bare-url@2.5.5)
       which-runtime: 1.4.0
     transitivePeerDependencies:
       - bare-url
@@ -12022,11 +12063,11 @@ snapshots:
       - bare-abort-controller
       - react-native-b4a
 
-  hypercore-crypto@3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  hypercore-crypto@3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
       compact-encoding: 3.3.0
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -12048,18 +12089,18 @@ snapshots:
     transitivePeerDependencies:
       - react-native-b4a
 
-  hypercore-storage@3.4.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  hypercore-storage@3.4.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      bare-path: 3.1.1
+      bare-path: 3.1.2
       compact-encoding: 3.3.0
-      device-file: 2.3.1(bare-buffer@3.6.2)(bare-url@2.4.7)
+      device-file: 2.3.1(bare-buffer@3.7.1)(bare-url@2.5.5)
       flat-tree: 1.13.0
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
       index-encoder: 3.5.0
       resolve-reject-promise: 1.1.0
-      rocksdb-native: 3.19.2(bare-url@2.4.7)
+      rocksdb-native: 3.19.2(bare-url@2.5.5)
       scope-lock: 1.2.4
       streamx: 2.28.0
       xache: 1.3.0
@@ -12071,26 +12112,26 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  hypercore@11.39.6(bare-buffer@3.6.2)(bare-url@2.4.7):
+  hypercore@11.39.6(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
-      '@hyperswarm/secret-stream': 6.9.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      '@hyperswarm/secret-stream': 6.9.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       b4a: 1.8.1
-      bare-events: 2.9.1
+      bare-events: 2.9.2
       big-sparse-array: 1.0.3
       compact-encoding: 3.3.0
       fast-fifo: 1.3.2
       flat-tree: 1.13.0
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       hypercore-errors: 1.5.0
       hypercore-id-encoding: 1.3.0
-      hypercore-storage: 3.4.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      hypercore-storage: 3.4.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       is-options: 1.0.2
       nanoassert: 2.0.0
       protomux: 3.11.0
-      quickbit-universal: 2.2.0(bare-url@2.4.7)
+      quickbit-universal: 2.2.0(bare-url@2.5.5)
       random-array-iterator: 1.0.0
       safety-catch: 1.0.3
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       streamx: 2.28.0
       unslab: 1.3.0
       z32: 1.1.0
@@ -12101,17 +12142,17 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  hyperdb@4.22.3(bare-buffer@3.6.2)(bare-url@2.4.7):
+  hyperdb@4.22.3(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
       compact-encoding: 2.19.2
       generate-object-property: 2.0.0
       generate-string: 1.0.1
       hyperbee: 2.27.3
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
       index-encoder: 3.5.0
       refcounter: 1.0.0
-      rocksdb-native: 3.19.2(bare-url@2.4.7)
+      rocksdb-native: 3.19.2(bare-url@2.5.5)
       scope-lock: 1.2.4
       streamx: 2.28.0
     transitivePeerDependencies:
@@ -12120,18 +12161,18 @@ snapshots:
       - bare-url
       - react-native-b4a
 
-  hyperdb@6.8.0(bare-buffer@3.6.2)(bare-url@2.4.7):
+  hyperdb@6.8.0(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
       compact-encoding: 3.3.0
       generate-object-property: 2.0.0
       generate-string: 1.0.1
       hyperbee: 2.27.3
-      hypercore: 11.39.6(bare-buffer@3.6.2)(bare-url@2.4.7)
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
+      hypercore: 11.39.6(bare-buffer@3.7.1)(bare-url@2.5.5)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
       index-encoder: 3.5.0
       refcounter: 1.0.0
-      rocksdb-native: 3.19.2(bare-url@2.4.7)
+      rocksdb-native: 3.19.2(bare-url@2.5.5)
       scope-lock: 1.2.4
       streamx: 2.28.0
     transitivePeerDependencies:
@@ -12141,33 +12182,33 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  hyperdht-address@1.1.1(bare-buffer@3.6.2):
+  hyperdht-address@1.1.1(bare-buffer@3.7.1):
     dependencies:
       compact-encoding: 3.3.0
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - react-native-b4a
 
-  hyperdht@6.33.0(bare-buffer@3.6.2)(bare-url@2.4.7):
+  hyperdht@6.35.0(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
-      '@hyperswarm/secret-stream': 6.9.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      '@hyperswarm/secret-stream': 6.9.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       b4a: 1.8.1
-      bare-events: 2.9.1
-      blind-relay: 1.6.1(bare-buffer@3.6.2)(bare-url@2.4.7)
+      bare-events: 2.9.2
+      blind-relay: 1.6.1(bare-buffer@3.7.1)(bare-url@2.5.5)
       bogon: 1.3.0
       compact-encoding: 3.3.0
-      dht-rpc: 6.27.0(bare-buffer@3.6.2)(bare-url@2.4.7)
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      dht-rpc: 6.28.0(bare-buffer@3.7.1)(bare-url@2.5.5)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       hypercore-id-encoding: 1.3.0
-      hyperdht-address: 1.1.1(bare-buffer@3.6.2)
-      noise-curve-ed: 2.1.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      noise-handshake: 4.2.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      hyperdht-address: 1.1.1(bare-buffer@3.7.1)
+      noise-curve-ed: 2.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      noise-handshake: 4.2.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       record-cache: 1.2.0
       safety-catch: 1.0.3
       signal-promise: 1.0.3
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       streamx: 2.28.0
       unslab: 1.3.0
       xache: 1.3.0
@@ -12178,23 +12219,23 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  hyperdispatch@1.6.0(bare-buffer@3.6.2):
+  hyperdispatch@1.6.0(bare-buffer@3.7.1):
     dependencies:
       b4a: 1.8.1
-      bare-fs: 4.8.0(bare-buffer@3.6.2)
-      bare-path: 3.1.1
+      bare-fs: 4.8.4(bare-buffer@3.7.1)
+      bare-path: 3.1.2
       compact-encoding: 3.3.0
       generate-string: 1.0.1
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
       nanoassert: 2.0.0
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
       - react-native-b4a
 
-  hyperschema@1.22.0(bare-buffer@3.6.2):
+  hyperschema@1.22.0(bare-buffer@3.7.1):
     dependencies:
-      bare-fs: 4.8.0(bare-buffer@3.6.2)
+      bare-fs: 4.8.4(bare-buffer@3.7.1)
       compact-encoding: 3.3.0
       generate-object-property: 2.0.0
       generate-string: 1.0.1
@@ -12203,11 +12244,11 @@ snapshots:
       - bare-buffer
       - react-native-b4a
 
-  hyperswarm@4.17.0(bare-buffer@3.6.2)(bare-url@2.4.7):
+  hyperswarm@4.17.2(bare-buffer@3.7.1)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      bare-events: 2.9.1
-      hyperdht: 6.33.0(bare-buffer@3.6.2)(bare-url@2.4.7)
+      bare-events: 2.9.2
+      hyperdht: 6.35.0(bare-buffer@3.7.1)(bare-url@2.5.5)
       safety-catch: 1.0.3
       shuffled-priority-queue: 2.1.0
       streamx: 2.28.0
@@ -12942,7 +12983,7 @@ snapshots:
 
   kademlia-routing-table@1.0.6:
     dependencies:
-      bare-events: 2.9.1
+      bare-events: 2.9.2
     transitivePeerDependencies:
       - bare-abort-controller
 
@@ -13100,37 +13141,37 @@ snapshots:
     optionalDependencies:
       expo-crypto: 13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0))
 
-  lockwright-lib-vault-core@file:../pearpass-lib-vault-core(bare-events@2.9.1)(bare-pipe@4.2.3(bare-buffer@3.6.2))(bare-url@2.4.7)(lockwright-lib-utils@https://codeload.github.com/Dexterity-Works/lockwright-lib-utils/tar.gz/32ffefed29db8d198f96401c780e09e70719bcc2(expo-crypto@13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0)))):
+  lockwright-lib-vault-core@file:../pearpass-lib-vault-core(bare-events@2.9.2)(bare-pipe@4.4.0(bare-buffer@3.7.1))(bare-url@2.5.5)(lockwright-lib-utils@https://codeload.github.com/Dexterity-Works/lockwright-lib-utils/tar.gz/32ffefed29db8d198f96401c780e09e70719bcc2(expo-crypto@13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0)))):
     dependencies:
       '@noble/ciphers': 2.2.0
       '@noble/hashes': 2.3.0
-      autopass: 3.3.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      autopass: 3.3.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       b4a: 1.8.1
-      bare-buffer: 3.6.2
-      bare-crypto: 1.15.3(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-fetch: 2.9.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-pipe@4.2.3(bare-buffer@3.6.2))
-      bare-file-logger: 1.2.3(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-fs: 4.8.0(bare-buffer@3.6.2)
+      bare-buffer: 3.7.1
+      bare-crypto: 1.15.4(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-fetch: 3.4.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-pipe@4.4.0(bare-buffer@3.7.1))
+      bare-file-logger: 1.2.3(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-fs: 4.8.4(bare-buffer@3.7.1)
       bare-os: 3.9.3
-      bare-path: 3.1.1
-      bare-rpc: 1.3.8(bare-buffer@3.6.2)(bare-events@2.9.1)
-      bare-system-logger: 1.0.3(bare-buffer@3.6.2)(bare-events@2.9.1)
-      blind-encryption-sodium: 3.0.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      bare-path: 3.1.2
+      bare-rpc: 1.3.9(bare-buffer@3.7.1)(bare-events@2.9.2)
+      bare-system-logger: 1.0.6(bare-buffer@3.7.1)(bare-events@2.9.2)
+      blind-encryption-sodium: 3.0.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       buffer: 6.0.3
       compact-encoding: 2.19.2
-      corestore: 7.12.0(bare-buffer@3.6.2)(bare-url@2.4.7)
+      corestore: 7.12.0(bare-buffer@3.7.1)(bare-url@2.5.5)
       events: 3.3.0
       framed-stream: 1.0.1
-      hypercore: 11.39.6(bare-buffer@3.6.2)(bare-url@2.4.7)
+      hypercore: 11.39.6(bare-buffer@3.7.1)(bare-url@2.5.5)
       hypercore-id-encoding: 1.3.0
-      hyperdht: 6.33.0(bare-buffer@3.6.2)(bare-url@2.4.7)
-      hyperswarm: 4.17.0(bare-buffer@3.6.2)(bare-url@2.4.7)
+      hyperdht: 6.35.0(bare-buffer@3.7.1)(bare-url@2.5.5)
+      hyperswarm: 4.17.2(bare-buffer@3.7.1)(bare-url@2.5.5)
       lockwright-lib-utils: https://codeload.github.com/Dexterity-Works/lockwright-lib-utils/tar.gz/32ffefed29db8d198f96401c780e09e70719bcc2(expo-crypto@13.0.2(expo@53.0.27(@babel/core@7.28.0)(@expo/metro-runtime@5.0.5(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0)))
       otpauth: 9.5.1
-      rocksdb-native: 3.19.2(bare-url@2.4.7)
-      sodium-native: 5.1.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      rocksdb-native: 3.19.2(bare-url@2.5.5)
+      sodium-native: 5.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
       suspendify: 1.7.2
-      udx-native: 1.22.0(bare-url@2.4.7)
+      udx-native: 1.22.0(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-events
@@ -13485,11 +13526,11 @@ snapshots:
 
   node-stream-zip@1.16.0: {}
 
-  noise-curve-ed@2.1.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  noise-curve-ed@2.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
       nanoassert: 2.0.0
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -13498,11 +13539,11 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  noise-handshake@4.2.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  noise-handshake@4.2.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
       nanoassert: 2.0.0
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -13895,16 +13936,16 @@ snapshots:
       protomux: 3.11.0
       safety-catch: 1.0.3
     optionalDependencies:
-      bare-events: 2.9.1
+      bare-events: 2.9.2
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
 
-  protomux-wakeup@2.9.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  protomux-wakeup@2.9.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      hypercore-crypto: 3.7.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
-      hyperschema: 1.22.0(bare-buffer@3.6.2)
+      hypercore-crypto: 3.7.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
+      hyperschema: 1.22.0(bare-buffer@3.7.1)
       protomux: 3.11.0
     transitivePeerDependencies:
       - bare-abort-controller
@@ -13962,19 +14003,19 @@ snapshots:
     dependencies:
       inherits: 2.0.4
 
-  quickbit-native@2.4.8(bare-url@2.4.7):
+  quickbit-native@2.4.8(bare-url@2.5.5):
     dependencies:
-      require-addon: 1.2.0(bare-url@2.4.7)
+      require-addon: 1.2.0(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-url
     optional: true
 
-  quickbit-universal@2.2.0(bare-url@2.4.7):
+  quickbit-universal@2.2.0(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      simdle-universal: 1.1.2(bare-url@2.4.7)
+      simdle-universal: 1.1.2(bare-url@2.5.5)
     optionalDependencies:
-      quickbit-native: 2.4.8(bare-url@2.4.7)
+      quickbit-native: 2.4.8(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-url
       - react-native-b4a
@@ -14022,16 +14063,14 @@ snapshots:
 
   react-is@19.2.8: {}
 
-  react-native-bare-kit@0.13.0(bare-buffer@3.6.2)(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0):
+  react-native-bare-kit@0.16.0(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0):
     dependencies:
-      bare-events: 2.9.1
-      bare-link: 3.3.0(bare-buffer@3.6.2)(bare-events@2.9.1)
+      bare-events: 2.9.2
       react: 19.0.0
       react-native: 0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)
       streamx: 2.28.0
     transitivePeerDependencies:
       - bare-abort-controller
-      - bare-buffer
       - react-native-b4a
 
   react-native-drawer-layout@4.2.10(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.17.5(@babel/core@7.28.0)(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0))(react@19.0.0):
@@ -14230,7 +14269,7 @@ snapshots:
 
   ready-resource@1.2.0:
     dependencies:
-      bare-events: 2.9.1
+      bare-events: 2.9.2
     transitivePeerDependencies:
       - bare-abort-controller
 
@@ -14296,9 +14335,9 @@ snapshots:
     dependencies:
       jsesc: 3.1.0
 
-  require-addon@1.2.0(bare-url@2.4.7):
+  require-addon@1.2.0(bare-url@2.5.5):
     dependencies:
-      bare-addon-resolve: 1.10.1(bare-url@2.4.7)
+      bare-addon-resolve: 1.11.0(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-url
 
@@ -14377,12 +14416,12 @@ snapshots:
       react: 19.0.0
       react-native: 0.79.5(@babel/core@7.28.0)(@react-native-community/cli@20.2.0(typescript@5.8.3))(@types/react@19.2.18)(react@19.0.0)
 
-  rocksdb-native@3.19.2(bare-url@2.4.7):
+  rocksdb-native@3.19.2(bare-url@2.5.5):
     dependencies:
       compact-encoding: 3.3.0
       ready-resource: 1.2.0
       refcounter: 1.0.0
-      require-addon: 1.2.0(bare-url@2.4.7)
+      require-addon: 1.2.0(bare-url@2.5.5)
       resolve-reject-promise: 1.1.0
       signal-promise: 1.0.3
       streamx: 2.28.0
@@ -14539,20 +14578,20 @@ snapshots:
     dependencies:
       varint: 5.0.0
 
-  simdle-native@1.3.9(bare-url@2.4.7):
+  simdle-native@1.3.9(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      require-addon: 1.2.0(bare-url@2.4.7)
+      require-addon: 1.2.0(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-url
       - react-native-b4a
     optional: true
 
-  simdle-universal@1.1.2(bare-url@2.4.7):
+  simdle-universal@1.1.2(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
     optionalDependencies:
-      simdle-native: 1.3.9(bare-url@2.4.7)
+      simdle-native: 1.3.9(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-url
       - react-native-b4a
@@ -14583,10 +14622,10 @@ snapshots:
 
   smol-toml@1.7.1: {}
 
-  sodium-native@5.1.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  sodium-native@5.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
-      bare-assert: 1.2.0(bare-buffer@3.6.2)(bare-events@2.9.1)
-      require-addon: 1.2.0(bare-url@2.4.7)
+      bare-assert: 1.3.0(bare-buffer@3.7.1)(bare-events@2.9.2)
+      require-addon: 1.2.0(bare-url@2.5.5)
       which-runtime: 1.4.0
     transitivePeerDependencies:
       - bare-abort-controller
@@ -14595,10 +14634,10 @@ snapshots:
       - bare-url
       - react-native-b4a
 
-  sodium-secretstream@1.2.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  sodium-secretstream@1.2.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      sodium-universal: 5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-universal: 5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -14607,9 +14646,9 @@ snapshots:
       - react-native-b4a
       - sodium-javascript
 
-  sodium-universal@5.0.1(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7):
+  sodium-universal@5.0.1(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5):
     dependencies:
-      sodium-native: 5.1.0(bare-buffer@3.6.2)(bare-events@2.9.1)(bare-url@2.4.7)
+      sodium-native: 5.1.0(bare-buffer@3.7.1)(bare-events@2.9.2)(bare-url@2.5.5)
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -14968,11 +15007,11 @@ snapshots:
 
   typescript@5.8.3: {}
 
-  udx-native@1.22.0(bare-url@2.4.7):
+  udx-native@1.22.0(bare-url@2.5.5):
     dependencies:
       b4a: 1.8.1
-      bare-events: 2.9.1
-      require-addon: 1.2.0(bare-url@2.4.7)
+      bare-events: 2.9.2
+      require-addon: 1.2.0(bare-url@2.5.5)
       streamx: 2.28.0
     transitivePeerDependencies:
       - bare-abort-controller

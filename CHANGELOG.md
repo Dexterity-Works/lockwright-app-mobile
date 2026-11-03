@@ -9,6 +9,14 @@ Starts at 0.0.17, after the Lockwright package rename. Earlier history is git.
 
 ## [Unreleased]
 
+### Changed
+
+- The vault process runs on react-native-bare-kit 0.16.0, bare-fetch 3, hyperswarm 4.17.2 and hyperdht 6.35.0.
+
+### Fixed
+
+- Connections a site closed after a favicon fetch stayed open in the vault process and piled up. bare-http1 moves to 4.6.3, which fixes it.
+
 ## [0.0.34] - 2026-11-01
 
 `2e18e9a33c64916ad54576ff6af442bacbf4509c`
